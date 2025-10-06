@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+   "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "emitDeclarationOnly": true,
+    "verbatimModuleSyntax": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+  },
+  "include": ["src/*"]
+
+}

@@ -1,0 +1,31 @@
+{
+  "name": "mongodb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./db": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },    
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/mongoose": "^5.11.96",
+    "ts-node": "^10.9.2",
+    "types": "workspace:*",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "mongoose": "^8.19.0",
+    "tsc-node": "^0.0.3"
+  }
+}

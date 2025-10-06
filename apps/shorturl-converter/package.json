@@ -1,0 +1,23 @@
+{
+  "name": "shorturl-converter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": " pnpx  index.ts --port 3001",
+    "build": "tsc -b",
+    "start": "node dist/index.js --port 3001"
+    
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+   "dependencies": {
+    "mongodb": "workspace:*"
+  },
+  "devDependencies": {
+    "@repo/typescript-config":"workspace:*",
+    "typescript": "latest"
+  }
+}

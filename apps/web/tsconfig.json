@@ -7,11 +7,21 @@
       }
     ]
   },
+  "paths": {
+    "types": [
+      "../../packages/types/src/*"
+    ],
+    "@/*": [
+      "./src/*"
+    ]
+  },
   "include": [
+    "**/*.d.ts",
+    "**/*.js",
+    "**/*.jsx",
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
-    "next.config.js",
     ".next/types/**/*.ts"
   ],
   "exclude": [
