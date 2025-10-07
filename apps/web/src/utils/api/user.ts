@@ -1,4 +1,4 @@
-import axios from '../lib/axios'
+import axios from '../../lib/axios'
 import {userResponse,userSignupData,userSigninData} from 'types'
 
 export const userSignup=async(data:userSignupData):Promise<userResponse>=>{

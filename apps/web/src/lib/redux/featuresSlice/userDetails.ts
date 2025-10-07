@@ -19,7 +19,7 @@ const  initialState: UserState = {
   state: 'pending',
 };
 
-export const getDetails = createAsyncThunk(
+export const getUser_details = createAsyncThunk(
   'auth/getDetails',
   async (_, thunkAPI) => {
     try {
@@ -47,10 +47,10 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getDetails.pending, (state) => {
+      .addCase(getUser_details.pending, (state) => {
         state.state = 'loading';
       })
-      .addCase(getDetails.fulfilled, (state, action)=> {
+      .addCase(getUser_details.fulfilled, (state, action)=> {
         if(action.payload){
         state.username = action.payload.username;
         state.emailId = action.payload.emailId;
@@ -61,7 +61,7 @@ export const userSlice = createSlice({
         state.state = 'succeeded';
         }
       })
-      .addCase(getDetails.rejected, (state) => {
+      .addCase(getUser_details.rejected, (state) => {
         state.state = 'failed';
       });
   },

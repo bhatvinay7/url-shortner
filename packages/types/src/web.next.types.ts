@@ -24,3 +24,11 @@ export type ClientInfo = {
   userId?:string |null;
   timestamp:string
 };
+
+export interface message extends ClientInfo{
+      token:string;
+      messageType:string;
+      isClickEvent?:boolean |null;
+      isRedirected?:boolean |null
+
+}

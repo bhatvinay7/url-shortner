@@ -1,4 +1,4 @@
-import {axiosPublic} from '../lib/axios'
+import {axiosPublic} from '../../lib/axios'
 import {userCredentials} from 'types'
 
 export  async function getUserDetails():Promise<userCredentials>{

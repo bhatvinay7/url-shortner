@@ -2,11 +2,6 @@ export interface userResponse{
     message:string
 }
 
-export interface userSignupData{
-    username:string,
-    email:string,
-    password:string
-}
 
 export interface userSigninData{
     email:string,
