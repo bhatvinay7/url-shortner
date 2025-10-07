@@ -2,30 +2,38 @@
   "name": "mongodb",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "commonjs",
+  "main": "dist/index.mjs",
+  "type": "module",
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc -b ",
+    "dev": " node --loader ts-node/esm src/index.ts"
+    
   },
   "types": "./dist/index.d.ts",
   "exports": {
-    "./db": {
-      "import": "./dist/index.js",
+    ".": {
+      "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
     }
-  },    
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/mongoose": "^5.11.96",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^22.15.3",
     "ts-node": "^10.9.2",
     "types": "workspace:*",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "mongoose": "^8.19.0",
-    "tsc-node": "^0.0.3"
+    "@types/express": "^5.0.3",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "fs": "0.0.1-security",
+    "mongoose": "^8.19.1",
+    "tsc-node": "^0.0.3",
+    "tsconfig-paths": "^4.2.0"
   }
 }

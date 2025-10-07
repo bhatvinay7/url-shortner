@@ -3,10 +3,12 @@ import axios from 'axios';
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI!;
-import {User,connectDB} from 'mongodb/db'
+import {User,connectDB} from 'mongodb'
   
 const callbackHandler=async (req: Request, res: Response) => {
-  const db=await connectDB()
+    console.log("hiii")
+    // res.redirect("http://localhost:3000")
+  // const db=await connectDB()
   
   try {
     const { code } = req.query;
@@ -37,7 +39,6 @@ const callbackHandler=async (req: Request, res: Response) => {
       }
     );
     const profile = userResponse.data;
-     
 
     res.json({ message: 'Login successful'});
   } catch (error: any) {

@@ -1,18 +1,26 @@
 import mongoose from 'mongoose';
-
-let dbInstance: mongoose.Connection | null = null;
+import dotenv from 'dotenv'
+dotenv.config({path:'./env'})
+let dbInstance: mongoose.mongo.Db | null = null;
 
 export async function connectDB() {
   if (dbInstance) return dbInstance; // reuse existing connection
 
   try {
-    await mongoose.connect('mongodb://127.0.0.1/my_database');
-    const db = mongoose.connection;
-
-    dbInstance = db;
+    console.log("db")
+    console.log(process.env.DB_URL! ||'mongodb+srv://bhatvinay74:yJcZTZl755aOvJqJ@cluster0.yxdhwpi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+    await mongoose.connect(process.env.DB_URL! || 'mongodb+srv://bhatvinay74:yJcZTZl755aOvJqJ@cluster0.yxdhwpi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+    const connection = mongoose.connection;
+    if(connection.readyState==1){
+      console.log("connected")
+    }
+    else if(connection.readyState==2){
+      console.log("connecting")
+    }
+    dbInstance = connection.db ?? null;
+    console.log(dbInstance)
     return dbInstance;
   } catch (error) {
     console.error('MongoDB connection failed:', error);
-    throw error;
   }
 }

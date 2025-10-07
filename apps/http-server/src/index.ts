@@ -2,22 +2,21 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-dotenv.config();
-import authRouter from './controllers/googleAuthHandler'
+import authRouter from './controllers/googleAuthHandler.js'
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(
-  cors({
-    origin: [process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000"],
+const PORT = process.env.PORT || 3001;
+dotenv.config();
+const options=cors({
+    origin: [process.env.NEXT_PUBLIC_FRONTEND_URL!],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  })
-);
-
+  } )
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use(options);
+
 
 app.use(authRouter)
 app.listen(PORT, () => {

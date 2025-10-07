@@ -11,9 +11,6 @@
     "types": [
       "../../packages/types/src/*"
     ],
-    "@/*": [
-      "./src/*"
-    ]
   },
   "include": [
     "**/*.d.ts",

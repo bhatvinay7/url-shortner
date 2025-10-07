@@ -1,102 +1,124 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
-
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
+'use client';
+import React, { useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [url, setUrl] = useState('');
+  const [shortUrl, setShortUrl] = useState<string | null>(null);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const handleShorten = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Example: Replace with your backend call
+    // const res = await fetch("/api/shorten", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ longUrl: url }),
+    // });
+    // const data = await res.json();
+    // setShortUrl(data.shortUrl);
+  };
+
+  const copyToClipboard = () => {
+    if (shortUrl) navigator.clipboard.writeText(shortUrl);
+  };
+
+  return (
+    <main className="min-h-screen bg-[hsl(240,7%,79%)] text-[hsl(220,20%,20%)] font-[Poppins] flex flex-col items-center justify-center px-6 py-12">
+      {/* Header */}
+      <header className="text-center mb-8">
+        <h1 className="text-5xl font-bold text-[hsl(212,90%,45%)] mb-2">
+          Shortly
+        </h1>
+        <p className="text-[hsl(220,10%,45%)]">
+          Shorten, manage, and share your links with ease.
+        </p>
+      </header>
+
+      {/* Main Card */}
+      <div className="w-full max-w-3xl bg-[hsl(240,7%,79%)] rounded-2xl shadow-xl backdrop-blur-md p-8 flex flex-col gap-6">
+        <section>
+          <h2 className="text-2xl font-semibold text-[hsl(212,90%,45%)] mb-4">
+            Paste your link below 
+          </h2>
+          <form onSubmit={handleShorten} className="flex flex-col gap-3">
+            <input
+              type="url"
+              placeholder="Enter your long URL..."
+              className="border border-[hsl(228,2%,43%)] focus:ring-2 focus:ring-[hsl(212,90%,45%)] outline-none rounded-xl px-4 py-3 text-[hsl(220,20%,20%)]"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              required
             />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.com/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.com?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.com →
-        </a>
-      </footer>
-    </div>
+            <button
+              type="submit"
+              className="bg-[#425e7bf0] hover:bg-[hsl(212,53%,35%)] text-white font-semibold py-3 rounded-xl transition-all shadow-md hover:shadow-lg"
+            >
+              Shorten URL
+            </button>
+          </form>
+
+          {shortUrl && (
+            <div className="mt-4 bg-white/80 border border-[hsl(220,10%,80%)] rounded-xl p-3 flex items-center gap-2">
+              <a
+                href={shortUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[hsl(212,90%,45%)] font-semibold break-all"
+              >
+                {shortUrl}
+              </a>
+              <button
+                onClick={copyToClipboard}
+                className="ml-auto text-[hsl(220,15%,35%)] border border-[hsl(212,90%,45%)/20] px-3 py-1 rounded-lg hover:bg-[hsl(212,90%,52%)/10]"
+              >
+                Copy
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* How It Works Section */}
+        <section className="mt-8">
+          <h3 className="text-xl font-semibold text-[hsl(212,90%,45%)] mb-3">
+            How It Works 🚀
+          </h3>
+          <ul className="space-y-2 text-[hsl(220,10%,40%)]">
+            <li>1️⃣ Paste your long URL into the input box above.</li>
+            <li>2️⃣ Click <strong>Shorten URL</strong> — we’ll generate a clean, shareable link.</li>
+            <li>3️⃣ Copy your new link and share it anywhere!</li>
+          </ul>
+        </section>
+
+        {/* Why Choose Us */}
+        <section className="mt-8">
+          <h3 className="text-xl font-semibold text-[hsl(212,90%,45%)] mb-3">
+            Why Choose Shortly 💡
+          </h3>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[hsl(220,10%,40%)]">
+            <li className="bg-white/70 p-3 rounded-xl shadow-sm">⚡ Instant URL shortening</li>
+            <li className="bg-white/70 p-3 rounded-xl shadow-sm">🔒 Secure and private</li>
+            <li className="bg-white/70 p-3 rounded-xl shadow-sm">🌍 Custom branded links</li>
+            <li className="bg-white/70 p-3 rounded-xl shadow-sm">📊 Real-time click analytics</li>
+          </ul>
+        </section>
+
+        {/* CTA Section */}
+        <section className="mt-10 text-center">
+          <h3 className="text-2xl font-semibold text-[hsl(212,90%,45%)] mb-2">
+            Ready to get started?
+          </h3>
+          <p className="text-[hsl(220,10%,45%)] mb-4">
+            Join thousands of users making their links smarter.
+          </p>
+          <button className="bg-[hsl(212,90%,45%)] hover:bg-[hsl(212,90%,40%)] text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg">
+            Get Started
+          </button>
+        </section>
+
+        {/* Footer */}
+        <footer className="text-center text-sm text-[hsl(220,10%,55%)] mt-10">
+          © {new Date().getFullYear()} Shortly — Built with 💙 for simplicity
+        </footer>
+      </div>
+    </main>
   );
 }

@@ -7,11 +7,12 @@ const googleauth= async(req:Request,res:Response)=>{
      try{
 
  const url =
-    `https://accounts.google.com/o/oauth2/v2/auth` +
-    `?client_id=${CLIENT_ID}` +
-    `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    `&response_type=code` +
-    `&scope=openid%20profile%20email`;
+  `https://accounts.google.com/o/oauth2/v2/auth` +
+  `?client_id=${CLIENT_ID}` +
+  `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+  `&response_type=code` +
+  `&scope=openid%20profile%20email` +
+  `&prompt=select_account`;
 
   res.redirect(url);
      }

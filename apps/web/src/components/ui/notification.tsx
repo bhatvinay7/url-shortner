@@ -1,12 +1,14 @@
+'use client'
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
-import {state,NotificationProps} from 'types'
-
-const Notification: React.FC<NotificationProps> = ({ message, type, show, onClose }) => {
-  const baseClasses =
-    "min-w-md px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 border";
-
+import {NotificationProps} from 'types'
+enum state { 
+  SUCCESS="success",
+  FAILURE="failure"
+}
+const Notification= ({ message, type, show, onClose }:NotificationProps ) => {
+  const baseClasses = "min-w-md px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 border";
   const typeClasses =
     type === state?.SUCCESS
       ? "bg-blue-50 border-blue-300 text-black"
