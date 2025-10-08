@@ -6,14 +6,9 @@ import getOSType from "./getOsInfo";
 export default function processdata() {
   const collectdata = async () => {
     const ua = navigator.userAgent;
-    // navigator.userAgentData may be undefined
-    const uaData = (navigator as any).userAgentData ?? null;
-    const platform = (navigator as any).platform ?? null;
+  
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? null;
-    const screenWidth = window.screen.width;
-    const screenHeight = window.screen.height;
     
-
     let deviceType: ClientInfo["deviceType"] = "desktop";
     const uaLower = ua.toLowerCase();
     if (/mobi|iphone|android.*mobile|windows phone/.test(uaLower))
@@ -37,13 +32,8 @@ export default function processdata() {
     }
 
     const payload: ClientInfo = {
-      ua,
-      uaData,
-      platform,
       osType,
       deviceType,
-      screenWidth,
-      screenHeight,
       timezone,
       geolocation,
       permissions: { geolocation: geolocationPermission },
