@@ -60,6 +60,9 @@ importers:
       mongodb:
         specifier: workspace:*
         version: link:../../packages/mongo-db
+      rabbitmq:
+        specifier: workspace:*
+        version: link:../../packages/rabbitmq
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
@@ -94,6 +97,9 @@ importers:
       mongodb:
         specifier: workspace:*
         version: link:../../packages/mongo-db
+      rabbitmq:
+        specifier: workspace:*
+        version: link:../../packages/rabbitmq
       tsc-node:
         specifier: ^0.0.3
         version: 0.0.3
@@ -146,6 +152,12 @@ importers:
       mongodb:
         specifier: workspace:*
         version: link:../../packages/mongo-db
+      nats-server:
+        specifier: workspace:*
+        version: link:../../packages/nats-server
+      rabbitmq:
+        specifier: workspace:*
+        version: link:../../packages/rabbitmq
       tsc-node:
         specifier: ^0.0.3
         version: 0.0.3
@@ -259,6 +271,12 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      nats-server:
+        specifier: workspace:*
+        version: link:../../packages/nats-server
+      rabbitmq:
+        specifier: workspace:*
+        version: link:../../packages/rabbitmq
       ws:
         specifier: ^8.18.3
         version: 8.18.3
@@ -275,6 +293,9 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
+      types:
+        specifier: workspace:*
+        version: link:../../packages/types
       typescript:
         specifier: latest
         version: 5.9.3
@@ -356,6 +377,34 @@ importers:
         version: 10.9.2(@types/node@22.15.3)(typescript@5.9.3)
       typescript:
         specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/nats-server:
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@24.7.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  packages/rabbitmq:
+    dependencies:
+      rabbitmq-client:
+        specifier: ^5.0.5
+        version: 5.0.5
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@24.7.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.9.2
         version: 5.9.3
 
   packages/types:
@@ -2159,6 +2208,10 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  rabbitmq-client@5.0.5:
+    resolution: {integrity: sha512-qa6j6YpkXsKrD2s+j4sWN8cFsXJsCz4Nyvw/r/JZEpComhYbQAoLp2w4Hamv59g0MhoJUtGfz0eJ8TH6G0s9bQ==}
+    engines: {node: '>=16'}
 
   range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
@@ -4517,6 +4570,8 @@ snapshots:
       side-channel: 1.1.0
 
   queue-microtask@1.2.3: {}
+
+  rabbitmq-client@5.0.5: {}
 
   range-parser@1.2.1: {}
 

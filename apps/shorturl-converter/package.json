@@ -20,7 +20,9 @@
     "groq-sdk": "^0.33.0",
     "mongodb": "workspace:*",
     "tsc-node": "^0.0.3",
-    "types": "workspace:*"
+    "types": "workspace:*",
+     "rabbitmq": "workspace:*",
+     "nats-server":"workspace:*"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

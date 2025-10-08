@@ -22,7 +22,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "workspace:*",
     "tsc-node": "^0.0.3",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+     "rabbitmq": "workspace:*"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

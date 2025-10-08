@@ -1,0 +1,124 @@
+version: "3.9"
+services:
+  urlshortner-web:
+    container_name: urlshortner-web
+    build:
+      context: ./apps/web
+      dockerfile: dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  data-collector:
+    container_name: data-collector
+    build:
+      context: ./apps/data-collector
+      dockerfile: dockerfile.dev
+    ports:
+      - "3008:3008"
+    volumes:
+      - ./apps/data-collector:/app
+      - /app/node_modules
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+  
+  ws-server:
+    container_name: ws-server
+    build:
+      context: ./apps/ws-server
+      dockerfile: dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./apps/ws-server:/app
+      - /app/node_modules
+    
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+
+  http-server:
+    container_name: http-server
+    build:
+      context: ./apps/http-server
+      dockerfile: dockerfile.dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./apps/http-server:/app
+      - /app/node_modules
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+
+  short-urlconverter:
+    container_name: short-urlconverter
+    build:
+      context: ./apps/short-urlconverter
+      dockerfile: dockerfile.dev
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./apps/short-urlconverter:/app
+      - /app/node_modules
+
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    restart: unless-stopped
+
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-admin123}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
+
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit loopback_users []"
+      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 0.4
+      RABBITMQ_HIPE_COMPILE: 0
+
+      # RABBITMQ_NODENAME: rabbit@rabbitmq
+      # RABBITMQ_USE_LONGNAME: "false"
+    ports:
+      # Expose for local dev
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+
+    networks:
+      - rabbitmq_net
+  nats:
+    image: nats:2.10
+    container_name: nats
+    command: ["-c", "/etc/nats/nats.conf"]
+    ports:
+      - "4222:4222"  # NATS clients
+      - "8222:8222"  # Monitoring endpoint
+      - "6222:6222"  # Clustering (optional)
+    volumes:
+      - ./nats/nats.conf:/etc/nats/nats.conf
+      - nats_data:/data/nats
+    environment:
+      - TZ=Asia/Kolkata
+    restart: unless-stopped
+    networks:
+      - app-net
+
+volumes:
+  rabbitmq_data:
+
+networks:
+  rabbitmq_net:
+  nats_data:
+    driver: bridge

@@ -7,15 +7,15 @@
     "dev": " pnpx ts-node index.ts --port 3001",
     "build": "tsc -b",
     "start": "node dist/index.js --port 3001"
-    
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
    "dependencies": {
-    "mongodb":"workspace:*"
+    "mongodb":"workspace:*",
+    "rabbitmq": "workspace:*"
+
   },
    "devDependencies": {
     "@repo/typescript-config":"workspace:*",
