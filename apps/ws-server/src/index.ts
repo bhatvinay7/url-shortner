@@ -18,7 +18,6 @@ try {
       if (parsedMessage?.token) {
         // authenticate the user
         try{
-
           const decoded=userVerify(parsedMessage?.token)
           if(decoded?.userId!=parsedMessage?.userId)
             return

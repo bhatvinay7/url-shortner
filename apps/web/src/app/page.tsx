@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import PopupUp from "../components/ui/signin-popup";
 import {
   getUser_details,
   userState,
@@ -18,17 +19,18 @@ export default function Home() {
   const [messages, setMessages] = useState<string[]>([]);
   const [permission, setPermission] = useState(false);
   const [input, setInput] = useState("");
+  const [popup,setPopUp]=useState(false)
 
   useEffect(() => {
     dispatch(getUser_details() as any);
     function check() {
       if (!userDetails?.token) {
-        router.push("/signin");
+       setPopUp(true)
       }
     }
     setTimeout(() => {
       check();
-    }, 5000);
+    }, 7000);
   }, []);
 
   const { connected, sendMessage } = useWebSocket({
@@ -46,7 +48,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[hsl(240,7%,79%)] text-[hsl(220,20%,20%)] font-[Poppins] flex flex-col items-center justify-center px-6 py-12">
-      {/* Header */}
+      { popup &&
+      <div className=" h-screen  absolute flex max-w-xl items-center justify-center ">
+      <PopupUp/>
+    </div>
+         }
       <header className="text-center mb-8">
         <h1 className="text-5xl font-bold text-[hsl(212,90%,45%)] mb-2">
           Shortly

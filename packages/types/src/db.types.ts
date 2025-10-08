@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-export    interface urlSchemaType {
+export    interface url_document extends Document {
       longUrl:string,
       user:Types.ObjectId
       shortUrl:string
@@ -9,7 +9,7 @@ export    interface urlSchemaType {
        createdAt:Date | string
     }
     
-export  interface deviceSchemaType{
+export  interface device_document extends Document{
   user_id: Types.ObjectId ;
   osType: string
   osName: string
@@ -24,10 +24,10 @@ export  interface deviceSchemaType{
   userIp:string,
 }    
 
-export interface userSchemaType {
+export interface user_document extends Document  {
   name: string,
   email: string,
-  password: string,
+  picture:string
   refreshToken: string,
   isEmailVerified:boolean
   createdAt:Date | string

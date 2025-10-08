@@ -1,6 +1,4 @@
-import {Types} from 'mongoose'
-import type {deviceSchemaType} from "./db.types.js"
-export interface url{
+export interface fetchUrl{
     message:string,
     shortUrl:string
 }

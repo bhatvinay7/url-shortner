@@ -13,23 +13,25 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.12.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "workspace:*",
     "tsc-node": "^0.0.3",
     "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "types":"workspace:*",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.3",
     "ts-node": "^10.9.2",
+    "types": "workspace:*",
     "typescript": "^5.9.3"
   }
 }

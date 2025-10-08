@@ -1,7 +1,7 @@
 // store/sidebarSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
-import {getUserDetails} from '../../../utils/getUserData';
+import {getUserDetails} from '../../../utils/api/getUserData';
 import {userCredentials} from 'types'
 
 interface UserState extends userCredentials{

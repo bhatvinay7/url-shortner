@@ -1,6 +1,4 @@
-    import { model, Document } from 'mongoose';
+    import { model} from 'mongoose';
     import {userSchema} from '../schemas/user_schema.js'
-    import {userSchemaType} from 'types'
-    interface UserDocument extends userSchemaType, Document {}
-
-    export const User = model<UserDocument>('User', userSchema);
+    import {user_document} from 'types'
+    export const User = model<user_document>('User', userSchema);

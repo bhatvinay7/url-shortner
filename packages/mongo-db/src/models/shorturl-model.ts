@@ -1,5 +1,4 @@
-    import { model, Document } from 'mongoose';
-    import { urlSchemaType } from 'types';
+    import { model} from 'mongoose';
+    import { url_document } from 'types';
     import { urlSchema} from '../schemas/shorturl-schem.js';
-    interface UserDocument extends urlSchemaType, Document {}
-    export const Url = model<UserDocument>('Url', urlSchema);
+    export const Url = model<url_document >('Url', urlSchema);

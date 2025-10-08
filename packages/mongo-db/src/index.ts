@@ -8,7 +8,7 @@ import {connectDB} from './connection.js'
 
 async function main() {
   try {
-    await connectDB(); // make sure DB is connected before starting server
+    await connectDB();
     console.log('Database connected');
 
   } catch (error: any) {

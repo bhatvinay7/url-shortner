@@ -8,7 +8,6 @@ import { FcGoogle } from "react-icons/fc";
 import { userSignin } from "../../utils/api/user";
 import NotificationBar from "../../components/ui/notification";
 
-import {axiosPublic} from '../../lib/axios'
 import processdata from "../../utils/getdata";
 
 enum state { 
@@ -97,7 +96,7 @@ const SignIn=() => {
        onClose={()=>{setResponse({message:null})}}
 
       />
-      <div className="bg-[hsl(240,3%,74%)] h-80 flex justify-center flex-col shadow-md rounded-sm p-8 w-full max-w-md ">
+      <div className=" h-80 flex justify-center flex-col border border-white/12 rounded-sm p-8 w-full max-w-md ">
       <header className="text-center mb-8">
         <h1 className="text-5xl font-bold text-[hsl(212,90%,45%)] mb-2">
           Shortly
@@ -110,7 +109,7 @@ const SignIn=() => {
         {/* Google Sign In Button */}
         <button
           onClick={handleGoogleSignIn}
-          className="w-full h-12 border bg-white/75 border-gray-300 rounded-full flex items-center justify-center gap-3 hover:bg-gray-50 transition-all"
+          className="w-full h-12 border bg-[hsl(240,2%,67%)] border-gray-300 rounded-full flex items-center justify-center gap-3 hover:bg-gray-300 transition-all"
         >
           <FcGoogle size={22} />
           <span className="text-gray-700 font-medium">

@@ -1,49 +1,63 @@
-import { Request, Response } from 'express';
-import axios from 'axios';
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
-const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
-const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI!;
-import {User,connectDB} from 'mongodb'
-  
-const callbackHandler=async (req: Request, res: Response) => {
-    console.log("hiii")
-    // res.redirect("http://localhost:3000")
-  // const db=await connectDB()
-  
+import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import getUserdata from "../utils/getUserdata.js";
+import { User, connectDB } from "mongodb"; 
+
+const SECRET_KEY = process.env.JWT_SECRET_KEY!;
+const ACCESS_KEY= process.env.access_key!
+const callbackHandler = async (req: Request, res: Response) => {
   try {
-    const { code } = req.query;
+    await connectDB();
 
-    if (!code || typeof code !== 'string') {
-      return res.status(400).json({ message: 'Missing code parameter' });
+    const data = await getUserdata(req, res);
+    if (!data?.email) {
+      return res.status(400).json({ message: "Invalid user data" });
     }
-
-    // Exchange code for access token
-    const tokenResponse = await axios.post(
-      'https://oauth2.googleapis.com/token',
+    let user= await User.findOne({ email: data.email });
+    
+    if (!user) {
+      user = await User.create({
+        name: data.name,
+        email: data.email,
+        isEmailVerified: true,
+        picture: data.picture,
+      })
+    }
+     const refreshToken = jwt.sign(
       {
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        code,
-        redirect_uri: REDIRECT_URI,
-        grant_type: 'authorization_code',
+        username: user.name!,
+        email: user.email!,
+        userId: user._id,
+        picture:user.picture
       },
-      { headers: { 'Content-Type': 'application/json' } }
+        ACCESS_KEY,
+      { expiresIn: "24d" }
     );
-
-    const { access_token, id_token } = tokenResponse.data;
-
-    const userResponse = await axios.get(
-      'https://www.googleapis.com/oauth2/v1/userinfo?alt=json',
+    const acces_token = jwt.sign(
       {
-        headers: { Authorization: `Bearer ${access_token}` },
-      }
+        username: user.name!,
+        email: user.email!,
+        userId: user._id,
+        picture:user.picture
+      },
+      SECRET_KEY,
+      { expiresIn: "7d" }
     );
-    const profile = userResponse.data;
+    await User.findOneAndUpdate({refreshToken:refreshToken})
+    
+    res.cookie("refresh_token", refreshToken , {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-    res.json({ message: 'Login successful'});
+
+    res.redirect(`${process.env.NEXT_PUBLIC_FRONTEND_URL}`);
   } catch (error: any) {
-    throw new Error('OAuth Error:', error.message)
-
+    console.error("OAuth Error:", error.message);
+    res.status(500).json({ message: "OAuth error", error: error.message });
   }
-}  
-export default callbackHandler
+};
+
+export default callbackHandler;

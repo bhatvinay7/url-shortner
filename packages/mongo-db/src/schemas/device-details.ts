@@ -1,5 +1,4 @@
 import { Schema } from 'mongoose';
-import {deviceSchemaType} from 'types'
 export const deviceSchema = new Schema({
   user_id: { type: Schema.Types.ObjectId},  
   osType: { type: String, required: true },

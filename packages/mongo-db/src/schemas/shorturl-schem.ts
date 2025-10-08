@@ -1,5 +1,4 @@
 import { Schema } from 'mongoose';
-import {urlSchemaType} from 'types'
 export const urlSchema = new Schema({
   longUrl: { type: String, required: true },
   user:{ type: Schema.Types.ObjectId,
