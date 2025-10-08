@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import PopupUp from "../components/ui/signin-popup";
+import {get_shorten_url} from '../utils/api/generate_short_url'
 import {
   getUser_details,
   userState,
@@ -10,12 +11,18 @@ import {
 import { useWebSocket } from "./hooks/useWesocketConnection";
 import { message } from "types";
 
+interface progress{
+    message:string[]
+}
+
 export default function Home() {
-  const [url, setUrl] = useState("");
-  const router = useRouter();
   const dispatch = useDispatch();
-  const [shortUrl, setShortUrl] = useState<string | null>(null);
+  const router = useRouter();
   const userDetails = useSelector(userState);
+   
+  const [progress,setProgress]=useState<progress|null>(null)
+  const [url, setUrl] = useState("");
+  const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
   const [permission, setPermission] = useState(false);
   const [input, setInput] = useState("");
@@ -34,11 +41,18 @@ export default function Home() {
   }, []);
 
   const { connected, sendMessage } = useWebSocket({
-    url: "ws://localhost:3001",
+    url: process.env.WS_SERVER_URL!,
   });
 
   const handleShorten = async (e: React.FormEvent) => {
     e.preventDefault();
+    try{
+     const response=await get_shorten_url(shortUrl!)
+     setProgress((priv)=>({message:priv?.message ? [...priv?.message ,response?.message]:[]}))
+    }
+    catch(error:any){
+
+    }
    
   };
 

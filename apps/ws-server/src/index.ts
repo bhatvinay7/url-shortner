@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
 import express from "express";
-import { userData } from "types";
+import { message } from "types";
 import userVerify from './userAuth'
 const app = express();
 const port = 8080;
@@ -10,7 +10,7 @@ const socketMap = new Map<WebSocket, string>();
 try {
   wss.on("connection", function connection(ws) {
     ws.on("message", (message: string) => {
-      const parsedMessage: userData = JSON.parse(message);
+      const parsedMessage: message = JSON.parse(message);
       if (!parsedMessage?.token) {
         return;
       }
