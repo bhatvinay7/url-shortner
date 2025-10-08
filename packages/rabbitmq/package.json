@@ -2,7 +2,7 @@
   "name": "rabbitmq",
   "version": "1.0.0",
   "description": "",
-  "type":"module",
+  "type": "module",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -14,15 +14,16 @@
   "scripts": {
     "build": "tsc -b"
   },
+  "dependencies": {
+    "rabbitmq-client": "^5.0.5"
+  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "ts-node": "^10.9.2",
+    "types": "workspace:*",
     "typescript": "^5.9.2"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "rabbitmq-client": "^5.0.5"
-  }
+  "lic,ense": "ISC"
 }

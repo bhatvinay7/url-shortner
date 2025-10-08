@@ -12,13 +12,14 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-   "dependencies": {
-    "mongodb":"workspace:*",
+  "dependencies": {
+    "@types/express": "^5.0.3",
+    "express": "^5.1.0",
+    "mongodb": "workspace:*",
     "rabbitmq": "workspace:*"
-
   },
-   "devDependencies": {
-    "@repo/typescript-config":"workspace:*",
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
     "typescript": "latest"
   }
 }
