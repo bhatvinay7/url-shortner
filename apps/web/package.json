@@ -15,6 +15,7 @@
     "@tailwindcss/postcss": "^4.1.14",
     "@types/express": "^5.0.3",
     "axios": "^1.12.2",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "framer-motion": "^12.23.22",
     "lucide-react": "^0.544.0",
@@ -31,11 +32,11 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "types":"workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
     "eslint": "^9.34.0",
+    "types": "workspace:*",
     "typescript": "5.9.2"
   }
 }

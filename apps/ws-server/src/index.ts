@@ -5,7 +5,6 @@ import userVerify from './userAuth'
 const app = express();
 const port = 8080;
 const wss = new WebSocketServer({ port: 8080 });
-
 const users = new Map<string, WebSocket>();
 const socketMap = new Map<WebSocket, string>();
 try {
