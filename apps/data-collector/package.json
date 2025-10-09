@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": " pnpx ts-node index.ts --port 3001",
+    "dev": " pnpx ts-node index.ts --port 3012",
     "build": "tsc -b",
-    "start": "node dist/index.js --port 3001"
+    "start": "node dist/index.js --port 3012"
   },
   "keywords": [],
   "author": "",

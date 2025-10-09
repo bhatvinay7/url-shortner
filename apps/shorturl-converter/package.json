@@ -6,7 +6,7 @@
   "scripts": {
     "dev": " node --loader ts-node/esm src/index.ts",
     "build": "tsc -b",
-    "start": "node -r tsconfig-paths/register dist/index.js --port 3011"
+    "start": "node  dist/index.js --port 3011"
   },
   "keywords": [],
   "author": "",

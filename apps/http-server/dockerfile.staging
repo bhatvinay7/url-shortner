@@ -6,14 +6,14 @@ ARG APP=http-server
 WORKDIR /app
 COPY . .
 RUN turbo prune --scope=$APP --docker
-FROM BASE AS INSTALLER
+FROM BASE AS installer
 WORKDIR /app
-ARG APP=ws-server
+ARG APP=http-server
 COPY --from=prunner /app/out/json/ .
 COPY --from=prunner /app/out/full/ .
 COPY package.json ./
 COPY package-lock.json ./
-COPY Ppnpm-workspace.yaml ./
+COPY pnpm-workspace.yaml ./
 COPY packages ./packages
 COPY apps/${APP}/package.json ./apps/${APP}/package.json
 RUN pnpm install --filter ${APP}
@@ -22,17 +22,17 @@ RUN pnpm --filter mongodb run build
 RUN pnpm --filter nats-server run build
 RUN pnpm --filter rabbitmq run build
 
-FROM BASE AS BUILDER
+FROM BASE AS builder
+ARG APP=http-server
 WORKDIR /app
-ARG APP=ws-server 
-COPY --from=INSTALLER /app ./
+COPY --from=installer /app ./
 WORKDIR /app/apps/${APP}
 RUN pnpm run build
 
-FROM BASE AS RUNNER
-ARG APP=ws-server 
+FROM BASE AS runner
+ARG APP=http-server
 WORKDIR /app
-COPY --from=BUILDER /app  ./
+COPY --from=builder /app  ./
 WORKDIR /app/apps/${APP}
 
 EXPOSE 3001
