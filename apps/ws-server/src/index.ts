@@ -2,13 +2,14 @@ import WebSocket, { WebSocketServer } from "ws";
 import express from "express";
 import { message } from "types";
 import userVerify from "./userAuth.js";
-import {publishToQueue} from 'rabbitmq'
+import {publishToQueue} from './rabbitmq-ptoducer.js'
 const app = express();
 const port = 8080;
 const wss = new WebSocketServer({ port: 8080 });
 const users = new Map<string, WebSocket>();
 const socketMap = new Map<WebSocket, string>();
 try {
+  
   wss.on("connection", async function connection(ws) {
     ws.on("message", async(message: string) => {
       const parsedMessage: message = JSON.parse(message);

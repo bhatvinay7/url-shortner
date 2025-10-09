@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { publishToQueue } from "rabbitmq";
+import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
 import { Url } from "mongodb";
 const generateShortUrl = async (req: Request, res: Response) => {
   try {
@@ -12,7 +12,8 @@ const generateShortUrl = async (req: Request, res: Response) => {
         .json({ message: "Your new url is generated", url: link?.shortUrl });
     }
     try {
-      await publishToQueue(url,"url-metrics","exchange",2,"push-url");
+      const userData={url:url,userId:req.body.userId}   
+      await publishToQueue(userData,"url-metrics","exchange",2,"push-url",);
     } catch (error: any) {
       console.log(error.message);
     }

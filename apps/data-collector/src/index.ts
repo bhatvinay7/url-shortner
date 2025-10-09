@@ -5,6 +5,7 @@ import {consumeFromQueue} from "rabbitmq";
 // created the rabbitmq package to handle the mesage
 try{
   (async()=>{
+  
     await consumeFromQueue("user-metrics","exchange","data.*","data-collector")
 
   })()
@@ -16,3 +17,13 @@ catch(error:any){
 app.listen(port,"0.0.0.0",()=>{
   console.log("Consumer collector running on port ${port}")
 })
+
+
+export async function onShutdown() {
+ 
+  await pub.close()
+  await sub.close()
+  await rabbit.close()
+}
+process.on('SIGINT', onShutdown)
+process.on('SIGTERM', onShutdown)
