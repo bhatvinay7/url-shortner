@@ -1,0 +1,39 @@
+FROM node:22 as BASE
+RUN npm install -g pnpm turbo
+
+FROM BASE AS prunner
+ARG APP=ws-server
+WORKDIR /app
+COPY . .
+RUN turbo prune --scope=$APP --docker
+FROM BASE AS INSTALLER
+WORKDIR /app
+ARG APP=http-server
+COPY --from=prunner /app/out/json/ .
+COPY --from=prunner /app/out/full/ .
+COPY package.json ./
+COPY package-lock.json ./
+COPY Ppnpm-workspace.yaml ./
+COPY packages ./packages
+COPY apps/${APP}/package.json ./apps/${APP}/package.json
+RUN pnpm install --filter ${APP}
+RUN pnpm --filter types run build
+RUN pnpm --filter mongodb run build
+RUN pnpm --filter nats-server run build
+RUN pnpm --filter rabbitmq run build
+
+# FROM BASE AS BUILDER
+# WORKDIR /app
+# ARG APP=ws-server 
+# COPY --from=INSTALLER /app ./
+# WORKDIR /app/apps/${APP}
+# RUN pnpm run build
+
+FROM BASE AS RUNNER
+ARG APP=ws-server 
+WORKDIR /app
+COPY --from=INSTALLER /app  ./
+WORKDIR /app/apps/${APP}
+
+EXPOSE 3001
+CMD ["pnpm", "run", "start"]  

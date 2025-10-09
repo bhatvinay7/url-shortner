@@ -1,0 +1,39 @@
+FROM node:latest AS base
+
+ENV PATH=/app/node_modules/.bin:$PATH
+RUN npm install -g pnpm turbo
+
+FROM base AS prunner
+ARG APP=web
+WORKDIR /app
+COPY . .
+RUN turbo prune --scope=${APP} --docker
+
+FROM base AS installer
+ARG APP=web
+WORKDIR /app
+COPY --from=prunner /app/out/json/ .
+COPY --from=prunner /app/out/full/ .
+COPY package.json  ./
+COPY apps/${APP}/package.json ./apps/${APP}/
+COPY pnpm-lock.yaml ./
+COPY  pnpm-workspace.yaml ./
+COPY .npmrc ./
+COPY packages/ ./packages/
+RUN pnpm install --filter ${APP}
+RUN pnpm install --filter ${APP}
+RUN pnpm --filter types run build
+RUN pnpm --filter mongodb run build
+RUN pnpm --filter nats-server run build
+RUN pnpm --filter rabbitmq run build
+
+FROM base AS  runner
+ARG APP=web
+WORKDIR /app
+COPY --from=installer /app ./
+COPY --from=installer /app/node_modules ./node_modules
+WORKDIR /app/apps/${APP}
+
+EXPOSE 3000
+WORKDIR /app/apps/${APP}
+CMD ["pnpm", "run", "start"]

@@ -18,7 +18,7 @@ services:
       context: ./apps/data-collector
       dockerfile: dockerfile.dev
     ports:
-      - "3008:3008"
+      - "3012:3012"
     volumes:
       - ./apps/data-collector:/app
       - /app/node_modules
@@ -61,7 +61,7 @@ services:
       context: ./apps/short-urlconverter
       dockerfile: dockerfile.dev
     ports:
-      - "3002:3002"
+      - "3011:3011"
     volumes:
       - ./apps/short-urlconverter:/app
       - /app/node_modules
@@ -109,8 +109,7 @@ services:
     volumes:
       - ./nats/nats.conf:/etc/nats/nats.conf
       - nats_data:/data/nats
-    environment:
-      - TZ=Asia/Kolkata
+
     restart: unless-stopped
     networks:
       - app-net

@@ -11,7 +11,7 @@ nats
 .env.development.local
 .env.test.local
 .env.production.local
-
+.vscode
 # Testing
 coverage
 
