@@ -13,7 +13,7 @@ const generateShortUrl = async (req: Request, res: Response) => {
     }
     try {
       const userData={url:url,userId:req.body.userId}   
-      await publishToQueue(userData,"url-metrics","exchange",2,"push-url",);
+      await publishToQueue(userData,"topic","url-metrics",2,"push-url",);
     } catch (error: any) {
       console.log(error.message);
     }

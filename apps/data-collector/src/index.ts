@@ -1,12 +1,12 @@
 import express from 'express'
 const app=express()
 const port=3012
-import {consumeFromQueue} from "rabbitmq";
+import {consumeFromQueue} from "./rabbitmq-consumer.js";
 // created the rabbitmq package to handle the mesage
 try{
   (async()=>{
   
-    await consumeFromQueue("user-metrics","exchange","data.*","data-collector")
+    await consumeFromQueue("topic","user-metrics","data.*","data-collector")
 
   })()
 }
@@ -19,11 +19,3 @@ app.listen(port,"0.0.0.0",()=>{
 })
 
 
-export async function onShutdown() {
- 
-  await pub.close()
-  await sub.close()
-  await rabbit.close()
-}
-process.on('SIGINT', onShutdown)
-process.on('SIGTERM', onShutdown)

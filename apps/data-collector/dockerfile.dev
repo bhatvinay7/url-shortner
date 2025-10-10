@@ -1,11 +1,11 @@
 FROM node:22 as base
-RUN npm install -g pnpm turbo
+RUN npm install -g pnpm turbo ts-node
 
 FROM base AS prunner
 ARG APP=data-collector
 WORKDIR /app
 COPY . .
-RUN turbo prune --scope=$APP --docker
+RUN turbo prune --scope=${APP} --docker
 FROM base AS  installer
 ARG APP=data-collector
 WORKDIR /app
@@ -16,7 +16,7 @@ COPY pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
 COPY packages ./packages
 COPY ./apps/${APP}/package.json ./apps/${APP}/package.json
-RUN pnpm install --filter ${APP}
+RUN pnpm install --filter ${APP} --force
 RUN pnpm --filter types run build
 RUN pnpm --filter mongodb run build
 RUN pnpm --filter nats-server run build
@@ -36,4 +36,4 @@ COPY --from=installer /app  ./
 WORKDIR /app/apps/${APP}
 
 EXPOSE 3012
-CMD ["pnpm", "run", "start"]  
+CMD ["pnpm", "run", "dev"]

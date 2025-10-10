@@ -1,28 +1,33 @@
-version: "3.9"
 services:
   urlshortner-web:
     container_name: urlshortner-web
     build:
       context: .
-      dockerfile: apps/shorturl-converter/dockerfile.dev
+      dockerfile: apps/web/dockerfile.dev
+    env_file:
+      - ./apps/web/.env      
     ports:
       - "3000:3000"
-    volumes:
-      - ./apps/shorturl-converter:/app
-      - /app/node_modules
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"  
     restart: unless-stopped
 
   data-collector:
     container_name: data-collector
     build:
       context: .
-      dockerfile: apps/data-collector/dockerfile.dev
+      dockerfile: apps/data-collector/dockerfile.dev  
     ports:
       - "3012:3012"
-    volumes:
-      - ./apps/data-collector:/app
-      - /app/node_modules
     restart: unless-stopped
+    networks:
+      - rabbitmq_net
+    deploy:
+      resources:
+        limits:
+          cpus: "1"  
     depends_on:
       - rabbitmq
       - nats
@@ -32,13 +37,17 @@ services:
     build:
       context: .
       dockerfile: apps/ws-server/dockerfile.dev
+    env_file:
+      - ./apps/ws-server/.env   
     ports:
       - "8080:8080"
-    volumes:
-      - ./apps/ws-server:/app
-      - /app/node_modules
-    
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+    networks:
+      - rabbitmq_net
     depends_on:
       - rabbitmq
       - nats
@@ -48,12 +57,18 @@ services:
     build:
       context: .
       dockerfile: apps/http-server/dockerfile.dev
+    deploy:
+      resources:
+        limits:
+          cpus: "1"  
+    env_file:
+      - ./apps/http-server/.env     
     ports:
       - "3001:3001"
-    volumes:
-      - ./apps/http-server:/app
-      - /app/node_modules
+    
     restart: unless-stopped
+    networks:
+      - rabbitmq_net
     depends_on:
       - rabbitmq
       - nats
@@ -63,13 +78,17 @@ services:
     build:
       context: .
       dockerfile: apps/shorturl-converter/dockerfile.dev
+    env_file:
+      - ./apps/shorturl-converter/.env  
     ports:
       - "3011:3011"
-    volumes:
-      - ./apps/shorturl-converter:/app
-      - /app/node_modules
-
+    networks:
+      - rabbitmq_net
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
     depends_on:
       - rabbitmq
       - nats
@@ -86,7 +105,6 @@ services:
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
 
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit loopback_users []"
-      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 0.4
       RABBITMQ_HIPE_COMPILE: 0
 
       # RABBITMQ_NODENAME: rabbit@rabbitmq
@@ -97,23 +115,30 @@ services:
       - "15672:15672"  # Management UI
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      # - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      # - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    deploy:
+      resources:
+        limits:
+          cpus: "2"  
 
     networks:
       - rabbitmq_net
   nats:
     image: nats:2.10
-    container_name: nats
+    container_name: nats-server
     command: ["-c", "/etc/nats/nats.conf"]
     ports:
       - "4222:4222"  # NATS clients
       - "8222:8222"  # Monitoring endpoint
       - "6222:6222"  # Clustering (optional)
     volumes:
-      - ./nats/nats.conf:/etc/nats/nats.conf
+      - ./packages/nats-server/src/nats/nats.conf:/etc/nats/nats.conf
       - nats_data:/data/nats
-
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
     restart: unless-stopped
     networks:
       - rabbitmq_net
@@ -121,7 +146,7 @@ services:
 volumes:
   rabbitmq_data:
   nats_data:
-
+  
 networks:
   rabbitmq_net:
     driver: bridge

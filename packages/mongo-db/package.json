@@ -2,7 +2,7 @@
   "name": "mongodb",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.mjs",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc -b ",
@@ -12,7 +12,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },

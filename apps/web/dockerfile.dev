@@ -1,7 +1,5 @@
 FROM node:latest AS base
-
-ENV PATH=/app/node_modules/.bin:$PATH
-RUN npm install -g pnpm turbo
+RUN npm install -g pnpm turbo ts-node
 
 FROM base AS prunner
 ARG APP=web
@@ -34,4 +32,4 @@ COPY --from=installer /app ./
 COPY --from=installer /app/node_modules ./node_modules
 WORKDIR /app/apps/${APP}
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["pnpm","run","dev"]

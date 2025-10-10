@@ -73,6 +73,12 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@24.7.0)(typescript@5.9.3)
+      tsc-node:
+        specifier: ^0.0.3
+        version: 0.0.3
       typescript:
         specifier: latest
         version: 5.9.3
@@ -271,6 +277,9 @@ importers:
 
   apps/ws-server:
     dependencies:
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -299,6 +308,12 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@24.7.0)(typescript@5.9.3)
+      tsc-node:
+        specifier: ^0.0.3
+        version: 0.0.3
       types:
         specifier: workspace:*
         version: link:../../packages/types
@@ -386,6 +401,10 @@ importers:
         version: 5.9.3
 
   packages/nats-server:
+    dependencies:
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
@@ -2058,6 +2077,10 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  nats@2.29.3:
+    resolution: {integrity: sha512-tOQCRCwC74DgBTk4pWZ9V45sk4d7peoE2njVprMRCBXrhJ5q5cYM7i6W+Uvw2qUrcfOSnuisrX7bEx3b3Wx4QA==}
+    engines: {node: '>= 14.0.0'}
+
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -2085,6 +2108,10 @@ packages:
         optional: true
       sass:
         optional: true
+
+  nkeys.js@1.1.0:
+    resolution: {integrity: sha512-tB/a0shZL5UZWSwsoeyqfTszONTt4k2YS0tuQioMOD180+MbombYVgzDUYHlx+gejYK6rgf08n/2Df99WY0Sxg==}
+    engines: {node: '>=10.0.0'}
 
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -2547,6 +2574,9 @@ packages:
   turbo@2.5.8:
     resolution: {integrity: sha512-5c9Fdsr9qfpT3hA0EyYSFRZj1dVVsb6KIWubA9JBYZ/9ZEAijgUEae0BBR/Xl/wekt4w65/lYLTFaP3JmwSO8w==}
     hasBin: true
+
+  tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -4426,6 +4456,10 @@ snapshots:
 
   nanoid@3.3.11: {}
 
+  nats@2.29.3:
+    dependencies:
+      nkeys.js: 1.1.0
+
   natural-compare@1.4.0: {}
 
   negotiator@1.0.0: {}
@@ -4452,6 +4486,10 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+
+  nkeys.js@1.1.0:
+    dependencies:
+      tweetnacl: 1.0.3
 
   node-domexception@1.0.0: {}
 
@@ -4997,6 +5035,8 @@ snapshots:
       turbo-linux-arm64: 2.5.8
       turbo-windows-64: 2.5.8
       turbo-windows-arm64: 2.5.8
+
+  tweetnacl@1.0.3: {}
 
   type-check@0.4.0:
     dependencies:

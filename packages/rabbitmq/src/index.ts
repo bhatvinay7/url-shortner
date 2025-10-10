@@ -1,11 +1,15 @@
-import {Connection} from 'rabbitmq-client'
+import {Connection,} from 'rabbitmq-client'
 import {message} from 'types'
-const rabbit = new Connection('amqp://guest:guest@localhost:5672')
-rabbit.on('error', (err:any) => {
+const connection = new Connection({url:'amqp://admin:admin123@rabbitmq:5672',
+  heartbeat: 90,
+  connectionTimeout: 10000,
+  })
+connection.on('error', (err:any) => {
   console.log('RabbitMQ connection error', err)
 })
-rabbit.on('connection', () => {
+connection.on('connection', () => {
   console.log('Connection successfully (re)established')
 })
 
-export default rabbit
+
+export default connection

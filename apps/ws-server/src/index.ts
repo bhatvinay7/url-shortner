@@ -24,7 +24,8 @@ try {
             return;
           }         
 
-          await publishToQueue(parsedMessage,"user-metrics","exchange",2,"user.*")
+          await publishToQueue(message,"topic","user-metrics",2,"data-collector*")
+          
         } catch (error: any) {}
 
         const wss = users.get(`${parsedMessage?.userId}`);

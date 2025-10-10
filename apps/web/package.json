@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
+  "main":"index.js",
   "scripts": {
     "dev": "next dev ",
-    "build": "next build --port 3000",
+    "build": "next build ",
     "start": "next start"
   },
   "dependencies": {

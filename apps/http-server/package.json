@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "type": "module",
+  
   "scripts": {
     "dev": " node --loader ts-node/esm src/index.ts",
     "build": "tsc -b",
@@ -11,7 +13,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.12.2",
