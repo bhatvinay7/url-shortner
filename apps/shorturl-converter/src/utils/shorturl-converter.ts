@@ -19,31 +19,24 @@ export async function consumeFromQueue(
       queueBindings: [
         { exchange: `${exhangeName}`, routingKey: `${routingKey}` },
       ],
-    },
-    async (message: AsyncMessage) => {
-      try {
-        await connectDB();
-        try {
-          async (message: AsyncMessage) => {
-            if (message) {
-              const userMessage: urlData = JSON.parse(
-                message?.content?.toString?.() ?? "{}"
-              );
+    },async (message) => {
+            try{
+            console.log("received message (user-events)", message);
+            if(message){
+            const userMessage: urlData = JSON.parse(
+              message?.toString?.() ?? "{}"
+            );
 
-              if (userMessage?.url) {
-                const data = await assignTopic(JSON.parse(userMessage.url));
-                console.log(data);
-                sub.ack(message);
-              }
+            if (userMessage?.url) {
+              const data = await assignTopic(JSON.parse(userMessage.url));
+              console.log(data);
+              sub.ack(message);
             }
-          };
+            }  
         } catch (err) {
           console.error("Consumer processing error:", err);
           if (sub && message) sub.nack(message, false, true);
         }
-      } catch (error: any) {
-        console.log(error);
-      }
-    }
-  );
-}
+  }  
+  )
+}  

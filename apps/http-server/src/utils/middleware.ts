@@ -1,23 +1,43 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { userCredentials } from "types";
 const JWT_SECRET = process.env.secret_key!;
 export interface AuthRequest extends Request {
-  user?: string | JwtPayload;
+  user?:
+    | {
+        userId: string;
+        username: string;
+        picture: string;
+        token: string;
+        isVerified: boolean;
+      }
+    | JwtPayload;
 }
-export const authMiddleware = (
+export const authMiddleware = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const cookieToken= req.cookies?.token;
+    console.log(req)
+    console.log(authHeader)
+    console.log(authHeader)
+    if ((!authHeader || !authHeader.startsWith("Bearer")) && !cookieToken) {
       return res.status(401).json({ message: "Unauthorized: Token missing" });
     }
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token!, JWT_SECRET);
-    req.user = decoded;
+    const token = authHeader?.split(" ")[1] || cookieToken;
+    const decoded = jwt.verify(token!, JWT_SECRET) as userCredentials;
+    const user = {
+      userId: decoded?.userId,
+      username: decoded?.username,
+      picture: decoded?.picture,
+      token: token,
+      email: decoded.email,
+      isVerified: true,
+    };
+    req.user = user;
 
     next();
   } catch (error: any) {

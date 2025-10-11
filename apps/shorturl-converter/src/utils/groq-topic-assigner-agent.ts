@@ -1,5 +1,9 @@
 import { Groq } from "groq-sdk";
-const groq = new Groq();
+import dotenv from 'dotenv'
+dotenv.config()
+const groq = new Groq({
+  apiKey: process.env.groq_api_key,
+});
 async function topicAssignerAgent(topics: any, data: any) {
   const chatCompletionData = await groq.chat.completions.create({
     messages: [

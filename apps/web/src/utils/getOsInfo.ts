@@ -14,8 +14,6 @@ const getOSType = async (): Promise<string> => {
 
     return platform;
   }
-
-  
   return getOSFromUserAgent(navigator.userAgent);
 };
 

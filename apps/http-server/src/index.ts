@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import authRouter from "./routers/googlerouteHandler.js";
 import urlRouter from "./routers/shortenUrl.js";
+import userCred from "./routers/userCredentialsRouter.js"
 import { authMiddleware } from "./utils/middleware.js";
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,9 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(options);
-app.use(authRouter);
+app.use('/api/auth',authRouter);
 app.use(authMiddleware);
-app.use(urlRouter);
+app.use('/user',userCred);
+app.use('/api',urlRouter);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

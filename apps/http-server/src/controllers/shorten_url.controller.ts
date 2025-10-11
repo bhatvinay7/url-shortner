@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
 import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
+import { userCredentials } from "types";
+interface authRequest extends Request{
+  user:userCredentials
+}
 import { Url } from "mongodb";
-const generateShortUrl = async (req: Request, res: Response) => {
+const generateShortUrl = async (req: authRequest, res: Response) => {
   try {
-    const url = req.body.url;
-    if(!url)return
+    const url = req?.body?.url;
+    if(!url){
+       return res.status(400).json({ message: 'url is not provided' });
+    }
     const link = await Url.findOne({ longUrl: url.trim() });
     if (link) {
       res
@@ -12,13 +18,12 @@ const generateShortUrl = async (req: Request, res: Response) => {
         .json({ message: "Your new url is generated", url: link?.shortUrl });
     }
     try {
-      const userData={url:url,userId:req.body.userId}   
+      const userData:{url:string,userId:string}={url:url!,userId:req?.user?.userId!}   
       await publishToQueue(userData,"topic","url-metrics",2,"push-url",);
     } catch (error: any) {
       console.log(error.message);
     }
   } catch (error: any) {
-    // push the link to queue
     res.sendStatus(500).json({ message: error.message });
   }
 };

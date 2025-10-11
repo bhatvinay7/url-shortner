@@ -1,9 +1,10 @@
-
-{  "extends": "@repo/typescript-config/base.json",
+{
+  "extends": "@repo/typescript-config/base.json",
+  "ts-node": { "logError": true },
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "module":"NodeNext",
+    "module": "NodeNext",
     "target": "ES2022",
     "declaration": true,
     "declarationMap": true,
@@ -11,10 +12,10 @@
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "paths":{
-      "types":["../types/src/*"]
-    },
+    "paths": {
+      "types": ["../types/src/*"]
+    }
   },
   "include": ["src"],
-   "exclude": ["node_modules"]
+  "exclude": ["node_modules"]
 }

@@ -1,21 +1,20 @@
 export interface userResponse{
     message:string
 }
-
-
 export interface userSigninData{
     email:string,
     password:string
 }
-
 export interface userCredentials{
     username:string |null
     userId:string |null,
     isVerified:boolean |null,
     picture:string |null,
-    emailId:string,
-    token:string
+    email:string,
+    token:string 
 }
+
+
 
 // export interface GoogleProfile {
 //   id: string;

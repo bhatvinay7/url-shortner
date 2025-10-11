@@ -1,15 +1,16 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import PopupUp from "../components/ui/signin-popup";
 import {get_shorten_url} from '../utils/api/generate_short_url'
 import {
   getUser_details,
-  userState,
+   userInfo,
 } from "../lib/redux/featuresSlice/userDetails";
+
 import { useWebSocket } from "./hooks/useWesocketConnection";
-import { message } from "types";
+
 
 interface progress{
     message:string[]
@@ -18,8 +19,8 @@ interface progress{
 export default function Home() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const userDetails = useSelector(userState);
-   
+  const userDetails=useSelector(userInfo)
+  const inputRef = useRef<HTMLInputElement>(null); 
   const [progress,setProgress]=useState<progress|null>(null)
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState<string | null>(null);
@@ -28,17 +29,29 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [popup,setPopUp]=useState(false)
 
+
+  useEffect(()=>{
+    dispatch(getUser_details() as any)
+    
+  },[dispatch])
+
   useEffect(() => {
-    dispatch(getUser_details() as any);
-    function check() {
-      if (!userDetails?.token) {
-       setPopUp(true)
-      }
+  if (!inputRef.current) return;
+
+  const handleKeyDown = () => {
+    if (!userDetails) {
+      setPopUp(true);
     }
-    setTimeout(() => {
-      check();
-    }, 7000);
-  }, []);
+  };
+
+  const currentInput = inputRef.current;
+  currentInput.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    currentInput.removeEventListener("keydown", handleKeyDown);
+  };
+}, [userDetails]);
+
 
   const { connected, sendMessage } = useWebSocket({
     url: process.env.WS_SERVER_URL!,
@@ -47,7 +60,8 @@ export default function Home() {
   const handleShorten = async (e: React.FormEvent) => {
     e.preventDefault();
     try{
-     const response=await get_shorten_url(shortUrl!)
+      
+     const response=await get_shorten_url(url!)
      setProgress((priv)=>({message:priv?.message ? [...priv?.message ,response?.message]:[]}))
     }
     catch(error:any){
@@ -84,6 +98,7 @@ export default function Home() {
           </h2>
           <form onSubmit={handleShorten} className="flex flex-col gap-3">
             <input
+              ref={inputRef} 
               type="url"
               placeholder="Enter your long URL..."
               className="border border-[hsl(228,2%,43%)] focus:ring-2 focus:ring-[hsl(212,90%,45%)] outline-none rounded-xl px-4 py-3 text-[hsl(220,20%,20%)]"

@@ -13,9 +13,10 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "URL shortner",
+  title: "urlshortner",
   description: "Easily access your url and share it with others",
 };
+
 
 export default function RootLayout({
   children,

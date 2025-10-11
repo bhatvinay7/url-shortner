@@ -2,13 +2,10 @@ import { ClientInfo } from "types";
 import getGeoPosition from "./getGeoposition";
 import getOSType from "./getOsInfo";
 
-
 export default function processdata() {
   const collectdata = async () => {
     const ua = navigator.userAgent;
-  
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? null;
-    
     let deviceType: ClientInfo["deviceType"] = "desktop";
     const uaLower = ua.toLowerCase();
     if (/mobi|iphone|android.*mobile|windows phone/.test(uaLower))

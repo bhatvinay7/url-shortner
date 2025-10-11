@@ -7,8 +7,12 @@ export default function SignInPopup() {
   const [open, setOpen] = useState(true);
 
   const handleGoogleSignIn = () => {
-   
-    window.location.href = `${process.env.NEXT_BACKEND_URL}/auth/google`;
+    try{
+      window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/googleAuth`;
+    }
+    catch(error:any){
+        console.log(error)
+    }
   };
 
   return (

@@ -7,14 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FcGoogle } from "react-icons/fc";
 import { userSignin } from "../../utils/api/user";
 import NotificationBar from "../../components/ui/notification";
-
 import processdata from "../../utils/getdata";
-
 enum state { 
   SUCCESS="success",
   FAILURE="failure"
 }
-
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -57,8 +54,6 @@ const SignIn=() => {
 
 },[])
 
-
-
   const onSubmit = async(data: SignInFormData) => {
 
    try{
@@ -80,7 +75,7 @@ const SignIn=() => {
 
   const handleGoogleSignIn = async() => {
       try{
-         window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
+         window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/googleAuth`;
       }
       catch(error:any){
         console.log({error:error.message})

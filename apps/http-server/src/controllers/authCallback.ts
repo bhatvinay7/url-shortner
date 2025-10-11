@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import getUserdata from "../utils/getUserdata.js";
 import { User, connectDB } from "mongodb"; 
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY!;
+const SECRET_KEY = process.env.secret_key!;
 const ACCESS_KEY= process.env.access_key!
 const callbackHandler = async (req: Request, res: Response) => {
   try {
@@ -28,9 +28,10 @@ const callbackHandler = async (req: Request, res: Response) => {
         username: user.name!,
         email: user.email!,
         userId: user._id,
-        picture:user.picture
+        picture:user.picture,
+        isVerified:true,
       },
-        ACCESS_KEY,
+        SECRET_KEY,
       { expiresIn: "24d" }
     );
     const acces_token = jwt.sign(
@@ -38,18 +39,22 @@ const callbackHandler = async (req: Request, res: Response) => {
         username: user.name!,
         email: user.email!,
         userId: user._id,
-        picture:user.picture
+        picture:user.picture,
+        isVerified:true,
+    
       },
-      SECRET_KEY,
+          ACCESS_KEY ,
       { expiresIn: "7d" }
     );
-    await User.findOneAndUpdate({refreshToken:refreshToken})
+    await User.findOneAndUpdate({email:user.email},{refreshToken:refreshToken})
     
-    res.cookie("refresh_token", refreshToken , {
+    res.cookie("token", refreshToken , {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      // domain:process.env.NEXT_PUBLIC_BACKEND_URL,
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      // path:".*"
     });
 
 

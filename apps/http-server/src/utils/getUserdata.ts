@@ -1,4 +1,6 @@
 import {Request,Response} from 'express'
+import dotenv from 'dotenv'
+dotenv.config()
 import axios from 'axios';
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
