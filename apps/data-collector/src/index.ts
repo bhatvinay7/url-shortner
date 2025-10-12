@@ -6,7 +6,7 @@ import {consumeFromQueue} from "./rabbitmq-consumer.js";
 try{
   (async()=>{
   
-    await consumeFromQueue("topic","user-metrics","data.*","data-collector")
+    await consumeFromQueue("topic","user-metrics","data.*","data-collector-queue")
 
   })()
 }

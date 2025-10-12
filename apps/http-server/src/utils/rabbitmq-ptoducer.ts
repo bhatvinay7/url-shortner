@@ -1,6 +1,5 @@
 import connection from 'rabbitmq'
-import {urlData} from 'types'
-export  async function publishToQueue(message:urlData,topic:string,exhangeName:string,maxAttemts:number,routingKey:string){
+export  async function publishToQueue(message:string,topic:string,exhangeName:string,maxAttemts:number,routingKey:string){
  const  pub = connection.createPublisher({
     confirm: true,
     maxAttempts: maxAttemts,

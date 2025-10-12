@@ -11,9 +11,10 @@ export const urlSchema = new Schema({
   ref: 'User',required:true},
   shortUrl: { type: String, required: true, unique: true },
   topic: { type: String,enum:Object.values(Topics),default:"",required:false},
+  applicationContext:{type:String,required:false,default:""},
   createdAt: { type: Date, default: Date.now },
 });
 
 urlSchema.index({ topic: 1 });
 urlSchema.index({ longUrl: 1 });
-urlSchema.index({ topic: 1 });
+urlSchema.index({ shortUrl: 1 });

@@ -5,7 +5,7 @@ const port = 3011;
 
 (async () => {
   try {
-   await consumeFromQueue("topic", "url-metrics", "push.*", "push-url");
+   await consumeFromQueue("topic", "url-metrics", "push.*", "push-url-queue");
   } catch (error) {
     console.error("Error consuming from queue:", error);
   }

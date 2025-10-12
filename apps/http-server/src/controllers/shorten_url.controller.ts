@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
 import { userCredentials } from "types";
+import connection from "rabbitmq";
 interface authRequest extends Request{
   user:userCredentials
 }
@@ -18,8 +19,9 @@ const generateShortUrl = async (req: authRequest, res: Response) => {
         .json({ message: "Your new url is generated", url: link?.shortUrl });
     }
     try {
+      await connection.onConnect(120,true)
       const userData:{url:string,userId:string}={url:url!,userId:req?.user?.userId!}   
-      await publishToQueue(userData,"topic","url-metrics",2,"push-url",);
+      await publishToQueue(JSON.stringify(userData),"topic","url-metrics",2,"push.url",);
     } catch (error: any) {
       console.log(error.message);
     }

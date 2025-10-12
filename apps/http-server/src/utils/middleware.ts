@@ -21,9 +21,6 @@ export const authMiddleware = async (
   try {
     const authHeader = req.headers.authorization;
     const cookieToken= req.cookies?.token;
-    console.log(req)
-    console.log(authHeader)
-    console.log(authHeader)
     if ((!authHeader || !authHeader.startsWith("Bearer")) && !cookieToken) {
       return res.status(401).json({ message: "Unauthorized: Token missing" });
     }

@@ -21,5 +21,4 @@ export {User,Devicedata,Url,connectDB}
 
 app.listen(3766,()=>{{
     
-    console.log("hii")
 }})

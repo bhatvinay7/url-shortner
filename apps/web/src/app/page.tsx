@@ -16,12 +16,15 @@ interface progress{
     message:string[]
 }
 
+
+
 export default function Home() {
   const dispatch = useDispatch();
   const router = useRouter();
   const userDetails=useSelector(userInfo)
   const inputRef = useRef<HTMLInputElement>(null); 
   const [progress,setProgress]=useState<progress|null>(null)
+  const [isLoading,setIsLoading]=useState<boolean>(false)
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
@@ -60,12 +63,17 @@ export default function Home() {
   const handleShorten = async (e: React.FormEvent) => {
     e.preventDefault();
     try{
-      
+     if(!url)return 
+     setIsLoading(true) 
      const response=await get_shorten_url(url!)
-     setProgress((priv)=>({message:priv?.message ? [...priv?.message ,response?.message]:[]}))
+     setUrl("")
+     setProgress((priv)=>({message:priv?.message  ? [...priv?.message ,response?.message]:[]}))
     }
     catch(error:any){
 
+    }
+    finally{
+       setIsLoading(false) 
     }
    
   };
@@ -104,7 +112,7 @@ export default function Home() {
               className="border border-[hsl(228,2%,43%)] focus:ring-2 focus:ring-[hsl(212,90%,45%)] outline-none rounded-xl px-4 py-3 text-[hsl(220,20%,20%)]"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              required
+          
             />
             <button
               type="submit"
@@ -113,7 +121,9 @@ export default function Home() {
               Shorten URL
             </button>
           </form>
-
+           {isLoading?
+           <div className=" w-full p-2 mt-2 rouded-xl bg-[#dbdbe0]">Processing...</div>:<></> 
+          }
           {shortUrl && (
             <div className="mt-4 bg-white/80 border border-[hsl(220,10%,80%)] rounded-xl p-3 flex items-center gap-2">
               <a

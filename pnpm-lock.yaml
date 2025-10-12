@@ -69,6 +69,9 @@ importers:
       rabbitmq:
         specifier: workspace:*
         version: link:../../packages/rabbitmq
+      rabbitmq-client:
+        specifier: ^5.0.5
+        version: 5.0.5
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
@@ -164,12 +167,18 @@ importers:
       mongodb:
         specifier: workspace:*
         version: link:../../packages/mongo-db
+      mongoose:
+        specifier: ^8.19.1
+        version: 8.19.1
       nats-server:
         specifier: workspace:*
         version: link:../../packages/nats-server
       rabbitmq:
         specifier: workspace:*
         version: link:../../packages/rabbitmq
+      rabbitmq-client:
+        specifier: ^5.0.5
+        version: 5.0.5
       tsc-node:
         specifier: ^0.0.3
         version: 0.0.3
@@ -3227,7 +3236,7 @@ snapshots:
       '@typescript-eslint/types': 8.40.0
       '@typescript-eslint/typescript-estree': 8.40.0(typescript@5.9.2)
       '@typescript-eslint/visitor-keys': 8.40.0
-      debug: 4.4.1
+      debug: 4.4.3
       eslint: 9.34.0(jiti@2.6.1)
       typescript: 5.9.2
     transitivePeerDependencies:
@@ -3237,7 +3246,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.40.0(typescript@5.9.2)
       '@typescript-eslint/types': 8.40.0
-      debug: 4.4.1
+      debug: 4.4.3
       typescript: 5.9.2
     transitivePeerDependencies:
       - supports-color
@@ -3271,7 +3280,7 @@ snapshots:
       '@typescript-eslint/tsconfig-utils': 8.40.0(typescript@5.9.2)
       '@typescript-eslint/types': 8.40.0
       '@typescript-eslint/visitor-keys': 8.40.0
-      debug: 4.4.1
+      debug: 4.4.3
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5

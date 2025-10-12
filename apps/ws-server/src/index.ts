@@ -24,7 +24,7 @@ try {
             return;
           }         
 
-          await publishToQueue(message,"topic","user-metrics",2,"data-collector*")
+          await publishToQueue(message,"topic","user-metrics",2,"data.collector")
           
         } catch (error: any) {}
 

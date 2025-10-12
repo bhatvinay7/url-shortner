@@ -1,4 +1,5 @@
 import connection from "rabbitmq";
+import { ConsumerStatus } from "rabbitmq-client";
 import { Url } from "mongodb";
 let sub:any=null;
 export async function consumeFromQueue(
@@ -7,6 +8,7 @@ export async function consumeFromQueue(
   routingKey: string,
   queueName: string
 ) {
+  await connection.onConnect(120,true)
   sub = connection.createConsumer(
     {
       queue: queueName,
@@ -14,14 +16,14 @@ export async function consumeFromQueue(
       qos: { prefetchCount: 1 },
       exchanges: [{ exchange: `${exhangeName}`, type: `${topic}` }],
       queueBindings: [{ exchange: `${exhangeName}`, routingKey: `${routingKey}` }],
+      
     },
     async (message) => {
       try {
-        { noAck: false }
-        console.log("received message (user-events)",JSON.stringify(message));
-        sub.ack(message);
+        console.log("received message (user-events)",JSON.parse(message.body.toString("utf8")));
+        ConsumerStatus.ACK
       } catch (error: any) {
-        sub.nack(message, false, true);
+        return 1
       }
     },
   );
