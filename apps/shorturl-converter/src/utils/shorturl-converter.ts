@@ -30,10 +30,12 @@ export async function consumeFromQueue(
         console.log("received message (user-events)", message);
         await connectDB();
         if (message) {
-          const userMessage: urlData = JSON.parse(message.body.toString("utf8")) 
-          console.log(userMessage);
+          const Message= JSON.parse(message.body.toString("utf8")) 
+          const userMessage:urlData =JSON.parse(Message)
+          console.log(userMessage)
           if (userMessage?.url) {
             const data = await assignTopic(userMessage.url);
+            console.log(data)
             const hash = generatetHash(userMessage.url);
             console.log(hash + " " + "hash");
             // const shortenUrl= Url.create({
@@ -50,7 +52,6 @@ export async function consumeFromQueue(
       }
       catch (err) {
         console.error("Consumer processing error:", err);
-        return 1
       }
     },
     

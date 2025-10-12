@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import Link from 'next/link'
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import PopupUp from "../components/ui/signin-popup";
@@ -188,9 +189,12 @@ export default function Home() {
           <p className="text-[hsl(220,10%,45%)] mb-4">
             Join thousands of users making their links smarter.
           </p>
+
+          <Link href={'/signin'}>
           <button className="bg-[hsl(212,90%,45%)] hover:bg-[hsl(212,90%,40%)] text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg">
             Get Started
           </button>
+          </Link>
         </section>
 
         {/* Footer */}

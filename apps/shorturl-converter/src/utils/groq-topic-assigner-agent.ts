@@ -1,28 +1,43 @@
 import { Groq } from "groq-sdk";
-import dotenv from 'dotenv'
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
+
 const groq = new Groq({
   apiKey: process.env.groq_api_key,
 });
+
 async function topicAssignerAgent(topics: any, data: any) {
-  const chatCompletionData = await groq.chat.completions.create({
+  const chatCompletion = await groq.chat.completions.create({
     messages: [
       {
         role: "user",
-        content: `For the  webscapped input data of the webpage  add the topic name and user application of the app context- ${topics} and data ${data}. output format should has json with fields topic and applicationContext.applicationContext should informative and not include more than one line`,
+        content: `
+        You are an AI that classifies a webpage.
+        Given the following data, identify the main topic (for which given input topic content of page fits perfect) and describe the application's context.
+
+        topic: ${topics}
+        Webpage Data: ${data}
+
+        Return a JSON object with the following format:
+        {
+          "topic": "<topic name>",
+          "applicationContext": "<one-line explanation of app context>"
+        }`,
       },
     ],
     model: "openai/gpt-oss-20b",
-    temperature: 1,
-    max_completion_tokens: 8192,
+    temperature: 0.7,
     top_p: 1,
-    stream: true,
+    max_completion_tokens: 2048,
     reasoning_effort: "medium",
-    response_format: {
-      type: "json_object",
-    },
-    stop: null,
+    response_format: { type: "json_object" },
+    stream: false,
   });
-  return chatCompletionData;
+
+  const raw = chatCompletion.choices?.[0]?.message?.content || "{}";
+  const parsed = JSON.parse(raw);
+
+  return parsed;
 }
+
 export default topicAssignerAgent;
