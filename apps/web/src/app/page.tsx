@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import Link from 'next/link'
+
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import PopupUp from "../components/ui/signin-popup";
+import Content from '../components/ui/content'
+import Footer from  '../components/ui/footer'
 import {get_shorten_url} from '../utils/api/generate_short_url'
 import {
   getUser_details,
@@ -12,12 +14,9 @@ import {
 
 import { useWebSocket } from "./hooks/useWesocketConnection";
 
-
 interface progress{
     message:string[]
 }
-
-
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -28,17 +27,20 @@ export default function Home() {
   const [isLoading,setIsLoading]=useState<boolean>(false)
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState<string | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
   const [permission, setPermission] = useState(false);
   const [input, setInput] = useState("");
   const [popup,setPopUp]=useState(false)
+  const [error, setError]=useState<{message:string}|null>(null)
 
 
   useEffect(()=>{
     dispatch(getUser_details() as any)
     
   },[dispatch])
-
+  
+  const { connected, sendMessage } = useWebSocket({
+    url: process.env.NEXT_WS_SERVER_URL!,onMessage:onMessage
+  });
   useEffect(() => {
   if (!inputRef.current) return;
 
@@ -56,18 +58,31 @@ export default function Home() {
   };
 }, [userDetails]);
 
+useEffect(()=>{
+  
+},[])
 
-  const { connected, sendMessage } = useWebSocket({
-    url: process.env.WS_SERVER_URL!,
-  });
+
+function onMessage(data:any){
+  const message=JSON.parse(data)
+  if(data.type=="data"){
+    setShortUrl(data?.message)
+  }
+  if(data.type=="notification"){
+     setProgress((priv)=>({message:priv?.message  ? [...priv?.message ,data?.message]:[]}))
+  }
+  if(data.type=="error"){
+    setError({message:data.message})
+  }
+}
 
   const handleShorten = async (e: React.FormEvent) => {
     e.preventDefault();
     try{
      if(!url)return 
      setIsLoading(true) 
-     const response=await get_shorten_url(url!)
      setUrl("")
+     const response=await get_shorten_url(url!)
      setProgress((priv)=>({message:priv?.message  ? [...priv?.message ,response?.message]:[]}))
     }
     catch(error:any){
@@ -110,19 +125,20 @@ export default function Home() {
               ref={inputRef} 
               type="url"
               placeholder="Enter your long URL..."
-              className="border border-[hsl(228,2%,43%)] focus:ring-2 focus:ring-[hsl(212,90%,45%)] outline-none rounded-xl px-4 py-3 text-[hsl(220,20%,20%)]"
+              className="border border-[hsl(228,2%,43%)] focus:ring-2 focus:ring-[hsl(212,90%,45%)] outline-none text-base rounded-xl px-4 py-3 text-[hsl(220,20%,20%)]"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
           
             />
             <button
+              disabled={isLoading}
               type="submit"
               className="bg-[#425e7bf0] hover:bg-[hsl(212,53%,35%)] text-white font-semibold py-3 rounded-xl transition-all shadow-md hover:shadow-lg"
             >
               Shorten URL
             </button>
           </form>
-           {isLoading?
+           {isLoading ?
            <div className=" w-full p-2 mt-2 rouded-xl bg-[#dbdbe0]">Processing...</div>:<></> 
           }
           {shortUrl && (
@@ -146,61 +162,10 @@ export default function Home() {
         </section>
 
         {/* How It Works Section */}
-        <section className="mt-8">
-          <h3 className="text-xl font-semibold text-[hsl(212,90%,45%)] mb-3">
-            How It Works 🚀
-          </h3>
-          <ul className="space-y-2 text-[hsl(220,10%,40%)]">
-            <li>1️⃣ Paste your long URL into the input box above.</li>
-            <li>
-              2️⃣ Click <strong>Shorten URL</strong> — we’ll generate a clean,
-              shareable link.
-            </li>
-            <li>3️⃣ Copy your new link and share it anywhere!</li>
-          </ul>
-        </section>
-
-        {/* Why Choose Us */}
-        <section className="mt-8">
-          <h3 className="text-xl font-semibold text-[hsl(212,90%,45%)] mb-3">
-            Why Choose Shortly 💡
-          </h3>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[hsl(220,10%,40%)]">
-            <li className="bg-white/70 p-3 rounded-xl shadow-sm">
-              ⚡ Instant URL shortening
-            </li>
-            <li className="bg-white/70 p-3 rounded-xl shadow-sm">
-              🔒 Secure and private
-            </li>
-            <li className="bg-white/70 p-3 rounded-xl shadow-sm">
-              🌍 Custom branded links
-            </li>
-            <li className="bg-white/70 p-3 rounded-xl shadow-sm">
-              📊 Real-time click analytics
-            </li>
-          </ul>
-        </section>
-
-        {/* CTA Section */}
-        <section className="mt-10 text-center">
-          <h3 className="text-2xl font-semibold text-[hsl(212,90%,45%)] mb-2">
-            Ready to get started?
-          </h3>
-          <p className="text-[hsl(220,10%,45%)] mb-4">
-            Join thousands of users making their links smarter.
-          </p>
-
-          <Link href={'/signin'}>
-          <button className="bg-[hsl(212,90%,45%)] hover:bg-[hsl(212,90%,40%)] text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg">
-            Get Started
-          </button>
-          </Link>
-        </section>
-
+        <Content/>
+         
         {/* Footer */}
-        <footer className="text-center text-sm text-[hsl(220,10%,55%)] mt-10">
-          © {new Date().getFullYear()} Shortly — Built with 💙 for simplicity
-        </footer>
+         <Footer/> 
       </div>
     </main>
   );

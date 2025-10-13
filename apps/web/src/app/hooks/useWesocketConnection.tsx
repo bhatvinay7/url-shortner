@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-
+import { useSelector } from "react-redux";
+import {userInfo} from '../../lib/redux/featuresSlice/userDetails'
 interface UseWebSocketOptions {
   url: string;
   retryDelay?: number; // in ms
@@ -22,6 +23,7 @@ export function useWebSocket({
   const socketRef = useRef<WebSocket | null>(null);
   const retryCountRef = useRef(0);
   const [connected, setConnected] = useState(false);
+  const userDetails = useSelector(userInfo);
 
   const connect = useCallback(() => {
     if (socketRef.current) return;
@@ -37,6 +39,7 @@ export function useWebSocket({
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        console.log(data)
         onMessage?.(data);
       } catch {
         console.warn("Non-JSON message:", event.data);
@@ -81,7 +84,7 @@ export function useWebSocket({
       socketRef.current?.close();
       socketRef.current = null;
     };
-  }, [connect]);
+  }, [connect,userInfo]);
 
   return { connected, sendMessage };
 }

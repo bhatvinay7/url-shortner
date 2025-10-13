@@ -49,7 +49,7 @@ const input = {
     "expandIframes": true,
     "clickElementsCssSelector": "[aria-expanded=\"false\"]",
     "htmlTransformer": "readableText",
-    "readableTextCharThreshold": 100,
+    "readableTextCharThreshold": 20,
     "aggressivePrune": false,
     "debugMode": false,
     "debugLog": false,

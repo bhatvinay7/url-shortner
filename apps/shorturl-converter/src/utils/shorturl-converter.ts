@@ -3,9 +3,9 @@ import { ConsumerStatus } from "rabbitmq-client";
 import { urlData } from "types";
 import assignTopic from "./topicAssigner.js";
 import mongoose from "mongoose";
+import { natsConnection, channel, notifyChannel, sc } from "nats-server";
 import generatetHash from "./uniqueStringConverter.js";
 import { Url, connectDB } from "mongodb";
-import { Channel } from "diagnostics_channel";
 let sub: any = null;
 export async function consumeFromQueue(
   topic: string,
@@ -23,37 +23,90 @@ export async function consumeFromQueue(
         { exchange: `${exhangeName}`, routingKey: `${routingKey}` },
       ],
       noAck: false,
-      
     },
     async (message) => {
       try {
         console.log("received message (user-events)", message);
         await connectDB();
         if (message) {
-          const Message= JSON.parse(message.body.toString("utf8")) 
-          const userMessage:urlData =JSON.parse(Message)
-          console.log(userMessage)
-          if (userMessage?.url) {
-            const data = await assignTopic(userMessage.url);
-            console.log(data)
-            const hash = generatetHash(userMessage.url);
-            console.log(hash + " " + "hash");
-            // const shortenUrl= Url.create({
-            //   longUrl:userMessage.url,
-            //   user: new mongoose.Types.ObjectId(userMessage.userId),
-            //   shortUrl:hash,
-            //   topic:data.topic,
-            //   applicationContext:data.applicationContext,
-            // })
-          return ConsumerStatus.ACK;    
-           
+          const Message = JSON.parse(message.body.toString("utf8"));
+          const userMessage: urlData = JSON.parse(Message);
+          console.log(userMessage);
+          try {
+            natsConnection.publish(
+              "url-status",
+              sc.encode(
+                JSON.stringify({
+                  message: "processing your request...",
+                  userId: userMessage.userId,
+                  type: "notification",
+                  status: 200,
+                })
+              )
+            );
+            if (userMessage?.url) {
+              const data = await assignTopic(userMessage.url);
+              natsConnection.publish(
+                "url-status",
+                sc.encode(
+                  JSON.stringify({
+                    message: "generating short url",
+                    userId: userMessage.userId,
+                    type: "notification",
+                    status: 200,
+                  })
+                )
+              );
+              const hash = generatetHash(userMessage.url);
+              // const shortenUrl= Url.create({
+              //   longUrl:userMessage.url,
+              //   user: new mongoose.Types.ObjectId(userMessage.userId),
+              //   shortUrl:hash,
+              //   topic:data.topic,
+              //   applicationContext:data.applicationContext,
+              // })
+              natsConnection.publish(
+                "url-status",
+                sc.encode(
+                  JSON.stringify({
+                    message: "New url successfully generated",
+                    type: "notification",
+                    status: 200,
+                    userId: userMessage.userId,
+                  })
+                )
+              );
+              natsConnection.publish(
+                "push-url",
+                sc.encode(
+                  JSON.stringify({
+                    message: `${hash}`,
+                    type: "data",
+                    userId: userMessage.userId,
+                  })
+                )
+              );
+
+              return ConsumerStatus.ACK;
+            }
+          } catch (error: any) {
+            throw new Error(JSON.stringify({ message: userMessage.userId }));
           }
         }
-      }
-      catch (err) {
+      } catch (err: any) {
         console.error("Consumer processing error:", err);
+        natsConnection.publish(
+          "push-url",
+          sc.encode(
+            JSON.stringify({
+              message: "Unable to process sudden error occured!",
+              type: "error",
+              status: 500,
+              userId: JSON.parse(err?.message),
+            })
+          )
+        );
       }
-    },
-    
+    }
   );
 }
