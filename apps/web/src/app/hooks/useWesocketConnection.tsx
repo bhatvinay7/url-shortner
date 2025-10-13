@@ -23,17 +23,28 @@ export function useWebSocket({
   const socketRef = useRef<WebSocket | null>(null);
   const retryCountRef = useRef(0);
   const [connected, setConnected] = useState(false);
-  const userDetails = useSelector(userInfo);
+  const { userId, token } = useSelector(userInfo);
+  console.log(userId)
 
   const connect = useCallback(() => {
-    if (socketRef.current) return;
-
+    if (socketRef.current){
+      return;
+    
+    }
+     if(retryCountRef?.current>maxRetries && !userId){
+      return
+      }
     const ws = new WebSocket(url);
     socketRef.current = ws;
 
     ws.onopen = () => {
       setConnected(true);
-      retryCountRef.current = 0;
+       if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({userId:userId,token:token}));
+      socketRef.current.send(JSON.stringify({userId:userId,token:token}));
+      retryCountRef.current=0
+       }
+
     };
 
     ws.onmessage = (event) => {
@@ -48,7 +59,9 @@ export function useWebSocket({
 
     ws.onclose = () => {
       console.warn("WebSocket disconnected");
-      setConnected(false);
+      if(retryCountRef.current<maxRetries){
+        setConnected(false);
+      }
       onClose?.();
       socketRef.current = null;
 
@@ -67,7 +80,7 @@ export function useWebSocket({
       onError?.(err);
       ws.close();
     };
-  }, [url, onMessage, onOpen, onClose, onError, retryDelay, maxRetries]);
+  }, [retryDelay, maxRetries,url,userId]);
 
   const sendMessage =(data: any) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
@@ -78,13 +91,20 @@ export function useWebSocket({
   }
 
   useEffect(() => {
-    connect();
-
+   if (socketRef.current) return 
+     if(retryCountRef?.current<maxRetries && !connected){
+      connect();
+      }
+      else{
+        return
+      }
+   
     return () => {
+    
       socketRef.current?.close();
       socketRef.current = null;
     };
-  }, [connect,userInfo]);
+  }, [connect]);
 
   return { connected, sendMessage };
 }

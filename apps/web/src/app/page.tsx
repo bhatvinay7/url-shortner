@@ -15,7 +15,7 @@ import {
 import { useWebSocket } from "./hooks/useWesocketConnection";
 
 interface progress{
-    message:string[]
+    messages:string[]
 }
 
 export default function Home() {
@@ -23,7 +23,7 @@ export default function Home() {
   const router = useRouter();
   const userDetails=useSelector(userInfo)
   const inputRef = useRef<HTMLInputElement>(null); 
-  const [progress,setProgress]=useState<progress|null>(null)
+  const [progress,setProgress]=useState<progress>({messages:[]})
   const [isLoading,setIsLoading]=useState<boolean>(false)
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export default function Home() {
   },[dispatch])
   
   const { connected, sendMessage } = useWebSocket({
-    url: process.env.NEXT_WS_SERVER_URL!,onMessage:onMessage
+    url: process.env.NEXT_PUBLIC_WS_SERVER_URL!,onMessage:onMessage
   });
   useEffect(() => {
   if (!inputRef.current) return;
@@ -65,14 +65,14 @@ useEffect(()=>{
 
 function onMessage(data:any){
   const message=JSON.parse(data)
-  if(data.type=="data"){
-    setShortUrl(data?.message)
+  if(message.type=="data"){
+    setShortUrl(message?.message)
   }
-  if(data.type=="notification"){
-     setProgress((priv)=>({message:priv?.message  ? [...priv?.message ,data?.message]:[]}))
+  if(message.type=="notification"){
+     setProgress((priv)=>({messages:priv?.messages  ? [...priv?.messages ,message?.message]:[]}))
   }
-  if(data.type=="error"){
-    setError({message:data.message})
+  if(message.type=="error"){
+    setError({message:message.message})
   }
 }
 
@@ -83,7 +83,7 @@ function onMessage(data:any){
      setIsLoading(true) 
      setUrl("")
      const response=await get_shorten_url(url!)
-     setProgress((priv)=>({message:priv?.message  ? [...priv?.message ,response?.message]:[]}))
+     setProgress((priv)=>({messages:priv?.messages  ? [...priv?.messages ,response?.message]:[]}))
     }
     catch(error:any){
 
@@ -138,9 +138,20 @@ function onMessage(data:any){
               Shorten URL
             </button>
           </form>
+         <div className="h-auto p-1.5">
+
+          {progress?.messages?.map((updates:any)=>{
+            return(
+               <div className="w-full p-3 text-[hsl(210,5%,15%)] bg-[hsl(210,17%,93%)] rounded-sm border border-white/15 ">
+               </div>
+            )
+
+          })}
+         </div>
            {isLoading ?
            <div className=" w-full p-2 mt-2 rouded-xl bg-[#dbdbe0]">Processing...</div>:<></> 
           }
+          
           {shortUrl && (
             <div className="mt-4 bg-white/80 border border-[hsl(220,10%,80%)] rounded-xl p-3 flex items-center gap-2">
               <a

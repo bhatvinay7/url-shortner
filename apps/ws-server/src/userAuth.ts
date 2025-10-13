@@ -8,6 +8,7 @@ try {
   const decoded = jwt.verify(token, secret);
   return decoded as userCredentials
 } catch(err:any) {
+  console.log(err.message)
   throw new Error("user is not authenticated")
 }
 
