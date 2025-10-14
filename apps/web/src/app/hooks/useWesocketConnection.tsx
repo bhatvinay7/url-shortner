@@ -1,6 +1,7 @@
+"use client";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import {userInfo} from '../../lib/redux/featuresSlice/userDetails'
+import { userInfo } from "../../lib/redux/featuresSlice/userDetails";
 interface UseWebSocketOptions {
   url: string;
   retryDelay?: number; // in ms
@@ -24,33 +25,44 @@ export function useWebSocket({
   const retryCountRef = useRef(0);
   const [connected, setConnected] = useState(false);
   const { userId, token } = useSelector(userInfo);
-  console.log(userId)
+
+  if (typeof window !== "undefined" && window.localStorage) {
+    localStorage.setItem("userId", userId!);
+    localStorage.setItem("token", token!);
+  }
 
   const connect = useCallback(() => {
-    if (socketRef.current){
+    if (socketRef.current) {
       return;
-    
     }
-     if(retryCountRef?.current>maxRetries && !userId){
-      return
-      }
+    if (retryCountRef?.current > maxRetries && !userId) {
+      return;
+    }
     const ws = new WebSocket(url);
     socketRef.current = ws;
 
     ws.onopen = () => {
       setConnected(true);
-       if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({userId:userId,token:token}));
-      socketRef.current.send(JSON.stringify({userId:userId,token:token}));
-      retryCountRef.current=0
-       }
+      if (
+        socketRef.current &&
+        socketRef.current.readyState === WebSocket.OPEN
+      ) {
+        setInterval(() => {
+          socketRef?.current?.send(
+            JSON.stringify({
+              userId: localStorage.getItem("userId") || "",
+              token: localStorage.getItem("token") || "",
+            })
+          );
+        }, 10000);
 
+        retryCountRef.current = 0;
+      }
     };
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log(data)
         onMessage?.(data);
       } catch {
         console.warn("Non-JSON message:", event.data);
@@ -59,9 +71,7 @@ export function useWebSocket({
 
     ws.onclose = () => {
       console.warn("WebSocket disconnected");
-      if(retryCountRef.current<maxRetries){
-        setConnected(false);
-      }
+      setConnected(false);
       onClose?.();
       socketRef.current = null;
 
@@ -80,27 +90,25 @@ export function useWebSocket({
       onError?.(err);
       ws.close();
     };
-  }, [retryDelay, maxRetries,url,userId]);
+  }, [retryDelay, maxRetries, url, userId]);
 
-  const sendMessage =(data: any) => {
+  const sendMessage = (data: any) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify(data));
     } else {
       console.warn("WebSocket not connected, message not sent");
     }
-  }
+  };
 
   useEffect(() => {
-   if (socketRef.current) return 
-     if(retryCountRef?.current<maxRetries && !connected){
+    if (socketRef.current) return;
+    if (retryCountRef?.current < maxRetries && !connected) {
       connect();
-      }
-      else{
-        return
-      }
-   
+    } else {
+      return;
+    }
+
     return () => {
-    
       socketRef.current?.close();
       socketRef.current = null;
     };

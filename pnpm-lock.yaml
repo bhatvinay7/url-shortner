@@ -231,6 +231,9 @@ importers:
       framer-motion:
         specifier: ^12.23.22
         version: 12.23.22(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      lucide:
+        specifier: ^0.545.0
+        version: 0.545.0
       lucide-react:
         specifier: ^0.544.0
         version: 0.544.0(react@19.1.0)
@@ -289,6 +292,12 @@ importers:
 
   apps/ws-server:
     dependencies:
+      '@types/cookie-parser':
+        specifier: ^1.4.9
+        version: 1.4.9(@types/express@5.0.3)
+      cookie-parser:
+        specifier: ^1.4.7
+        version: 1.4.7
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -2000,6 +2009,9 @@ packages:
     resolution: {integrity: sha512-t5tS44bqd825zAW45UQxpG2CvcC4urOwn2TrwSH8u+MjeE+1NnWl6QqeQ/6NdjMqdOygyiT9p3Ev0p1NJykxjw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lucide@0.545.0:
+    resolution: {integrity: sha512-mrBH0upkb1TH8ZLkf0XERQAKMdTJ1C+Offr7eSvanmdQ7JrV8jkrFw5jgRAS8fygiZgG4X9mfEg/BXCL+mNMRw==}
 
   magic-string@0.30.19:
     resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
@@ -4430,6 +4442,8 @@ snapshots:
   lucide-react@0.544.0(react@19.1.0):
     dependencies:
       react: 19.1.0
+
+  lucide@0.545.0: {}
 
   magic-string@0.30.19:
     dependencies:

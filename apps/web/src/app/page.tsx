@@ -7,12 +7,15 @@ import PopupUp from "../components/ui/signin-popup";
 import Content from '../components/ui/content'
 import Footer from  '../components/ui/footer'
 import {get_shorten_url} from '../utils/api/generate_short_url'
+import Copy from '../components/ui/copy'
+import {Loader,CircleCheck} from  'lucide-react'
 import {
   getUser_details,
    userInfo,
 } from "../lib/redux/featuresSlice/userDetails";
 
 import { useWebSocket } from "./hooks/useWesocketConnection";
+import { message } from 'types';
 
 interface progress{
     messages:string[]
@@ -64,7 +67,8 @@ useEffect(()=>{
 
 
 function onMessage(data:any){
-  const message=JSON.parse(data)
+  setIsLoading(false) 
+  const message=data
   if(message.type=="data"){
     setShortUrl(message?.message)
   }
@@ -82,8 +86,9 @@ function onMessage(data:any){
      if(!url)return 
      setIsLoading(true) 
      setUrl("")
-     const response=await get_shorten_url(url!)
+     setProgress({messages:[]})
      setProgress((priv)=>({messages:priv?.messages  ? [...priv?.messages ,response?.message]:[]}))
+     const response=await get_shorten_url(url!)
     }
     catch(error:any){
 
@@ -92,10 +97,6 @@ function onMessage(data:any){
        setIsLoading(false) 
     }
    
-  };
-
-  const copyToClipboard = () => {
-    if (shortUrl) navigator.clipboard.writeText(shortUrl);
   };
 
   return (
@@ -138,38 +139,33 @@ function onMessage(data:any){
               Shorten URL
             </button>
           </form>
-         <div className="h-auto p-1.5">
+         <div className="h-auto flex flex-col gap-1 space-y-1 p-1.5">
 
-          {progress?.messages?.map((updates:any)=>{
+             {isLoading ?
+             <div className=" w-fit p-2 mt-1 rouded-xl px-1.5 py-1 rounded-xl text-base bg-[#dbdbe0]">
+              <Loader  className="animate-spin mx-auto  absolute  w-5 h-5 text-[hsl(237,62%,63%)]"/></div>:<></> 
+            }
+
+          {progress?.messages?.map((updates:string,index:number)=>{
             return(
-               <div className="w-full p-3 text-[hsl(210,5%,15%)] bg-[hsl(210,17%,93%)] rounded-sm border border-white/15 ">
+              <div key={index} className=" w-fit px-2 py-1 space-x-2 h-auto  text-[hsl(210,5%,15%)] bg-[#dbdbe0] rounded-sm border border-white/15 ">
+                <div className=" flex items-center min-h-4 space-x-2 ">
+                {updates}
+
+               { (updates.includes("processing") || updates.includes("generating")) && !shortUrl ? <Loader  className="animate-spin  w-5 h-5 text-[hsl(237,62%,63%)]"/>:<CircleCheck className=" w-6 h-6 text-[hsl(156,90%,45%)]"/>} 
+                </div>  
                </div>
             )
-
           })}
-         </div>
-           {isLoading ?
-           <div className=" w-full p-2 mt-2 rouded-xl bg-[#dbdbe0]">Processing...</div>:<></> 
-          }
           
-          {shortUrl && (
-            <div className="mt-4 bg-white/80 border border-[hsl(220,10%,80%)] rounded-xl p-3 flex items-center gap-2">
-              <a
-                href={shortUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[hsl(212,90%,45%)] font-semibold break-all"
-              >
-                {shortUrl}
-              </a>
-              <button
-                onClick={copyToClipboard}
-                className="ml-auto text-[hsl(220,15%,35%)] border border-[hsl(212,90%,45%)/20] px-3 py-1 rounded-lg hover:bg-[hsl(212,90%,52%)/10]"
-              >
-                Copy
-              </button>
-            </div>
-          )}
+          {shortUrl && <div className=" w-full flex items-center justify-between bg-white/75 p-1.5 rounded-md border border-black/15 gap-x-1.5">
+            <div className="text-[hsl(211,48%,12%)] p-1 text-base max-w-[310px] line-clamp-1 font-medium break-all">{shortUrl}</div>
+                <Copy
+          text={shortUrl}
+          />
+          </div>
+         }
+          </div>
         </section>
 
         {/* How It Works Section */}
