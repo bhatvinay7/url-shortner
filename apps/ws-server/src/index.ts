@@ -39,8 +39,6 @@ try {
       if (parsedMessage?.token) {
         try {
           const decoded = userVerify(parsedMessage?.token || req.cookies?.token ||``);
-          console.log(decoded);
-
           // check whether use already added or not
           const user = users.get(`${parsedMessage?.userId}`);
           if (!user) {

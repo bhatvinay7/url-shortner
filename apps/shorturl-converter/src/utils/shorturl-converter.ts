@@ -3,7 +3,8 @@ import { ConsumerStatus } from "rabbitmq-client";
 import { urlData } from "types";
 import assignTopic from "./topicAssigner.js";
 import mongoose from "mongoose";
-import { natsConnection, channel, notifyChannel, sc } from "nats-server";
+import redis from "redis";
+import { natsConnection, sc } from "nats-server";
 import generatetHash from "./uniqueStringConverter.js";
 import { Url, connectDB } from "mongodb";
 let sub: any = null;
@@ -65,6 +66,7 @@ export async function consumeFromQueue(
               //   topic:data.topic,
               //   applicationContext:data.applicationContext,
               // })
+              redis.set(hash,userMessage.url)
               natsConnection.publish(
                 "url-status",
                 sc.encode(

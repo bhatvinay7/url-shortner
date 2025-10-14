@@ -15,8 +15,8 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@types/node": "^22.15.3",
-    "rabbitmq-client": "^5.0.5"
+    "dotenv": "^17.2.3",
+    "redis": "^5.8.3"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

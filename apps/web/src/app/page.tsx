@@ -9,6 +9,7 @@ import Footer from  '../components/ui/footer'
 import {get_shorten_url} from '../utils/api/generate_short_url'
 import Copy from '../components/ui/copy'
 import {Loader,CircleCheck} from  'lucide-react'
+import Link from "next/link";
 import {
   getUser_details,
    userInfo,
@@ -87,8 +88,8 @@ function onMessage(data:any){
      setIsLoading(true) 
      setUrl("")
      setProgress({messages:[]})
-     setProgress((priv)=>({messages:priv?.messages  ? [...priv?.messages ,response?.message]:[]}))
      const response=await get_shorten_url(url!)
+     setProgress((priv)=>({messages:priv?.messages  ? [...priv?.messages ,response?.message]:[]}))
     }
     catch(error:any){
 
@@ -116,7 +117,7 @@ function onMessage(data:any){
       </header>
 
       {/* Main Card */}
-      <div className="w-full max-w-3xl bg-[hsl(240,7%,79%)] rounded-2xl shadow-xl backdrop-blur-md p-8 flex flex-col gap-6">
+      <div className="w-full max-w-3xl bg-[hsl(240,7%,79%)] rounded-2xl  backdrop-blur-md p-8 flex flex-col gap-6">
         <section>
           <h2 className="text-2xl font-semibold text-[hsl(212,90%,45%)] mb-4">
             Paste your link below

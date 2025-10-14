@@ -25,7 +25,8 @@
     "rabbitmq": "workspace:*",
     "rabbitmq-client": "^5.0.5",
     "tsc-node": "^0.0.3",
-    "types": "workspace:*"
+    "types": "workspace:*",
+    "redis": "workspace:*"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
