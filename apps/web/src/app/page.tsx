@@ -17,7 +17,8 @@ import {
 
 import { useWebSocket } from "./hooks/useWesocketConnection";
 import { message } from 'types';
-
+import { Code } from '../../../../packages/ui/src/code';
+import RateLimitError from "../components/ui/ratelimit"; 
 interface progress{
     messages:string[]
 }
@@ -35,6 +36,8 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [popup,setPopUp]=useState(false)
   const [error, setError]=useState<{message:string}|null>(null)
+  const [isRarelimited,setIsRatelimited]=useState(false)
+  const [time,setTime]=useState(0)
 
 
   useEffect(()=>{
@@ -92,7 +95,11 @@ function onMessage(data:any){
      setProgress((priv)=>({messages:priv?.messages  ? [...priv?.messages ,response?.message]:[]}))
     }
     catch(error:any){
-
+    if(error.reponse.Code==403){
+    setIsRatelimited(true)
+    setTime(error?.response?.data?.setTime)
+    setIsRatelimited(true)
+      }
     }
     finally{
        setIsLoading(false) 
@@ -107,6 +114,11 @@ function onMessage(data:any){
       <PopupUp/>
     </div>
          }
+      <RateLimitError
+       time={time}
+       isRatelimited={isRarelimited}
+       
+      />   
       <header className="text-center mb-8">
         <h1 className="text-5xl font-bold text-[hsl(212,90%,45%)] mb-2">
           Shortly

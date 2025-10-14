@@ -13,7 +13,7 @@ const redirect = async (req: Request, res: Response) =>{
     if(url){
        res.redirect(`${url}`);
     }
-    const link=await Url.findOne({shortUrl:decodeURIComponent(hash)})
+    const link=await Url.findOne({shortUrl:hash})
 
     res.redirect(`${link?.longUrl}`);
   } catch (error: any) {

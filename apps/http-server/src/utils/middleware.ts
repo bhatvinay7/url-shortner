@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { userCredentials } from "types";
+import redis from 'redis'
+import { parse } from "dotenv";
 const JWT_SECRET = process.env.secret_key!;
 export interface AuthRequest extends Request {
   user?:
@@ -26,6 +28,25 @@ export const authMiddleware = async (
     }
     const token = authHeader?.split(" ")[1] || cookieToken;
     const decoded = jwt.verify(token!, JWT_SECRET) as userCredentials;
+    try{
+      const count = await redis.get(decoded.userId);
+
+      if(count && parseInt(count)>5){
+        redis.set("startTime",Date.now()); // Set expiration time to 5 minutes
+        redis.expire("startTime",300); // Set expiration time to 5 minutes
+        redis.expire(decoded.userId,300); // Set expiration time to 5 minutes
+        const startTime= await redis.get("startTime")  // updat the user with left time for next request
+        const leftTime= startTime ? Date.now()-parseInt(startTime):0
+        const waitTime= leftTime/1000
+        return res.status(429).json({message:"Too many requests, please try again later",setTime:waitTime})
+      }
+      else{
+        await redis.incr(decoded.userId);
+      }
+    }
+    catch(error:any){
+     return res.status(429).json({message:"Too many requests, please try again later"})
+    }
     const user = {
       userId: decoded?.userId,
       username: decoded?.username,
