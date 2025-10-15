@@ -24,6 +24,7 @@
     "mongodb": "workspace:*",
     "tsc-node": "^0.0.3",
     "tsconfig-paths": "^4.2.0",
+    "ws": "^8.18.3",
     "rabbitmq": "workspace:*",
     "redis": "workspace:*"
   },
@@ -31,7 +32,6 @@
     "@repo/typescript-config": "workspace:*",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
-    "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.3",
     "ts-node": "^10.9.2",
     "types": "workspace:*",

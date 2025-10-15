@@ -3,8 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import authRouter from "./routers/googlerouteHandler.js";
-import urlRouter from "./routers/shortenUrl.js";
+import urlRouter from "./routers/shortenUrl.Router.js";
 import userCred from "./routers/userCredentialsRouter.js"
+import redirectRouter from "./routers/redirect.Router.js"
+import analyticsRouter from "./routers/analytics.Router.js"
 import { authMiddleware } from "./utils/middleware.js";
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,6 +26,8 @@ app.use('/api/auth',authRouter);
 app.use(authMiddleware);
 app.use('/user',userCred);
 app.use('/api',urlRouter);
+app.use('/api',redirectRouter);
+app.use('/api/analytics',analyticsRouter);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
