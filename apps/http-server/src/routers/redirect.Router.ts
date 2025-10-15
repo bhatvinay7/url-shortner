@@ -1,5 +1,5 @@
-import express, { Router,RequestHandler} from 'express';
+import express, { Router} from 'express';
 const router:Router=express.Router()
 import redirect   from '../controllers/redirect.js';
-router.post('/redirect',redirect) 
+router.post('/redirect/:hash',redirect) 
 export default router

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
 import { userCredentials } from "types";
 import connection from "rabbitmq";
-import redis from "redis";
+import redis from "redisclient";
 interface authRequest extends Request {
   user: userCredentials;
 }

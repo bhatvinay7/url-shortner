@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Url, connectDB } from "mongodb";
-import { publishToQueue } from "rabbitmq";
-import redis from "redis";
+import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
+import redis from "redisclient";
 
 interface customRequest extends Request {
   user?: {
@@ -15,15 +15,21 @@ interface customRequest extends Request {
 const redirect = async (req: customRequest, res: Response) => {
   try {
     await connectDB();
-    const hash = req?.body?.hash;
-    const urlId=req?.params?.urlId;
-    const message = req?.body?.message;
-    const updatedMessage = { ...message, urlId: urlId };
+    const hash = decodeURIComponent(req?.params?.hash! ?? "");
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? (forwarded as string).split(',')?.[0] : req.socket.remoteAddress
+    const message = req?.body?.data
+    if(!hash || !message){
+      return res.status(400).json({message:"Invalid url or data is missing"})
+    }
+    const urlId= await Url.findOne({shortUrl:hash}).select('_id')
+
+    const updatedMessage = { ...message, urlId: urlId,ip:ip };
     // push user device data to queue
     try {
       if (message) {
         await publishToQueue(
-          JSON.stringify(message),
+          JSON.stringify(updatedMessage),
           "topic",
           "user-metrics",
           2,
@@ -39,7 +45,7 @@ const redirect = async (req: customRequest, res: Response) => {
         .status(400)
         .json({ message: "url is invalid,provide valid url" });
     }
-    const url = redis.get(hash);
+    const url :string|null= await redis.get(hash);
 
     if (url) {
       return res.status(404).json({ message: "url is not found" });
