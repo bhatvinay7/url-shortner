@@ -10,6 +10,7 @@ try{
 
   })()
 }
+
 catch(error:any){
   console.log(error.message)
 }

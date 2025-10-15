@@ -44,9 +44,8 @@ export const deviceSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-deviceSchema.index({ geolocation: "2dsphere" });
-deviceSchema.index({ user_id: 1 });         
-deviceSchema.index({ urlId: 1 });
+deviceSchema.index({ geolocation: "2dsphere" });        
 deviceSchema.index({ createdAt: -1 }); 
+deviceSchema.index({ userId: 1, osType: 1, deviceType: 1});
 
 

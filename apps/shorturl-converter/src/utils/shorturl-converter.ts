@@ -3,7 +3,7 @@ import { ConsumerStatus } from "rabbitmq-client";
 import { urlData } from "types";
 import assignTopic from "./topicAssigner.js";
 import mongoose from "mongoose";
-import redis from "redis";
+import redis from "redisclient";
 import { natsConnection, sc } from "nats-server";
 import generatetHash from "./uniqueStringConverter.js";
 import { Url, connectDB } from "mongodb";
@@ -59,13 +59,13 @@ export async function consumeFromQueue(
                 )
               );
               const hash = generatetHash(userMessage.url);
-              // const shortenUrl= Url.create({
-              //   longUrl:userMessage.url,
-              //   user: new mongoose.Types.ObjectId(userMessage.userId),
-              //   shortUrl:hash,
-              //   topic:data.topic,
-              //   applicationContext:data.applicationContext,
-              // })
+              const shortenUrl= Url.create({
+                longUrl:userMessage.url,
+                user: new mongoose.Types.ObjectId(userMessage.userId),
+                shortUrl:hash,
+                topic:data.topic,
+                applicationContext:data.applicationContext,
+              })
               redis.set(hash,userMessage.url)
               natsConnection.publish(
                 "url-status",

@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from "ws";
-import express,{Request} from "express";
+import express, { Request } from "express";
 import http from "http";
 import { message } from "types";
 import userVerify from "./userAuth.js";
@@ -20,14 +20,14 @@ const clientTimers = new Map<WebSocket, NodeJS.Timeout>();
 const users = new Map<string, WebSocket>();
 const socketMap = new Map<WebSocket, string>();
 try {
-  wss.on("headers", (headers, req:Request) => {
+  wss.on("headers", (headers, req: Request) => {
     headers.push(
       `Access-Control-Allow-Origin: ${process.env.NEXT_PUBLIC_FRONTEND_URL}`
     );
     headers.push("Access-Control-Allow-Credentials: true");
   });
 
-  wss.on("connection", async function connection(ws:WebSocket,req:Request) {
+  wss.on("connection", async function connection(ws: WebSocket, req: Request) {
     setupHeartbeat(ws);
     ws.on("message", async (message: string) => {
       const parsedMessage: message = JSON.parse(message);
@@ -38,29 +38,15 @@ try {
       // authenticate the user
       if (parsedMessage?.token) {
         try {
-          const decoded = userVerify(parsedMessage?.token || req.cookies?.token ||``);
+          const decoded = userVerify(
+            parsedMessage?.token || req.cookies?.token || ``
+          );
           // check whether use already added or not
           const user = users.get(`${parsedMessage?.userId}`);
           if (!user) {
             users.set(parsedMessage.userId!, ws);
             ws.send(JSON.stringify({ message: "connected.." }));
             socketMap.set(ws, parsedMessage.userId!);
-          }
-
-          // push user device data to queue
-          try {
-            if (parsedMessage?.isRedirected) {
-              console.log("redirected user");
-              await publishToQueue(
-                JSON.stringify(parsedMessage),
-                "topic",
-                "user-metrics",
-                2,
-                "data.collector"
-              );
-            }
-          } catch (error: any) {
-            console.log("publisher error " + error);
           }
         } catch (error: any) {
           ws.close();
