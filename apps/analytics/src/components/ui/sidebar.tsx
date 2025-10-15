@@ -1,0 +1,97 @@
+"use client";
+import { motion } from "framer-motion";
+import {
+  TrendingUp,
+  Zap,
+  RefreshCw,
+  BarChart3,
+  Link
+} from "lucide-react";
+import { useState } from "react";
+
+interface SidebarProps {
+  onFilterSelect?: (topic: string) => void;
+}
+
+const Sidebar = ({ onFilterSelect }: SidebarProps) => {
+  const [active, setActive] = useState("overall");
+
+  const menuItems = [
+    {
+      label: "Overall Analytics",
+      value: "overall",
+      icon: <BarChart3 size={22} />,
+    },
+    {
+      label: "Acquisition",
+      value: "acquisition",
+      icon: <TrendingUp size={22} />,
+    },
+    {
+      label: "Activation",
+      value: "activation",
+      icon: <Zap size={22} />,
+    },
+    {
+      label: "Retention",
+      value: "retention",
+      icon: <RefreshCw size={22} />,
+    },
+    {
+        label:"Urls",
+        value:"urls",
+        icon:<Link size={22}/>
+    }
+  ];
+
+  const handleClick = (value: string) => {
+    setActive(value);
+    if (onFilterSelect) onFilterSelect(value);
+  };
+
+  return (
+    <motion.aside
+      initial={{ x: -30, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      className=" w-full h-screen bg-white shadow-md border-r border-gray-100  flex flex-col"
+    >
+      {/* Header */}
+      <div className="mb-6  ">
+
+        <p className="text-sm  text-gray-500">Filter by Topic</p>
+      </div>
+
+      {/* Menu */}
+      <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300">
+        {menuItems.map((item) => {
+          const isActive = item.value === active;
+          return (
+            <motion.button
+              key={item.value}
+              whileHover={{ x: 1 }}
+              onClick={() => handleClick(item.value)}
+              className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-medium transition-all
+                ${
+                  isActive
+                    ? "bg-[hsl(30,90%,90%)] text-[hsl(30,90%,45%)]"
+                    : "text-gray-700 hover:bg-[hsl(30,90%,95%)]"
+                }`}
+            >
+              <span
+                className={`${
+                  isActive ? "text-[hsl(30,90%,50%)]" : "text-[hsl(30,90%,60%)]"
+                }`}
+              >
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
+            </motion.button>
+          );
+        })}
+      </div>
+
+    </motion.aside>
+  );
+};
+
+export default Sidebar;
