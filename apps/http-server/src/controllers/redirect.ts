@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { Url, connectDB } from "mongodb";
 import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
 import redis from "redisclient";
+const topic=process.env.TOPIC1!
+const exchange=process.env.EXCHANGE_NAME1!
+const routing_key=process.env.ROUTING_KEY1!
 
 interface customRequest extends Request {
   user?: {
@@ -25,15 +28,16 @@ const redirect = async (req: customRequest, res: Response) => {
     const urlId= await Url.findOne({shortUrl:hash}).select('_id')
 
     const updatedMessage = { ...message, urlId: urlId,ip:ip };
+    console.log(updatedMessage)
     // push user device data to queue
     try {
       if (message) {
         await publishToQueue(
           JSON.stringify(updatedMessage),
-          "topic",
-          "user-metrics",
+          topic,
+          exchange,
           2,
-          "data.collector"
+         routing_key
         );
       }
     } catch (error: any) {

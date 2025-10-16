@@ -21,6 +21,7 @@ RUN pnpm --filter types run build
 RUN pnpm --filter mongodb run build
 RUN pnpm --filter nats-server run build
 RUN pnpm --filter rabbitmq run build
+RUN pnpm --filter redisclient run build
 
 # FROM BASE AS BUILDER
 # WORKDIR /app

@@ -1,0 +1,341 @@
+on:
+  # pull_request:
+  #   branches: [ "dev" ]
+  # push:
+  #   branches: [ "dev" ]
+
+jobs:
+  build:
+    name: Build and Push
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: build and push url-web image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./apps/web/dockerfile.staging
+        push: true
+        tags: |
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-web:latest 
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-web:staging
+
+    - name: build and push url-analytics image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./apps/analytics/dockerfile.staging
+        push: true
+        tags: |
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-analytics:latest 
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-analytics:staging   
+
+    - name: build and push data-collector image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./apps/data-collector/dockerfile.staging
+        push: true
+        tags: |
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-data-collector:latest 
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-data-collector:staging
+
+    - name: build and push http-server image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./apps/http-server/dockerfile.staging
+        push: true
+        tags: |
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-http-server:latest 
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-http-server:staging
+
+    - name: build and push shorturl-converter image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./apps/shorturl-converter/dockerfile.staging
+        push: true
+        tags: |
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-shorturl-converter:latest 
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-shorturl-converter:staging  
+
+    - name: build and push ws-server image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./apps/ws-server/dockerfile.staging
+        push: true
+        tags: |
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-ws-server:latest 
+          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-ws-server:staging
+
+  Deploy:
+    needs: build
+    runs-on: ubuntu-latest        
+    environment: staging
+    steps:
+      - uses: actions/checkout@v3   
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          kubectl version --client
+
+      - name: Install kubeseal
+        run: |
+          KUBESEAL_VERSION="v0.32.2"
+          curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/${KUBESEAL_VERSION}/kubeseal-0.32.2-linux-amd64.tar.gz"
+          tar -xvzf kubeseal-0.32.2-linux-amd64.tar.gz kubeseal
+          sudo install -m 755 kubeseal /usr/local/bin/kubeseal
+
+      - name: Checkout GitOps repo
+        run: |
+          export GITOPS_BRANCH=${{secrets.GITOPS_BRANCH}}
+          export GITOPS_REPO=${{secrets.GITOPS_REPO}}
+          export TOKEN=${{secrets.TOKEN}}
+          export DOCKER_USERNAME=${{secrets.DOCKER_USERNAME}}
+          mkdir -p ~/gitops
+
+          sudo apt-get update && sudo apt-get install -y git yq
+          git clone --branch $GITOPS_BRANCH https://$TOKEN@github.com/$DOCKER_USERNAME/$GITOPS_REPO.git  ~/gitops
+
+      - name: Update YAML images
+        run: |
+          cd ~/gitops/services
+          export GITOPS_BRANCH=${{secrets.GITOPS_BRANCH}}
+          export DOCKER_USERNAME=${{secrets.DOCKER_USERNAME}}
+          git checkout $GITOPS_BRANCH
+
+
+          declare -A services=(
+          ["url-web"]="url-web"
+          ["url-analytics"]="url-analytics"
+          ["url-data-collector"]="url-data-collector"
+          ["url-http-server"]="url-http-server"
+          ["url-ws-server"]="url-ws-server"
+          ["url-shorturl-converter"]="url-shorturl-converter" )
+
+          for dir in "${!services[@]}"; do
+          cd "$dir"
+          key=${services[$dir]}
+          yq -i -y "(.services[].image) = \"${DOCKER_USERNAME}/${key}:${GITHUB_SHA}\"" values.staging.yml
+          cd ..
+          done
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{secrets.ACTION_ROLE}}
+          aws-region: ${{secrets.AWS_REGION}}
+
+      - name: Setup Kubeconfig
+        run: |
+          export KUBERNETES_CLUSTER_REGION=${{secrets.KUBERNETES_CLUSTER_REGION}}
+          export KUBERNETES_CLUSTER_NAME=${{secrets.KUBERNETES_CLUSTER_NAME}}
+          aws eks update-kubeconfig --region $KUBERNETES_CLUSTER_REGION --name $KUBERNETES_CLUSTER_NAME
+          kubectl get nodes
+    
+
+      - name: Setup  Seal secret --controller-name
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo  update
+
+          if helm status sealed-secrets -n sealed-secrets >/dev/null 2>&1; then
+          echo "Sealed Secrets already installed. Upgrading..."
+          helm upgrade sealed-secrets bitnami/sealed-secrets -n sealed-secrets
+          else
+          echo "Installing Sealed Secrets..."
+          helm install sealed-secrets bitnami/sealed-secrets --namespace sealed-secrets --create-namespace
+          fi
+
+      - name: create scripts/create-secrets.sh
+        run: |
+          mkdir -p scripts
+          touch scripts/create-secrets.sh
+          cat <<'EOF'> scripts/create-secrets.sh
+          set -e
+          cd ~/gitops
+
+          kubeseal --fetch-cert \
+          --controller-name sealed-secrets \
+          --controller-namespace sealed-secrets \
+          > pub-sealed-secrets.pem
+
+          kubectl get namespace shortner >/dev/null 2>&1 || kubectl create namespace shortner
+
+          kubectl create secret docker-registry docker-sealed-secret \
+          --docker-server=https://index.docker.io/v1/ \
+          --docker-username="$DOCKER_USERNAME" \
+          --docker-password="$DOCKER_PASSWORD" \
+          --docker-email="$email" \
+          --namespace=feedback-services \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
+          > secrets/docker-sealed-secret.yaml
+
+
+          cat <<'EOFON' > frontend.env
+          NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+          NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL
+          NEXT_PUBLIC_WS_SERVER_URL=$NEXT_PUBLIC_WS_SERVER_URL
+          EOFON
+
+          kubectl create secret generic frontend-sealed-secret \
+          --from-literal=combined_env="$(cat frontend.env)" \
+          --namespace=feedback-services \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
+          > secrets/frontend-sealed-secret.yaml
+
+          cat <<'EOFAN' > analytics-frontend.env
+          NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+          NEXT_PUBLIC_ANALYTICS_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL
+          EOFAN
+
+          kubectl create secret generic analytics-frontend-sealed-secret \
+          --from-literal=combined_env="$(cat analytics-frontend.env)" \
+          --namespace=feedback-services \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
+          > secrets/analytics-frontend-sealed-secret.yaml
+
+          cat <<'EOFBACK' >  http.env
+          GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+          GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+          GOOGLE_REDIRECT_URI=$GOOGLE_REDIRECT_URI
+          NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_API_URL
+          secret_key=$SECRET_KEY
+          access_key=$ACCESS_KEY
+
+          TOPIC1=$TOPIC1
+          EXCHANGE_NAME1=$EXCHANGE_NAME1
+          ROUTING_KEY1=$ROUTING_KEY1
+
+          TOPIC2=$TOPIC2
+          EXCHANGE_NAME2=$EXCHANGE_NAME2
+          ROUTING_KEY2=$QUEUE_NAME2
+          EOFBACK
+
+          kubectl create secret generic http-server-sealed-secret \
+          --from-literal=combined_env="$(cat http.env)" \
+          --namespace=shortner \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
+          >  secrets/http-server-sealed-secret.yaml
+
+
+          cat <<'EOFKAF' > data-collector.env
+          TOPIC1=TOPIC1
+          EXCHANGE_NAME1=EXCHANGE_NAME1
+          BINDING_KEY1=BINDING_KEY1
+          QUEUE_NAME1=$QUEUE_NAME1
+          EOFKAF
+
+          kubectl create secret generic data-collector-sealed-secret \
+          --from-literal=combined_env="$(cat data-collector.env)" \
+          --namespace=shortner \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
+          >  secrets/data-collector-sealed-secret.yaml
+
+
+          cat <<EOFCON> shorturl-converter.env
+          api_key=$API_KEY
+          groq_api_key=$GROQ_API_KEY
+          TOPIC2=$TOPIC2
+          EXCHANGE_NAME2=$EXCHANGE_NAME2
+          BINDING_KEY2=$BINDING_KEY2
+          QUEUE_NAME2=$QUEUE_NAME2
+          EOFCON
+
+          kubectl create secret generic shorturl-converter-sealed-secret \
+          --from-literal=combined_env="$(cat shorturl-converter.env)" \
+          --namespace=shortner \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
+          >  secrets/shorturl-converter-sealed-secret.yaml
+
+
+          cat <<'EOFWS' > ws.env
+          NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL
+          secret_key=$SECRET_KEY
+          
+          EOFWS
+
+          kubectl create secret generic ws-sealed-secret \
+          --from-literal=combined_env="$(cat ws.env)" \
+          --namespace=shortner \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
+          >  secrets/ws-sealed-secret.yaml
+          EOF
+          chmod +x scripts/create-secrets.sh
+
+      - name: Create and Seal Secrets
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          NEXT_PUBLIC_FRONTEND_API_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_API_URL }}
+          NEXT_PUBLIC_WS_SERVER: ${{ secrets.NEXT_PUBLIC_WS_SERVER }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
+          api_key: ${{ secrets.API_KEY }}
+          groq_api_key: ${{ secrets.GROQ_API_KEY }}
+          access_key: ${{ secrets.ACCESS_KEY }}
+          secret_key: ${{ secrets.SECRET_KEY }}
+          email: ${{ secrets.USER_EMAIL}}
+
+          TOPIC1: ${{secrets.TOPIC1}}
+          EXCHANGE_NAME1: ${{secrets.EXCHANGE_NAME1}}
+          BINDING_KEY1: ${{secrets.BINDING_KEY1}}
+          ROUTING_KEY1: ${{secrets.ROUTING_KEY1}}
+          QUEUE_NAME1: ${{secrets.QUEUE_NAME1}}
+
+          TOPIC2: ${{secrets.TOPIC2}}
+          EXCHANGE_NAME2: ${{secrets.EXCHANGE_NAME2}}
+          BINDING_KEY2: ${{secrets.BINDING_KEY2}}
+          ROUTING_KEY2: ${{secrets.ROUTING_KEY2}}
+          QUEUE_NAME2: ${{secrets.QUEUE_NAME2}}
+
+        run: |
+          source scripts/create-secrets.sh
+          cd ~/gitops
+          rm -f pub-sealed-secrets.pem
+          rm -f http.env frontend.env ws.env shorturl-converter.env  data-collector.env
+
+
+      - name: Commit and Push Changes
+        run: |
+          export GITOPS_BRANCH=${{secrets.GITOPS_BRANCH}}
+          export GITOPS_REPO=${{secrets.GITOPS_REPO}}
+          export TOKEN=${{secrets.TOKEN}}
+          export DOCKER_USERNAME=${{secrets.DOCKER_USERNAME}}
+          cd ~/gitops
+          git checkout $GITOPS_BRANCH
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@example.com"
+          git add -u
+          git add --renormalize .
+          git add .
+          if git diff-index --quiet HEAD --; then
+          echo "No changes to commit"
+          else
+          git commit -m "Update images to SHA ${GITHUB_SHA}"
+
+          git push https://x-access-token:$TOKEN@github.com/$DOCKER_USERNAME/$GITOPS_REPO.git $GITOPS_BRANCH
+
+          fi

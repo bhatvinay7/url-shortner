@@ -1,0 +1,46 @@
+FROM node:latest AS base
+
+ENV PATH=/app/node_modules/.bin:$PATH
+RUN npm install -g pnpm turbo
+
+FROM base AS prunner
+ARG APP=analytics
+WORKDIR /app
+COPY . .
+RUN turbo prune --scope=${APP} --docker
+
+FROM base AS installer
+ARG APP=analytics
+WORKDIR /app
+COPY --from=prunner /app/out/json/ .
+COPY --from=prunner /app/out/full/ .
+COPY package.json  ./
+COPY apps/${APP}/package.json ./apps/${APP}/
+COPY pnpm-lock.yaml ./
+COPY  pnpm-workspace.yaml ./
+COPY .npmrc ./
+COPY packages/ ./packages/
+RUN pnpm install --filter ${APP}
+RUN pnpm install --filter ${APP}
+RUN pnpm --filter types run build
+RUN pnpm --filter mongodb run build
+RUN pnpm --filter nats-server run build
+RUN pnpm --filter rabbitmq run build
+
+FROM base AS  builder
+ARG APP=analytics
+WORKDIR /app
+COPY --from=installer /app ./
+COPY --from=installer /app/node_modules ./node_modules
+WORKDIR /app/apps/${APP}
+RUN pnpm run build
+FROM base AS runner
+ARG APP=analytics
+WORKDIR /app
+COPY --from=builder /app/apps/${APP}/.next/standalone ./
+COPY --from=builder /app/apps/${APP}/.next/static ./apps/${APP}/.next/static
+COPY --from=builder /app/apps/${APP}/public ./apps/${APP}/public
+
+EXPOSE 3000
+WORKDIR /app/apps/${APP}
+CMD ["node", "server.js"]

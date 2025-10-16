@@ -3,7 +3,6 @@ import express, { Request } from "express";
 import http from "http";
 import { message } from "types";
 import userVerify from "./userAuth.js";
-import { publishToQueue } from "./rabbitmq-ptoducer.js";
 import { channel, notifyChannel, sc } from "nats-server";
 import cookieParser from "cookie-parser";
 const heartbeatInterval = 30 * 1000;

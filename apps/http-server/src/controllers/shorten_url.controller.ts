@@ -3,6 +3,11 @@ import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
 import { userCredentials } from "types";
 import connection from "rabbitmq";
 import redis from "redisclient";
+
+const topic=process.env.TOPIC2!
+const exchange=process.env.EXCHANGE_NAME2!
+const routing_key=process.env.ROUTING_KEY2!
+
 interface authRequest extends Request {
   user: userCredentials;
 }
@@ -33,14 +38,14 @@ const generateShortUrl = async (req: authRequest, res: Response) => {
       };
       await publishToQueue(
         JSON.stringify(userData),
-        "topic",
-        "url-metrics",
+        topic,
+        exchange,
         2,
-        "push.url"
+        routing_key
       );
       res
         .sendStatus(200)
-        .json({ message: "Your new url is being generated", url: "" });
+        .json({ message: "Your new url is being generated", url: null });
     } catch (error: any) {
       console.log(error.message);
     }

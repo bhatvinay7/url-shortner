@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import { userCredentials } from "types";
 import dotenv from 'dotenv'
 dotenv.config()
-const secret=process.env.REFRESH_TOKEN!
+const secret=process.env.secret_key!
 function verifyUser(token:string){
 try {
   const decoded = jwt.verify(token, secret);

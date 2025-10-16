@@ -14,6 +14,21 @@ services:
           cpus: "0.5"  
     restart: unless-stopped
 
+  analytics-web:
+    container_name: analytics
+    build:
+      context: .
+      dockerfile: apps/analytics/dockerfile.dev
+    # env_file:
+    #   - ./apps/analytics/.env      
+    ports:
+      - "3006:3006"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"  
+    restart: unless-stopped  
+
   data-collector:
     container_name: data-collector
     build:

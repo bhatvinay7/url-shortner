@@ -3,6 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { userCredentials } from "types";
 import redis from 'redisClient'
 import { parse } from "dotenv";
+import {RateLimitter} from "../utils/rateLimitter.js";
 const JWT_SECRET = process.env.secret_key!;
 export interface AuthRequest extends Request {
   user?:
@@ -31,26 +32,13 @@ export const authMiddleware = async (
     if(req.path.includes('/shorten_url')){
     try{
 
-      
-      const count = await redis.get(decoded.userId!);
-      if(count && parseInt(count)>5){
-        const time=await redis.get("startTime")
-        if(!time){
-          redis.set("startTime",Date.now()); // Set expiration time to 5 minutes
-          redis.expire("startTime",300); // Set expiration time to 5 minutes
-          redis.expire(decoded.userId!,300); // Set expiration time to 5 minutes
-        }
-        const startTime= await redis.get("startTime")  // updat the user with left time for next request
-        const leftTime= startTime ? Date.now()-parseInt(startTime):0
-        const waitTime= leftTime/1000
-        return res.status(429).json({message:"Too many requests, please try again later",setTime:waitTime})
-      }
-      else{
-        await redis.incr(decoded.userId!);
+      const value= await RateLimitter(decoded?.userId!) // 5 requests per 60 seconds
+      if(value){
+        return res.status(429).json({message:"Too many requests, please try again later",startTime:value})
       }
     }
     catch(error:any){
-     return res.status(429).json({message:"Too many requests, please try again later"})
+     return res.status(400).json({message:"some user credentials are missing"})
     }
     } 
     const user = {
