@@ -1,6 +1,7 @@
 # Ignore common build and development files
 Dockerfile
 .dockerignore
+.github
 .env
 .git
 .gitignore

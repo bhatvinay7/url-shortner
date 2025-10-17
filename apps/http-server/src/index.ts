@@ -11,18 +11,18 @@ import { authMiddleware } from "./utils/middleware.js";
 import cluster from "cluster";
 import os from "os"; // To get the number of CPU cores
 
-if (cluster.isPrimary) {
-  console.log(`Primary ${process.pid} is running`);
-  const numCPUs = os.cpus().length;
+// if (cluster.isPrimary) {
+//   console.log(`Primary ${process.pid} is running`);
+//   const numCPUs = os.cpus().length;
 
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-  cluster.on("exit", (worker: any, code: any, signal: any) => {
-    console.log(`Worker ${worker.process.pid} died. Restarting...`);
-    cluster.fork();
-  });
-} else {
+//   for (let i = 0; i < numCPUs; i++) {
+//     cluster.fork();
+//   }
+//   cluster.on("exit", (worker: any, code: any, signal: any) => {
+//     console.log(`Worker ${worker.process.pid} died. Restarting...`);
+//     cluster.fork();
+//   });
+// } else {
   const app = express();
   const PORT = process.env.PORT || 3001;
 
@@ -46,4 +46,4 @@ if (cluster.isPrimary) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
-}
+// }

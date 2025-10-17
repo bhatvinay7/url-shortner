@@ -86,7 +86,7 @@ export function useWebSocket({
     };
 
     ws.onerror = (err) => {
-      console.error("WebSocket error", err);
+      console?.error("WebSocket error", err);
       onError?.(err);
       ws.close();
     };

@@ -1,8 +1,8 @@
 on:
-  # pull_request:
-  #   branches: [ "dev" ]
-  # push:
-  #   branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+  push:
+    branches: [ "dev" ]
 
 jobs:
   build:
@@ -132,19 +132,18 @@ jobs:
           cd ..
           done
 
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Azure login (OIDC)
+        uses: azure/login@v1
         with:
-          role-to-assume: ${{secrets.ACTION_ROLE}}
-          aws-region: ${{secrets.AWS_REGION}}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Setup Kubeconfig
-        run: |
-          export KUBERNETES_CLUSTER_REGION=${{secrets.KUBERNETES_CLUSTER_REGION}}
-          export KUBERNETES_CLUSTER_NAME=${{secrets.KUBERNETES_CLUSTER_NAME}}
-          aws eks update-kubeconfig --region $KUBERNETES_CLUSTER_REGION --name $KUBERNETES_CLUSTER_NAME
-          kubectl get nodes
-    
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group myResourceGroup --name myAksCluster --overwrite-existing
+
+      - name: Verify access
+        run: kubectl get nodes
 
       - name: Setup  Seal secret --controller-name
         run: |

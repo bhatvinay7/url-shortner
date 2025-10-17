@@ -89,7 +89,7 @@ const overallAnalytics = async (req: customRequest, res: Response) => {
     ]);
     res.status(200).json({ message: "data fetched", data: urlData[0] });
   } catch (error: any) {
-    res
+    return res
       .status(500)
       .json({ message: " url is not found", error: error.message });
   }

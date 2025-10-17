@@ -1,5 +1,6 @@
 export interface userResponse{
     message:string
+    url:string|null
 }
 export interface userSigninData{
     email:string,

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { userCredentials } from "types";
-import redis from 'redisClient'
-import { parse } from "dotenv";
+import dotenv from 'dotenv'
+dotenv.config()
 import {RateLimitter} from "../utils/rateLimitter.js";
 const JWT_SECRET = process.env.secret_key!;
 export interface AuthRequest extends Request {
@@ -33,11 +33,13 @@ export const authMiddleware = async (
     try{
 
       const value= await RateLimitter(decoded?.userId!) // 5 requests per 60 seconds
+      console.log(value)
       if(value){
         return res.status(429).json({message:"Too many requests, please try again later",startTime:value})
       }
     }
     catch(error:any){
+      console.log(error)
      return res.status(400).json({message:"some user credentials are missing"})
     }
     } 

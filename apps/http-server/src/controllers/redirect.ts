@@ -21,7 +21,7 @@ const redirect = async (req: customRequest, res: Response) => {
     const hash = decodeURIComponent(req?.params?.hash! ?? "");
     const forwarded = req.headers['x-forwarded-for'];
     const ip = forwarded ? (forwarded as string).split(',')?.[0] : req.socket.remoteAddress
-    const message = req?.body?.data
+    const message = req?.body
     if(!hash || !message){
       return res.status(400).json({message:"Invalid url or data is missing"})
     }
@@ -57,7 +57,7 @@ const redirect = async (req: customRequest, res: Response) => {
     const link = await Url.findOne({ shortUrl: hash });
     res.redirect(`${link?.longUrl}`);
   } catch (error: any) {
-    res
+    return res
       .status(500)
       .json({ message: " url is not found", error: error.message });
   }

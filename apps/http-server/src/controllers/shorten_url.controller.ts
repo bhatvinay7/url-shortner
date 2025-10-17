@@ -14,20 +14,21 @@ interface authRequest extends Request {
 import { Url } from "mongodb";
 const generateShortUrl = async (req: authRequest, res: Response) => {
   try {
+
     const url = req?.body?.url;
     if (!url) {
       return res.status(400).json({ message: "url is not provided" });
     }
     const userLink = await redis.get(url);
     if (userLink) {
-      res
-        .sendStatus(200)
+    return  res
+        .status(200)
         .json({ message: "Your new url is generated", url: userLink });
     }
     const link = await Url.findOne({ longUrl: url.trim() });
     if (link) {
-      res
-        .sendStatus(200)
+    return  res
+        .status(200)
         .json({ message: "Your new url is generated", url: link?.shortUrl });
     }
     try {
@@ -43,14 +44,14 @@ const generateShortUrl = async (req: authRequest, res: Response) => {
         2,
         routing_key
       );
-      res
-        .sendStatus(200)
-        .json({ message: "Your new url is being generated", url: null });
+      return res
+        .status(200)
+        .json({ message: "Your request is accepted", url: null });
     } catch (error: any) {
       console.log(error.message);
     }
   } catch (error: any) {
-    res.sendStatus(500).json({ message: error.message });
+    return res.status(500).json({ message: error });
   }
 };
 

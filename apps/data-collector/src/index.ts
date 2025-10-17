@@ -12,18 +12,18 @@ const exchange = process.env.EXCHANGE_NAME1!;
 const binding_key = process.env.BINDING_KEY1!;
 const queueName = process.env.QUEUE_NAME1!;
 
-if (cluster.isPrimary) {
-  console.log(`Primary ${process.pid} is running`);
-  const numCPUs = os.cpus().length;
+// if (cluster.isPrimary) {
+//   console.log(`Primary ${process.pid} is running`);
+//   const numCPUs = os.cpus().length;
 
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-  cluster.on("exit", (worker: any, code: any, signal: any) => {
-    console.log(`Worker ${worker.process.pid} died. Restarting...`);
-    cluster.fork();
-  });
-} else {
+//   for (let i = 0; i < numCPUs; i++) {
+//     cluster.fork();
+//   }
+//   cluster.on("exit", (worker: any, code: any, signal: any) => {
+//     console.log(`Worker ${worker.process.pid} died. Restarting...`);
+//     cluster.fork();
+//   });
+// } else {
   try {
     (async () => {
       await consumeFromQueue(topic, exchange, binding_key, queueName);
@@ -35,4 +35,4 @@ if (cluster.isPrimary) {
   app.listen(port, "0.0.0.0", () => {
     console.log("Consumer collector running on port ${port}");
   });
-}
+// }

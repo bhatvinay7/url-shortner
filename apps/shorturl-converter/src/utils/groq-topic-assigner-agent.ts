@@ -20,7 +20,7 @@ async function topicAssignerAgent(topics: any, data: any) {
 
         Return a JSON object with the following format:
         {
-          "topic": "<topic name>",
+          "topic": "<add the any of these [acquisition,activation,retention] category based on the given data.do not add any other explantion for topic field> ",
           "applicationContext": "<one-line explanation of app context>"
         }`,
       },

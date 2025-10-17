@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import getUserdata from "../utils/getUserdata.js";
 import { User, connectDB } from "mongodb"; 
-
 const SECRET_KEY = process.env.secret_key!;
 const ACCESS_KEY= process.env.access_key!
 const callbackHandler = async (req: Request, res: Response) => {
@@ -61,7 +60,7 @@ const callbackHandler = async (req: Request, res: Response) => {
     res.redirect(`${process.env.NEXT_PUBLIC_FRONTEND_URL}`);
   } catch (error: any) {
     console.error("OAuth Error:", error.message);
-    res.status(500).json({ message: "OAuth error", error: error.message });
+    return res.status(500).json({ message: "OAuth error", error: error.message });
   }
 };
 

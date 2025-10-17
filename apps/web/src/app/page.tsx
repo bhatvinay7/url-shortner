@@ -17,7 +17,7 @@ import {
 
 import { useWebSocket } from "./hooks/useWesocketConnection";
 import { message } from 'types';
-import { Code } from '../../../../packages/ui/src/code';
+
 import RateLimitError from "../components/ui/ratelimit"; 
 interface progress{
     messages:string[]
@@ -39,8 +39,7 @@ export default function Home() {
   const [isRarelimited,setIsRatelimited]=useState(false)
   const [time,setTime]=useState(0)
 
-
-  useEffect(()=>{
+useEffect(()=>{
     dispatch(getUser_details() as any)
     
   },[dispatch])
@@ -92,12 +91,16 @@ function onMessage(data:any){
      setUrl("")
      setProgress({messages:[]})
      const response=await get_shorten_url(url!)
+     if(response?.url){
+      setShortUrl(response?.url)
+     }
      setProgress((priv)=>({messages:priv?.messages  ? [...priv?.messages ,response?.message]:[]}))
     }
     catch(error:any){
-    if(error.reponse.Code==403){
+    if(error?.response?.status==429){
     setIsRatelimited(true)
     setTime(error?.response?.data?.setTime)
+    
     setIsRatelimited(true)
       }
     }
@@ -152,20 +155,20 @@ function onMessage(data:any){
               Shorten URL
             </button>
           </form>
-         <div className="h-auto flex flex-col gap-1 space-y-1 p-1.5">
+         <div className="h-auto flex flex-col gap-2 space-y-1 p-1.5">
 
              {isLoading ?
-             <div className=" w-fit p-2 mt-1 rouded-xl px-1.5 py-1 rounded-xl text-base bg-[#dbdbe0]">
+             <div className=" w-fit p-2 mt-1 rouded-xl px-1.5 py-1 rounded-xl text-base ">
               <Loader  className="animate-spin mx-auto  absolute  w-5 h-5 text-[hsl(237,62%,63%)]"/></div>:<></> 
             }
 
           {progress?.messages?.map((updates:string,index:number)=>{
             return(
-              <div key={index} className=" w-fit px-2 py-1 space-x-2 h-auto  text-[hsl(210,5%,15%)] bg-[#dbdbe0] rounded-sm border border-white/15 ">
-                <div className=" flex items-center min-h-4 space-x-2 ">
+              <div key={index} className={` w-full  px-2 flex justify-between text-base py-2 space-x-2 h-auto  text-[hsl(210,5%,15%)] ${updates ?"bg-[#dbdbe0]":"bg-transparent"} rounded-sm border border-white/15 `}>
+                <div className=" flex items-center min-h-4 space-x-2 "  >
                 {updates}
 
-               { (updates.includes("processing") || updates.includes("generating")) && !shortUrl ? <Loader  className="animate-spin  w-5 h-5 text-[hsl(237,62%,63%)]"/>:<CircleCheck className=" w-6 h-6 text-[hsl(156,90%,45%)]"/>} 
+               { (updates?.includes("processing") || updates?.includes("generating")) && !shortUrl ? <Loader  className="animate-spin  w-5 h-5 text-[hsl(237,62%,63%)]"/>:<CircleCheck className=" w-6 h-6 text-[hsl(156,90%,45%)]"/>} 
                 </div>  
                </div>
             )

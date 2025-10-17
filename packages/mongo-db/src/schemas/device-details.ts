@@ -1,14 +1,14 @@
 import { Schema } from 'mongoose';
-enum permissions {
-  granted= 1,
-  denied = 0,
+export enum permissions {
+  granted= "granted",
+  denied = "denied",
 }
-enum deviceType{
+export enum deviceType{
   MOBILE = "mobile",
   DESKTOP = "desktop",
   TABLET = "tablet",
 }
-enum OSType{
+export enum OSType{
   WINDOWS="Windows",
   MACOS="MacOS",
   ANDROID="Android",
@@ -17,7 +17,7 @@ enum OSType{
 }
 
 export const deviceSchema = new Schema({
-  user_id: { type: Schema.Types.ObjectId},  
+  userId: { type: Schema.Types.ObjectId},  
   osType: { type: String,enum:Object.values(OSType),required: true },
   osName: {type:String,required: true},
   urlId:{ type: Schema.Types.ObjectId,
@@ -37,7 +37,7 @@ export const deviceSchema = new Schema({
     },
     coordinates: {
       type: [Number],
-      required: true
+      required: false
     }
   },
   userIp:{type:String},

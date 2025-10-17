@@ -1,9 +1,9 @@
 function getOSFromUserAgent(ua: string): string {
-  if (/windows/i.test(ua)) return "Windows";
-  if (/macintosh|mac os x/i.test(ua)) return "MacOS";
-  if (/android/i.test(ua)) return "Android";
-  if (/iphone|ipad|ipod/i.test(ua)) return "iOS";
-  if (/linux/i.test(ua)) return "Linux";
+  if (/windows/i.test(ua)) return "WINDOWS";
+  if (/macintosh|mac os x/i.test(ua)) return "MACOS";
+  if (/android/i.test(ua)) return "ANDROID";
+  if (/iphone|ipad|ipod/i.test(ua)) return "IOS";
+  if (/linux/i.test(ua)) return "LINUX";
   return "Unknown";
 }
 
