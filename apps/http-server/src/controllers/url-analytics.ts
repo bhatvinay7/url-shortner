@@ -49,7 +49,7 @@ const urlAnalytics = async (req: customRequest, res: Response) => {
                 },
               },
             },
-            { $sort: { createdAt: -1 } }, // descending
+            { $sort: { createdAt: -1 } },
             {
               $group: {
                 _id: {

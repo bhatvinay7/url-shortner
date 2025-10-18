@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FcGoogle } from "react-icons/fc";
 import { userSignin } from "../../utils/api/user";
 import NotificationBar from "../../components/ui/notification";
-import processdata from "../../utils/getdata";
 enum state {
   SUCCESS = "success",
   FAILURE = "failure",
@@ -34,21 +33,6 @@ const SignIn = () => {
     resolver: zodResolver(signInSchema),
   });
 
-  useEffect(() => {
-    async function fetch() {
-      const collectData = await processdata();
-      const data = await collectData();
-      return data;
-    }
-    try {
-      (async () => {
-        const collectedData = await fetch();
-        console.log(collectedData);
-      })();
-    } catch (error: any) {
-      console.log("not able to process data");
-    }
-  }, []);
 
   const onSubmit = async (data: SignInFormData) => {
     try {

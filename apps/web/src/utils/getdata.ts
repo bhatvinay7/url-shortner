@@ -1,3 +1,4 @@
+import os from "os";
 import { ClientInfo } from "types";
 import getGeoPosition from "./getGeoposition";
 import getOSType from "./getOsInfo";
@@ -14,28 +15,23 @@ export default function processdata() {
       deviceType = "tablet";
 
     const geolocation = (await getGeoPosition()) ?? null;
-
-    const osType=(await getOSType()) ?? ""
+    
+    const osType=os.type
+    const deviceName=os.hostname 
+    const osName=(await getOSType()) ?? ""
     //  query Permissions API for geolocation permission state
-    let geolocationPermission: string | undefined;
-    try {
-      //  navigator.permission supported by some browsers
-      const perm = await (navigator as any).permissions?.query?.({
-        name: "geolocation",
-      });
-      geolocationPermission = perm?.state;
-    } catch {
-      geolocationPermission = undefined;
-    }
+    
 
     const payload: ClientInfo = {
       osType,
+      osName,
+      deviceName,
       deviceType,
-      timezone,
+      timeZone,
       geolocation,
-      permissions: { geolocation: geolocationPermission },
+      permissions: { geolocation: "" },
       timestamp: new Date().toISOString(),
-      ip: "",
+      userIp: "",
       userId:"",
     };
 

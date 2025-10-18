@@ -9,6 +9,7 @@ import Footer from  '../components/ui/footer'
 import {get_shorten_url} from '../utils/api/generate_short_url'
 import Copy from '../components/ui/copy'
 import {Loader,CircleCheck} from  'lucide-react'
+
 import Link from "next/link";
 import {
   getUser_details,
@@ -99,13 +100,12 @@ function onMessage(data:any){
     catch(error:any){
     if(error?.response?.status==429){
     setIsRatelimited(true)
-    setTime(error?.response?.data?.setTime)
-    
+    setTime(error?.response?.data?.startTime)  
     setIsRatelimited(true)
       }
     }
     finally{
-       setIsLoading(false) 
+       setIsLoading(false)
     }
    
   };
@@ -117,9 +117,11 @@ function onMessage(data:any){
       <PopupUp/>
     </div>
          }
+
       <RateLimitError
        time={time}
        isRatelimited={isRarelimited}
+       setValue={setIsRatelimited}
        
       />   
       <header className="text-center mb-8">
@@ -164,12 +166,12 @@ function onMessage(data:any){
 
           {progress?.messages?.map((updates:string,index:number)=>{
             return(
-              <div key={index} className={` w-full  px-2 flex justify-between text-base py-2 space-x-2 h-auto  text-[hsl(210,5%,15%)] ${updates ?"bg-[#dbdbe0]":"bg-transparent"} rounded-sm border border-white/15 `}>
+              <div key={index} className={` w-fit  px-2 flex  justify-between  text-base py-2 space-x-2 h-auto  text-[hsl(210,5%,15%)] ${updates ?"bg-[#dbdbe0]":"bg-transparent"} rounded-sm border border-white/15 `}>
                 <div className=" flex items-center min-h-4 space-x-2 "  >
                 {updates}
+                </div>  
 
                { (updates?.includes("processing") || updates?.includes("generating")) && !shortUrl ? <Loader  className="animate-spin  w-5 h-5 text-[hsl(237,62%,63%)]"/>:<CircleCheck className=" w-6 h-6 text-[hsl(156,90%,45%)]"/>} 
-                </div>  
                </div>
             )
           })}

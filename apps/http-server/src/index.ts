@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routers/googlerouteHandler.js";
 import urlRouter from "./routers/shortenUrl.Router.js";
 import userCred from "./routers/userCredentialsRouter.js";
-import redirectRouter from "./routers/redirect.Router.js";
+import collect_User_DataRouter from "./routers/collect.Router.js";
 import analyticsRouter from "./routers/analytics.Router.js";
 import { authMiddleware } from "./utils/middleware.js";
 import cluster from "cluster";
@@ -41,7 +41,7 @@ import os from "os"; // To get the number of CPU cores
   app.use(authMiddleware);
   app.use("/user", userCred);
   app.use("/api", urlRouter);
-  app.use("/api", redirectRouter);
+  app.use("/api",collect_User_DataRouter);
   app.use("/api/analytics", analyticsRouter);
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

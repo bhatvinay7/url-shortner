@@ -7,5 +7,5 @@ export  async function publishToQueue(message:string,topic:string,exhangeName:st
   })
   
   await pub.send(
-    {exchange: `${exhangeName}`, routingKey: routingKey},JSON.stringify(message))
+    {exchange: `${exhangeName}`, routingKey: `${routingKey}`},message)
 }

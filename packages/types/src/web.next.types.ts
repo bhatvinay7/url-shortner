@@ -10,22 +10,17 @@ export interface NotificationProps {
 }
 
 export type ClientInfo = {
-
-  platform?: string | null;
   deviceType?: "mobile" | "tablet" | "desktop";
-  osType?:string |unknown;
-  timezone?: string | null;
-  geolocation?: { latitude: number; longitude: number } | null;
-  permissions?: { geolocation?: string };
-  ip?:string |null;
-  userId?:string |null;
-  timestamp:string
+  deviceName?:string;
+  osName?:string;
+  osType?:string;
+  timeZone?: string;
+  geolocation?: { latitude: number; longitude: number };
+  permission?: { geolocation?: string };
+  userIp?:string;
+  userId?:string;
 };
-
-export interface message extends ClientInfo{
-      token:string;
-      messageType:string;
-      isClickEvent?:boolean |null;
-      isRedirected?:boolean |null
-
+export type message={
+  userId:string,
+  token:string
 }

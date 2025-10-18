@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { Url, connectDB } from "mongodb";
+import dotenv from 'dotenv'
+dotenv.config()
 import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
-import redis from "redisclient";
 const topic=process.env.TOPIC1!
 const exchange=process.env.EXCHANGE_NAME1!
 const routing_key=process.env.ROUTING_KEY1!
@@ -15,7 +16,7 @@ interface customRequest extends Request {
     isVerified: boolean;
   };
 }
-const redirect = async (req: customRequest, res: Response) => {
+const collectData = async (req: customRequest, res: Response) => {
   try {
     await connectDB();
     const hash = decodeURIComponent(req?.params?.hash! ?? "");
@@ -25,13 +26,15 @@ const redirect = async (req: customRequest, res: Response) => {
     if(!hash || !message){
       return res.status(400).json({message:"Invalid url or data is missing"})
     }
-    const urlId= await Url.findOne({shortUrl:hash}).select('_id')
-
-    const updatedMessage = { ...message, urlId: urlId,ip:ip };
+    const urlData= await Url.findOne({shortUrl:hash})
+    if(!urlData){
+      return res.status(400).json({message:"alias not found"})
+    }
+    const updatedMessage = { ...message, urlId: urlData?._id,userIp:ip,userId:req?.user?.userId };
     console.log(updatedMessage)
     // push user device data to queue
     try {
-      if (message) {
+      if (updatedMessage) {
         await publishToQueue(
           JSON.stringify(updatedMessage),
           topic,
@@ -43,19 +46,7 @@ const redirect = async (req: customRequest, res: Response) => {
     } catch (error: any) {
       console.log("publisher error " + error);
     }
-
-    if (!hash) {
-      return res
-        .status(400)
-        .json({ message: "url is invalid,provide valid url" });
-    }
-    const url :string|null= await redis.get(hash);
-
-    if (url) {
-      return res.status(404).json({ message: "url is not found" });
-    }
-    const link = await Url.findOne({ shortUrl: hash });
-    res.redirect(`${link?.longUrl}`);
+    return res.status(200).json({message:"use data succesfully sent",url:urlData?.longUrl})
   } catch (error: any) {
     return res
       .status(500)
@@ -63,4 +54,4 @@ const redirect = async (req: customRequest, res: Response) => {
   }
 };
 
-export default redirect;
+export default collectData;

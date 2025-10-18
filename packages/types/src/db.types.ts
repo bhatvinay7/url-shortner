@@ -10,12 +10,13 @@ export    interface url_document extends Document {
     }
     
 export  interface device_document extends Document{
-  user_id: Types.ObjectId ;
+  userId: Types.ObjectId ;
   osType: string
   osName: string
   urlId:Types.ObjectId,
   deviceType: string 
   deviceName: string
+  permission:{geolocation:string}
   createdAt:Date | string
   geolocation:{
   type:string  

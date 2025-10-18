@@ -33,7 +33,6 @@ export const authMiddleware = async (
     try{
 
       const value= await RateLimitter(decoded?.userId!) // 5 requests per 60 seconds
-      console.log(value)
       if(value){
         return res.status(429).json({message:"Too many requests, please try again later",startTime:value})
       }

@@ -1,20 +1,28 @@
 import connection from "rabbitmq";
 import { ConsumerStatus } from "rabbitmq-client";
+import { ClientInfo } from "types";
 import {
   Devicedata,
   connectDB,
   deviceType,
   permissions,
-  OSType,
+  OSName,
 } from "mongodb";
 let sub: any = null;
+
+type Permission = {
+  geolocation: string;
+ 
+};
+
+
+
 export async function consumeFromQueue(
   topic: string,
   exhangeName: string,
   routingKey: string,
   queueName: string
 ) {
-  await connection.onConnect(120, true);
   sub = connection.createConsumer(
     {
       queue: queueName,
@@ -27,41 +35,48 @@ export async function consumeFromQueue(
     },
     async (message) => {
       try {
-        const deviceData = JSON.parse(message.body.toString("utf8"));
-        console.log(
-          "received message (user-events)",
-          message.body.toString("utf8")
-        );
-        const permissionState=deviceData.permissions.geolocation.geolocationPermission
-        const data=deviceData.osType.toUpperCase()      
-        const device_Type=deviceData.deviceType.toUpperCase()    
-                  try {
-          await connectDB();
+        if (message) {
+          const deviceData: ClientInfo = JSON.parse(
+            message.body.toString("utf8")
+          );
+          console.log(
+            "received message (user-events)",
+            message.body.toString("utf8")
+          );
+          const permissionState = (deviceData.permission as Permission).geolocation;
+          const data = (deviceData.osType  as string).toUpperCase();
+          const device_Type = (deviceData?.deviceType as string).toUpperCase();
+          try {
+            await connectDB();
 
-          await Devicedata.create({
-            osType: OSType[data as keyof typeof OSType],
-            deviceType: deviceType[device_Type as keyof typeof deviceType],
-            timezone: deviceData.timezone,
-            geolocation: {
-              type: "Point",
-              coordinates: [
-                deviceData.geolocation?.longitude,
-                deviceData.geolocation?.latitude,
-              ],
-            },
-            permissions: {
-              geolocation:
-                permissions[permissionState as keyof typeof permissions]
-            },
-            timestamp: deviceData.timestamp,
-            ip: deviceData.ip,
-            userId: deviceData.userId,
-          });
-          ConsumerStatus.ACK;
-        } catch (error: any) {
-          return 1;
+            await Devicedata.create({
+              osName: OSName[data as keyof typeof OSName]!,
+              deviceType: deviceType[device_Type as keyof typeof deviceType]!,
+              timeZone: deviceData?.timeZone!,
+              osType:deviceData.osName,
+              geolocation: {
+                type: "Point",
+                coordinates: [
+                  deviceData.geolocation?.longitude,
+                  deviceData.geolocation?.latitude,
+                ],
+              },
+              permission: {
+                geolocation:
+                  permissions[permissionState as keyof typeof permissions],
+              },
+              createdAt: Date.now(),
+              userIp: deviceData?.userIp!,
+              userId: deviceData?.userId!,
+            });
+            return ConsumerStatus.ACK;
+          } catch (error: any) {
+            console.log(error);
+            return 1;
+          }
         }
       } catch (error: any) {
+        console.log(error);
         return 1;
       }
     }
