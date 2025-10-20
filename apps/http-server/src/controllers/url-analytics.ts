@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Devicedata, connectDB } from "mongodb";
-
+import mongoose from "mongoose";
 interface customRequest extends Request {
   user?: {
     userId: string;
@@ -12,13 +12,13 @@ interface customRequest extends Request {
 }
 const urlAnalytics = async (req: customRequest, res: Response) => {
   try {
-    const urlId = req?.params?.urlId;
+    const urlId = decodeURIComponent(req?.params?.urlId?.trim()!);
     if (!urlId) {
       return res.status(400).json({ message: "urlId is not provided" });
     }
     await connectDB();
     const urlData = await Devicedata.aggregate([
-      { $match: { urlId: `${urlId}` }}, // Base filter for this short URL
+      { $match: { urlId: new mongoose.Types.ObjectId(urlId) } }, // Base filter for this short URL
 
       {
         $facet: {
@@ -36,7 +36,7 @@ const urlAnalytics = async (req: customRequest, res: Response) => {
               $project: {
                 _id: 0,
                 totalClicks: 1,
-                uniqueUsers: { $size: "$uniqueUsers" },
+                uniqueUsers: { $size: { $ifNull: ["$uniqueUsers", []] } },
               },
             },
           ],
@@ -87,9 +87,9 @@ const urlAnalytics = async (req: customRequest, res: Response) => {
             {
               $project: {
                 _id: 0,
-                osName: "$_id",
+                osType: "$_id",
                 uniqueClicks: 1,
-                uniqueUsers: { $size: "$uniqueUsers" },
+                uniqueUsers: { $size: { $ifNull: ["$uniqueUsers", []] } },
               },
             },
           ],
@@ -116,14 +116,15 @@ const urlAnalytics = async (req: customRequest, res: Response) => {
                 _id: 0,
                 deviceName: "$_id",
                 uniqueClicks: 1,
-                uniqueUsers: { $size: "$uniqueUsers" },
+                uniqueUsers: { $size: { $ifNull: ["$uniqueUsers", []] } },
               },
             },
           ],
         },
       },
     ]);
-    return res.status(200).json({ message: "data fetched", data: urlData[0] });
+    console.log(urlData);
+    return res.status(200).json(urlData[0]);
   } catch (error: any) {
     return res
       .status(500)

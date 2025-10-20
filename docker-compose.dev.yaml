@@ -19,10 +19,12 @@ services:
   #   build:
   #     context: .
   #     dockerfile: apps/analytics/dockerfile.dev
-  #   # env_file:
-  #   #   - ./apps/analytics/.env      
+  #   env_file:
+  #     - ./apps/analytics/.env      
   #   ports:
   #     - "3006:3006"
+  #   networks:
+  #     - rabbitmq_net  
   #   deploy:
   #     resources:
   #       limits:
@@ -42,7 +44,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"  
+          cpus: "0.3"  
     depends_on:
       - rabbitmq
       - nats
@@ -60,7 +62,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: "0.3"
     networks:
       - rabbitmq_net
     depends_on:
@@ -75,7 +77,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"  
+          cpus: "0.3"  
     env_file:
       - ./apps/http-server/.env     
     ports:
@@ -103,7 +105,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: "0.3"
     depends_on:
       - rabbitmq
       - nats
@@ -153,7 +155,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: "0.4"
     restart: unless-stopped
     networks:
       - rabbitmq_net

@@ -6,7 +6,7 @@ import getOSType from "./getOsInfo";
 export default function processdata() {
   const collectdata = async () => {
     const ua = navigator.userAgent;
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? null;
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? null;
     let deviceType: ClientInfo["deviceType"] = "desktop";
     const uaLower = ua.toLowerCase();
     if (/mobi|iphone|android.*mobile|windows phone/.test(uaLower))
@@ -16,9 +16,9 @@ export default function processdata() {
 
     const geolocation = (await getGeoPosition()) ?? null;
     
-    const osType=os.type
-    const deviceName=os.hostname 
-    const osName=(await getOSType()) ?? ""
+    const osName=os.type()
+    const deviceName=os.hostname() 
+    const osType=(await getOSType()) ?? ""
     //  query Permissions API for geolocation permission state
     
 
@@ -29,8 +29,7 @@ export default function processdata() {
       deviceType,
       timeZone,
       geolocation,
-      permissions: { geolocation: "" },
-      timestamp: new Date().toISOString(),
+      permission: { geolocation: "" },
       userIp: "",
       userId:"",
     };

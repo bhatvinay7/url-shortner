@@ -1,52 +1,82 @@
-export interface userResponse{
-    message:string
-    url:string|null
+export interface userResponse {
+  message: string;
+  url: string | null;
 }
-export interface userSigninData{
-    email:string,
-    password:string
+export interface userSigninData {
+  email: string;
+  password: string;
 }
-export interface userCredentials{
-    username:string |null
-    userId:string |null,
-    isVerified:boolean |null,
-    picture:string |null,
-    email:string,
-    token:string 
+export interface userCredentials {
+  username: string | null;
+  userId: string | null;
+  isVerified: boolean | null;
+  picture: string | null;
+  email: string;
+  token: string;
 }
 
+export interface overallAnalyticsData {
+  deviceType: [
+    {
+      uniqueClicks: number;
+      deviceName: string |null;
+      uniqueUsers: number;
+    },
+  ];
+  osType: [
+    {
+      uniqueClicks: number;
+      osType: string |null;
+      uniqueUsers: number;
+    },
+  ];
+  totalStatus: {
+    totalClicks: number;
+    totalUrls: number;
+    uniqueUsers: number;
+  },
+  state?:string
+}
 
+export interface topicAnalyticsData {
+    totalStats:{
+        totalClicks: number,
+        uniqClicks:number
+    },
+    urlsArray:[{
+        shortUrl: string,
+        totalClicks: number,
+        uniqueUsers: number
+    }],
+     state?:string
+}
 
-// export interface GoogleProfile {
-//   id: string;
-//   displayName: string;
-//   name: { givenName: string; familyName: string };
-//   emails?: { value: string }[];
-//   photos?: { value: string }[];
-//   provider: string;
-// }
+export interface individualUrlAnalyticsData {
+  deviceType: [{ uniqueClicks: number; deviceName: string|null; uniqueUsers: number }]
 
+  last7Days: [{
+    dailyClicks: number;
+    date: string;
+  }],
+  osType: [{
+    uniqueClicks: number;
+    osType: string|null;
+    uniqueUsers: number;
+  }],
 
+  totalStats: {
+    totalClicks: number;
+    uniqueUsers: number;
+  },
+   state?:string
 
-// declare module "passport-google-oidc" {
-//   import { Strategy as PassportStrategy } from "passport";
-//   import { VerifyCallback } from "passport-oauth2";
+}
 
-
-//   interface GoogleStrategyOptions {
-//     clientID: string;
-//     clientSecret: string;
-//     callbackURL: string;
-//     scope?: string[];
-//   }
-
-//   class Strategy extends PassportStrategy {
-//     constructor(
-//       options: GoogleStrategyOptions,
-//       verify: (issuer: string, profile: GoogleProfile, done: VerifyCallback) => void
-//     );
-//   }
-
-//   export default Strategy;
-// }
-
+export interface urlsData{
+    totalStats:[{
+      _id: string|null,
+      totalClicks: number,
+      longUrl:string
+    }],
+    state?:string
+}

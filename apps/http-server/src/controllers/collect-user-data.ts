@@ -27,11 +27,12 @@ const collectData = async (req: customRequest, res: Response) => {
       return res.status(400).json({message:"Invalid url or data is missing"})
     }
     const urlData= await Url.findOne({shortUrl:hash})
+    console.log(urlData)
     if(!urlData){
       return res.status(400).json({message:"alias not found"})
     }
     const updatedMessage = { ...message, urlId: urlData?._id,userIp:ip,userId:req?.user?.userId };
-    console.log(updatedMessage)
+
     // push user device data to queue
     try {
       if (updatedMessage) {

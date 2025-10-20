@@ -11,18 +11,18 @@ export    interface url_document extends Document {
     
 export  interface device_document extends Document{
   userId: Types.ObjectId ;
-  osType: string
-  osName: string
-  urlId:Types.ObjectId,
-  deviceType: string 
-  deviceName: string
-  permission:{geolocation:string}
-  createdAt:Date | string
+  osType: string;
+  osName: string;
+  urlId:Types.ObjectId;
+  deviceType: string ;
+  deviceName: string;
+  permission:{ geolocation:string }
+  createdAt:Date | string;
   geolocation:{
-  type:string  
+  type:string ; 
   coordinates: [number, number]
 };
-  userIp:string,
+  userIp:string;
 }    
 
 export interface user_document extends Document  {

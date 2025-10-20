@@ -23,18 +23,25 @@ export default function Redirect() {
       });
 
       // Check permission state afterward (optional)
-      const perm = await (navigator as any).permissions?.query?.({
-        name: "geolocation",
-      });
-      geolocationPermission = perm?.state || "granted";
+      try{
+        const perm = await (navigator as any).permissions?.query?.({
+          name: "geolocation",
+        });
+        geolocationPermission = perm?.state || "granted";
+
+      }
+      catch(error:any){
+        console.log(error)
+      }
       const data = await processData()();
       const updatedData = {
         ...data,
-        permissions: { geolocation: geolocationPermission },
+        permission: { geolocation: geolocationPermission },
       };
       
       const response=await collect_user_data(data,hash)
-      window.location.href = response?.url
+      console.log(response)
+      window.location.href = response?.url!
       // await redirectUser(hash);
     } catch (err) {
       geolocationPermission = "denied";
@@ -49,8 +56,8 @@ export default function Redirect() {
     return <ErrorPage />;
   }
   return (
-    <div className=" w-full h-screen bg-gray-100 flex items-center justify-center ">
-      <p className="w-fit  mx-auto text-base sm:text-2xl font-sans text-indigo-950">
+    <div className=" w-full h-screen bg-[hsl(240,2%,8%)] flex items-center justify-center ">
+      <p className="w-fit  mx-auto text-xl sm:text-2xl font-semibold font-sans text-gray-100">
         Loading... wait for a moment!
       </p>
     </div>

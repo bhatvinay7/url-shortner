@@ -3,7 +3,7 @@ import express from 'express'
 const app=express()
 import {User} from './models/user-model.js'
 import {Devicedata} from './models/device-model.js'
-import {permissions,deviceType,OSName} from './schemas/device-details.js'
+import {permissions,deviceType,OSType} from './schemas/device-details.js'
 import {Url} from './models/shorturl-model.js'
 import {connectDB} from './connection.js'
 
@@ -18,7 +18,7 @@ async function main() {
 }
 
 main();
-export {User,Devicedata,Url,connectDB,permissions,deviceType,OSName}
+export {User,Devicedata,Url,connectDB,permissions,deviceType,OSType}
 
 app.listen(3766,()=>{{
     

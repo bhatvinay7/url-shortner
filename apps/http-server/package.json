@@ -4,7 +4,6 @@
   "description": "",
   "main": "dist/index.js",
   "type": "module",
-  
   "scripts": {
     "dev": " node --loader ts-node/esm src/index.ts",
     "build": "tsc -b",
@@ -22,11 +21,12 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "workspace:*",
+    "mongoose": "^8.19.1",
+    "rabbitmq": "workspace:*",
+    "redisclient": "workspace:*",
     "tsc-node": "^0.0.3",
     "tsconfig-paths": "^4.2.0",
-    "ws": "^8.18.3",
-    "rabbitmq": "workspace:*",
-    "redisclient": "workspace:*"
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

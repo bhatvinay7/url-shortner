@@ -1,4 +1,5 @@
 import { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 export enum permissions {
   granted= "granted",
   denied = "denied",
@@ -8,7 +9,7 @@ export enum deviceType{
   DESKTOP = "desktop",
   TABLET = "tablet",
 }
-export enum OSName{
+export enum OSType{
   WINDOWS="Windows",
   MACOS="MacOS",
   ANDROID="Android",
@@ -17,10 +18,10 @@ export enum OSName{
 }
 
 export const deviceSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId},  
-  osName: { type: String,enum:Object.values(OSName),required: true },
-  osType: {type:String,required: true},
-  urlId:{ type: Schema.Types.ObjectId,
+  userId: { type: mongoose.Schema.Types.ObjectId},  
+  osType: { type: String,enum:Object.values(OSType),required: true },
+  osName: {type:String,required: true},
+  urlId:{ type: mongoose.Schema.Types.ObjectId,
   ref: 'Url',required:true},
   deviceType: { type: String,enum:Object.values(deviceType),required: true},
   deviceName: { type: String ,required: true},

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Url, Devicedata, connectDB } from "mongodb";
-
+import mongoose from "mongoose";
 interface customRequest extends Request {
   user?: {
     userId: string;
@@ -12,14 +12,14 @@ interface customRequest extends Request {
 }
 const urlToppicAnalytics = async (req: customRequest, res: Response) => {
   try {
-    const topic = req?.params?.topic;
+    const topic = req?.params?.topic?.trim();
     if (!topic) {
       return res.status(400).json({ message: "topic is not provided" });
     }
     await connectDB();
     const urls = await Url.find({ topic }).select('_id');
     const urlIds = urls.map((u) => u._id);
-
+    console.log(urlIds)
     const urlData = await Devicedata.aggregate([
       { $match: { urlId: { $in: urlIds } } },
 
@@ -38,11 +38,11 @@ const urlToppicAnalytics = async (req: customRequest, res: Response) => {
         $facet: {
           totalStats: [
             {
-              $match: { "urlInfo.topic": `${topic}` },
+              $match: { "urlInfo.topic": topic },
             },
             {
               $group: {
-                _id: "$urlId",
+                _id: null,
                 totalClicks: { $sum: 1 },
                 uniqClicks: { $addToSet: "$userId" },
               },
@@ -51,7 +51,8 @@ const urlToppicAnalytics = async (req: customRequest, res: Response) => {
               $project: {
                 _id: 0,
                 totalClicks: 1,
-                uniqClicks: { $size: "$uniqClicks" },
+                uniqClicks: { $size: { $ifNull: [ "$uniqClicks", []] } },
+                
               },
             },
           ],
@@ -65,11 +66,20 @@ const urlToppicAnalytics = async (req: customRequest, res: Response) => {
                 uniqueUsers: { $addToSet: "$userId" },
               },
             },
+             {
+              $project: {
+                _id: 0,
+                shortUrl:1,
+                totalClicks: 1,
+                uniqueUsers: { $size: { $ifNull: [ "$uniqueUsers", []] } },
+                
+              },
+            },
           ],
         },
       },
     ]);
-    return res.status(200).json({ message: "data fetched", data: urlData[0] });
+    return res.status(200).json(urlData[0]);
   } catch (error: any) {
     return res
       .status(500)

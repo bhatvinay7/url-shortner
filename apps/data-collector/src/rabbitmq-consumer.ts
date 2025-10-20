@@ -1,12 +1,13 @@
 import connection from "rabbitmq";
 import { ConsumerStatus } from "rabbitmq-client";
+import mongoose from "mongoose";
 import { ClientInfo } from "types";
 import {
   Devicedata,
   connectDB,
   deviceType,
   permissions,
-  OSName,
+  OSType,
 } from "mongodb";
 let sub: any = null;
 
@@ -14,8 +15,6 @@ type Permission = {
   geolocation: string;
  
 };
-
-
 
 export async function consumeFromQueue(
   topic: string,
@@ -39,21 +38,19 @@ export async function consumeFromQueue(
           const deviceData: ClientInfo = JSON.parse(
             message.body.toString("utf8")
           );
-          console.log(
-            "received message (user-events)",
-            message.body.toString("utf8")
-          );
           const permissionState = (deviceData.permission as Permission).geolocation;
-          const data = (deviceData.osType  as string).toUpperCase();
+          const data = (deviceData.osType as string).toUpperCase();
           const device_Type = (deviceData?.deviceType as string).toUpperCase();
           try {
             await connectDB();
 
             await Devicedata.create({
-              osName: OSName[data as keyof typeof OSName]!,
+              osType: OSType[data as keyof typeof OSType]!,
               deviceType: deviceType[device_Type as keyof typeof deviceType]!,
               timeZone: deviceData?.timeZone!,
-              osType:deviceData.osName,
+              deviceName: deviceData?.deviceName!,
+              urlId: deviceData?.urlId,
+              osName:deviceData.osName,
               geolocation: {
                 type: "Point",
                 coordinates: [
@@ -72,7 +69,6 @@ export async function consumeFromQueue(
             return ConsumerStatus.ACK;
           } catch (error: any) {
             console.log(error);
-            return 1;
           }
         }
       } catch (error: any) {

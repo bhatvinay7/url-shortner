@@ -21,7 +21,7 @@ const overallAnalytics = async (req: customRequest, res: Response) => {
           totalStats: [
             {
               $group: {
-                _id: "$_id",
+                _id: null,
                 totalUrls: { $addToSet: "$urlId" },
                 totalClicks: { $sum: 1 },
                 uniqueUsers: { $addToSet: "$userId" },
@@ -31,8 +31,8 @@ const overallAnalytics = async (req: customRequest, res: Response) => {
               $project: {
                 _id: 0,
                 totalClicks: 1,
-                uniqueUsers: { $size: "$uniqueUsers" },
-                totalUrls: { $size: "$totalUrls" },
+                uniqueUsers: { $size: { $ifNull: [ "$uniqueUsers", []] }},
+                totalUrls: { $size: { $ifNull: [ "$totalUrls", []] } },
               },
             },
           ],
@@ -42,17 +42,27 @@ const overallAnalytics = async (req: customRequest, res: Response) => {
             {
               $group: {
                 _id: {
+                  userId: "$userId",
                   osType: "$osType",
-                  totalUniqueCLicks: { $addToSet: "$osType" },
-                  uniqueUsers: { $addToSet: "$userId" },
+                  // deviceType: "$deviceType",
                 },
+                firstClick: { $first: "$createdAt" },
               },
             },
+              {
+              $group: {
+                _id: "$_id.osType",
+                   uniqueUsers: { $addToSet: "$_id.userId" },
+                   uniqueClicks: { $sum: 1 },
+              },
+            },
+
             {
               $project: {
                 _id: 0,
-                totalClicks: { $size: "$totalCLicks" },
-                uniqueUsers: { $size: "$uniqueUsers" },
+                osType:"$_id",
+                uniqueClicks: 1,
+                uniqueUsers: { $size:{ $ifNull: [ "$uniqueUsers", []] } },
               },
             },
           ],
@@ -62,7 +72,7 @@ const overallAnalytics = async (req: customRequest, res: Response) => {
               $group: {
                 _id: {
                   userId: "$userId",
-                  osType: "$osType",
+                  // osType: "$osType",
                   deviceType: "$deviceType",
                 },
                 firstClick: { $first: "$createdAt" },
@@ -80,15 +90,16 @@ const overallAnalytics = async (req: customRequest, res: Response) => {
                 _id: 0,
                 deviceName: "$_id",
                 uniqueClicks: 1,
-                uniqueUsers: { $size: "$uniqueUsers" },
+                uniqueUsers: { $size: { $ifNull: [ "$uniqueUsers", []] } },
               },
             },
           ],
         },
       },
     ]);
-    res.status(200).json({ message: "data fetched", data: urlData[0] });
+    res.status(200).json(urlData[0]);
   } catch (error: any) {
+    console.log(error)
     return res
       .status(500)
       .json({ message: " url is not found", error: error.message });

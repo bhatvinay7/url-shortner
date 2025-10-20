@@ -20,12 +20,18 @@ importers:
 
   apps/analytics:
     dependencies:
+      '@reduxjs/toolkit':
+        specifier: ^2.9.0
+        version: 2.9.0(react-redux@9.2.0(@types/react@19.1.0)(react@19.1.0)(redux@5.0.1))(react@19.1.0)
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@tailwindcss/postcss':
         specifier: ^4.1.14
         version: 4.1.14
+      axios:
+        specifier: ^1.12.2
+        version: 1.12.2
       framer-motion:
         specifier: ^12.23.22
         version: 12.23.22(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -44,6 +50,9 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
+      react-redux:
+        specifier: ^9.2.0
+        version: 9.2.0(@types/react@19.1.0)(react@19.1.0)(redux@5.0.1)
       recharts:
         specifier: ^3.2.1
         version: 3.2.1(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react-is@16.13.1)(react@19.1.0)(redux@5.0.1)
@@ -69,6 +78,9 @@ importers:
       eslint:
         specifier: ^9.34.0
         version: 9.34.0(jiti@2.6.1)
+      types:
+        specifier: workspace:*
+        version: link:../../packages/types
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -84,6 +96,9 @@ importers:
       mongodb:
         specifier: workspace:*
         version: link:../../packages/mongo-db
+      mongoose:
+        specifier: ^8.19.1
+        version: 8.19.1
       rabbitmq:
         specifier: workspace:*
         version: link:../../packages/rabbitmq
@@ -103,6 +118,9 @@ importers:
       tsc-node:
         specifier: ^0.0.3
         version: 0.0.3
+      types:
+        specifier: workspace:*
+        version: link:../../packages/types
       typescript:
         specifier: latest
         version: 5.9.3
@@ -133,6 +151,9 @@ importers:
       mongodb:
         specifier: workspace:*
         version: link:../../packages/mongo-db
+      mongoose:
+        specifier: ^8.19.1
+        version: 8.19.1
       rabbitmq:
         specifier: workspace:*
         version: link:../../packages/rabbitmq

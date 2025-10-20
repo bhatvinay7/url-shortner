@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 export enum state { 
   SUCCESS="success",
   FAILURE="failure"
@@ -15,11 +16,12 @@ export type ClientInfo = {
   osName?:string;
   osType?:string;
   timeZone?: string;
-  geolocation?: { latitude: number; longitude: number };
+  geolocation?: { latitude: number; longitude: number } |null;
   permission?: { geolocation?: string };
   userIp?:string;
   userId?:string;
-};
+  urlId?: string | mongoose.Types.ObjectId;
+}
 export type message={
   userId:string,
   token:string

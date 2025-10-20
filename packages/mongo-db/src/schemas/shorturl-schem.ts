@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-
+import mongoose from 'mongoose';
 enum Topics{
   ACQUISITION="acquisition",
   ACTIVATION="activation",
@@ -7,7 +7,7 @@ enum Topics{
 }
 export const urlSchema = new Schema({
   longUrl: { type: String, required: true },
-  user:{ type: Schema.Types.ObjectId,
+  user:{ type: mongoose.Schema.Types.ObjectId,
   ref: 'User',required:true},
   shortUrl: { type: String, required: true, unique: true },
   topic: { type: String,enum:Object.values(Topics),default:"",required:false},

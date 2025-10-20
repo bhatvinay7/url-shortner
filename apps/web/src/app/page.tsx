@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
 import PopupUp from "../components/ui/signin-popup";
 import Content from '../components/ui/content'
 import Footer from  '../components/ui/footer'
@@ -10,15 +9,12 @@ import {get_shorten_url} from '../utils/api/generate_short_url'
 import Copy from '../components/ui/copy'
 import {Loader,CircleCheck} from  'lucide-react'
 
-import Link from "next/link";
 import {
   getUser_details,
    userInfo,
 } from "../lib/redux/featuresSlice/userDetails";
 
 import { useWebSocket } from "./hooks/useWesocketConnection";
-import { message } from 'types';
-
 import RateLimitError from "../components/ui/ratelimit"; 
 interface progress{
     messages:string[]
@@ -26,7 +22,6 @@ interface progress{
 
 export default function Home() {
   const dispatch = useDispatch();
-  const router = useRouter();
   const userDetails=useSelector(userInfo)
   const inputRef = useRef<HTMLInputElement>(null); 
   const [progress,setProgress]=useState<progress>({messages:[]})
@@ -111,7 +106,7 @@ function onMessage(data:any){
   };
 
   return (
-    <main className="min-h-screen bg-[hsl(240,7%,79%)] text-[hsl(220,20%,20%)] font-[Poppins] flex flex-col items-center justify-center px-6 py-12">
+    <main className="min-h-screen bg-[hsl(240,6%,86%)] text-[hsl(220,20%,20%)] font-[Poppins] flex flex-col items-center justify-center px-6 py-12">
       { popup &&
       <div className=" h-screen  absolute flex max-w-xl items-center justify-center ">
       <PopupUp/>
@@ -134,7 +129,7 @@ function onMessage(data:any){
       </header>
 
       {/* Main Card */}
-      <div className="w-full max-w-3xl bg-[hsl(240,7%,79%)] rounded-2xl  backdrop-blur-md p-8 flex flex-col gap-6">
+      <div className="w-full max-w-3xl bg-[hsl(240,7%,84%)] rounded-2xl  backdrop-blur-md p-8 flex flex-col gap-6">
         <section>
           <h2 className="text-2xl font-semibold text-[hsl(212,90%,45%)] mb-4">
             Paste your link below
@@ -187,11 +182,12 @@ function onMessage(data:any){
         </section>
 
         {/* How It Works Section */}
-        <Content/>
          
         {/* Footer */}
-         <Footer/> 
+
       </div>
+       <Content/>
+      <Footer/> 
     </main>
   );
 }

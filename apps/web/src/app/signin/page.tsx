@@ -79,13 +79,15 @@ const SignIn = () => {
         </header>
 
         {/* Google Sign In Button */}
+        <div className=" w-full flex justify-center items-center">
         <button
           onClick={handleGoogleSignIn}
-          className="w-full h-12 border bg-[hsl(240,2%,67%)] border-gray-300 rounded-full flex items-center justify-center gap-3 hover:bg-gray-300 transition-all"
+          className="w-3/4 h-12 border bg-[hsl(240,2%,67%)] border-gray-300 rounded-full flex items-center justify-center gap-3 hover:bg-gray-300 transition-all"
         >
           <FcGoogle size={22} />
           <span className="text-gray-700 font-medium">Sign in with Google</span>
         </button>
+        </div>
       </div>
     </div>
   );

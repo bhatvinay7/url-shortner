@@ -31,7 +31,7 @@ export async function consumeFromQueue(
         await connectDB();
         if (message) {
           const Message = JSON.parse(message.body.toString("utf8"));
-          const userMessage: urlData = JSON.parse(Message);
+          const userMessage: urlData = Message
           console.log(userMessage);
           try {
             natsConnection.publish(
@@ -92,7 +92,17 @@ export async function consumeFromQueue(
               return ConsumerStatus.ACK;
             }
           } catch (error: any) {
-            throw new Error(JSON.stringify({ message: userMessage.userId }));
+           natsConnection.publish(
+          "push-url",
+          sc.encode(
+            JSON.stringify({
+              message: "Unable to process sudden error occured!",
+              type: "error",
+              status: 500,
+              userId: JSON.parse("Error ocured!"),
+            })
+          )
+        );
           }
         }
       } catch (err: any) {

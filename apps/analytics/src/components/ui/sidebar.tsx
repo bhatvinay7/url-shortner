@@ -1,12 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import {
-  TrendingUp,
-  Zap,
-  RefreshCw,
-  BarChart3,
-  Link
-} from "lucide-react";
+import { TrendingUp, Zap, RefreshCw, BarChart3, Link } from "lucide-react";
 import { useState } from "react";
 
 interface SidebarProps {
@@ -15,13 +9,22 @@ interface SidebarProps {
 
 const Sidebar = ({ onFilterSelect }: SidebarProps) => {
   const [active, setActive] = useState("overall");
-
+  const [subActive, setSubActive] = useState<boolean>(false);
   const menuItems = [
     {
       label: "Overall Analytics",
       value: "overall",
       icon: <BarChart3 size={22} />,
     },
+
+    {
+      label: "Urls",
+      value: "urls",
+      icon: <Link size={22} />,
+    },
+  ];
+
+  const subMenueItems = [
     {
       label: "Acquisition",
       value: "acquisition",
@@ -37,11 +40,6 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
       value: "retention",
       icon: <RefreshCw size={22} />,
     },
-    {
-        label:"Urls",
-        value:"urls",
-        icon:<Link size={22}/>
-    }
   ];
 
   const handleClick = (value: string) => {
@@ -50,47 +48,96 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
   };
 
   return (
-    <motion.aside
-      initial={{ x: -30, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      className=" w-full h-screen bg-white shadow-md border-r border-gray-100  flex flex-col"
-    >
-      {/* Header */}
-      <div className="mb-6  ">
+    <div className=" border-r border-r-white  top-0 sticky bg-[hsl(0,0%,100%)] p-1 ">
+      <motion.h1
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-2xl font-semibold mb-6 mt-3 text-gray-800 text-center"
+      >
+        Analytics Overview
+      </motion.h1>
 
-        <p className="text-sm  text-gray-500">Filter by Topic</p>
-      </div>
+      <motion.aside
+        initial={{ x: -30, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        className=" w-full h-screen bg-white shadow-md border-r border-gray-100  flex flex-col"
+      >
+        {/* Header */}
+        <div className="mb-6  ">
+          <p className="text-sm  text-gray-500">Filter by Topic</p>
+        </div>
 
-      {/* Menu */}
-      <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300">
-        {menuItems.map((item) => {
-          const isActive = item.value === active;
-          return (
-            <motion.button
-              key={item.value}
-              whileHover={{ x: 1 }}
-              onClick={() => handleClick(item.value)}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-medium transition-all
+        {/* Menu */}
+        <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300">
+          {menuItems.map((item) => {
+            const isActive = item.value === active;
+            return (
+              <motion.button
+                key={item.value}
+                whileHover={{ x: 1 }}
+                onClick={() => handleClick(item.value)}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-medium transition-all
                 ${
                   isActive
                     ? "bg-[hsl(30,90%,90%)] text-[hsl(30,90%,45%)]"
                     : "text-gray-700 hover:bg-[hsl(30,90%,95%)]"
                 }`}
-            >
-              <span
-                className={`${
-                  isActive ? "text-[hsl(30,90%,50%)]" : "text-[hsl(30,90%,60%)]"
-                }`}
               >
-                {item.icon}
-              </span>
-              <span>{item.label}</span>
-            </motion.button>
-          );
-        })}
-      </div>
-
-    </motion.aside>
+                <span
+                  className={`${
+                    isActive
+                      ? "text-[hsl(30,90%,50%)]"
+                      : "text-[hsl(30,90%,60%)]"
+                  }`}
+                >
+                  {item.icon}
+                </span>
+                <span>{item.label}</span>
+              </motion.button>
+            );
+          })}
+          <div className="w-full h-auto flex flex-col ">
+            <button
+              onClick={() => {
+                setSubActive(!subActive);
+              }}
+            >
+              topics
+            </button>
+            <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300">
+              {subActive &&
+                subMenueItems.map((item) => {
+                  const isActive = item.value === active;
+                  return (
+                    <motion.button
+                      key={item.value}
+                      whileHover={{ x: 1 }}
+                      onClick={() => handleClick(item.value)}
+                      className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-medium transition-all
+                ${
+                  isActive
+                    ? "bg-[hsl(30,90%,90%)] text-[hsl(30,90%,45%)]"
+                    : "text-gray-700 hover:bg-[hsl(30,90%,95%)]"
+                }`}
+                    >
+                      <span
+                        className={`${
+                          isActive
+                            ? "text-[hsl(30,90%,50%)]"
+                            : "text-[hsl(30,90%,60%)]"
+                        }`}
+                      >
+                        {item.icon}
+                      </span>
+                      <span>{item.label}</span>
+                    </motion.button>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      </motion.aside>
+    </div>
   );
 };
 
