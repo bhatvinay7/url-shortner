@@ -1,5 +1,6 @@
 'use client';
 import { motion } from "framer-motion";
+import { OSData } from "./AnalyticsDashboard";
 import {
   Monitor,
   Smartphone,
@@ -8,19 +9,12 @@ import {
   Terminal,
 } from "lucide-react";
 
-interface OSData {
-  osName: string;
-  uniqueClicks: number;
-}
 
-interface Props {
-  data: OSData[];
-}
 
-const OSStats = ({ data }: Props) => {
+const OSStats = ({ data }:{data:OSData[]}) => {
   // Icon mapping for OS names
-  const getOSIcon = (osName: string) => {
-    switch (osName.toLowerCase()) {
+  const getOSIcon = (osType: string) => {
+    switch (osType.toLowerCase()) {
       case "windows":
         return <Monitor className="h-5 w-5 text-blue-600" />;
       case "android":
@@ -54,8 +48,8 @@ const OSStats = ({ data }: Props) => {
             className="flex justify-between items-center bg-[hsl(0,0%,97%)] rounded-xl p-3"
           >
             <div className="flex items-center gap-2">
-              {getOSIcon(os.osName)}
-              <span className="text-gray-700 font-medium">{os.osName}</span>
+              {getOSIcon(os.osType!)}
+              <span className="text-gray-700 font-medium">{os.osType}</span>
             </div>
 
             <span className="text-[hsl(30,90%,50%)] font-semibold">

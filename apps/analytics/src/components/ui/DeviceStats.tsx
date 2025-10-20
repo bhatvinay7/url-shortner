@@ -1,12 +1,9 @@
 'use client";'
 import { motion } from "framer-motion";
 import { Smartphone, Monitor, Tablet } from "lucide-react";
+import { DeviceStat } from "./AnalyticsDashboard";
 
-interface Props {
-  data: { deviceName: string; uniqueClicks: number }[];
-}
-
-const DeviceStats = ({ data }: Props) => (
+const DeviceStats = ({ data }:{data: DeviceStat[]}) => (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}

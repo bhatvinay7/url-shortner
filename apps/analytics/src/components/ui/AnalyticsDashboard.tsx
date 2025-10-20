@@ -1,44 +1,33 @@
 "use client";
 import SummaryCard from "./SummaryCard";
-import { useEffect, useState } from "react";
-import Last7DaysChart from "./Days";
 import OSStats from "./OsStats";
 import DeviceStats from "./DeviceStats";
-import { MousePointer, Users } from "lucide-react";
+import {JSX} from 'react'
+import { Smartphone, Monitor, Tablet, MousePointerClick, Users,MousePointer, Laptop, Terminal } from "lucide-react";
 
+export type OSData = { uniqueClicks: number; osType: string | null; uniqueUsers: number };
+export type DeviceStat = { uniqueClicks: number; deviceName: string | null; uniqueUsers: number };
+type TotalStats = { totalClicks: number; uniqueUsers: number };
 
-// import { getAdminData } from "../../utils/api/getAdminData";
-// import { getUrlsData } from "../../utils/api/getUrls";
-import { getTopicAnalytics } from "../../utils/api/topicAnalytics";
-import { getOverallAnalytics } from "../../utils/api/overallAnalytics";
-import { getUrlAnalytics } from "../../utils/api/urlAnalytics";
-
-const AnalyticsDashboard = () => {
-  const [totalStats, setStats] = useState({ totalClicks: 0, uniqueUsers: 0 });
-  const [last7Days, setDay] = useState([]);
-  const [osType, setOs] = useState([]);
-  const [deviceType, setDevice] = useState([]);
-
-useEffect(() => {
-    async function fetch() {
-      try {
-        // const r1 = await getAdminData();
-        const r2 = await getTopicAnalytics("acquistion");
-        const r3 = await getOverallAnalytics();
-        // const r4 = await getUrlAnalytics("");
-        // const r5 = await getUrlsData();
-        // console.log(r1)
-        console.log(r2)
-        console.log(r3)
-        // console.log(r4)
-        // console.log(r5) 
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetch()
-
-  }, []);
+interface AnalyticsProps {
+  osType: OSData[];
+  deviceType: DeviceStat[];
+  totalStatus: TotalStats;
+}
+  
+  const AnalyticsDashboard = ({ osType, deviceType, totalStatus }:AnalyticsProps) => {
+    
+    const osIcons: Record<string, JSX.Element> = {
+      Android: <Smartphone className="w-6 h-6 text-[hsl(150,70%,45%)]" />,
+      Windows: <Laptop className="w-6 h-6 text-[hsl(220,70%,50%)]" />,
+      Linux: <Terminal className="w-6 h-6 text-[hsl(30,80%,50%)]" />,
+    };
+  
+    const deviceIcons: Record<string, JSX.Element> = {
+      Desktop: <Monitor className="w-6 h-6 text-[hsl(200,80%,55%)]" />,
+      Mobile: <Smartphone className="w-6 h-6 text-[hsl(160,80%,45%)]" />,
+      Tablet: <Tablet className="w-6 h-6 text-[hsl(45,90%,55%)]" />,
+    };
   return (
     <div className="min-h-screen bg-[hsl(263,48%,95%)]    overflow-y-auto">
       
@@ -47,22 +36,19 @@ useEffect(() => {
           <div className=" w-full flex gap-x-2 ">
             <SummaryCard
               title="Total Clicks"
-              value={totalStats.totalClicks}
+              value={totalStatus.totalClicks}
               icon={
                 <MousePointer className="text-[hsl(30,90%,60%)]" size={28} />
               }
             />
             <SummaryCard
               title="Unique Users"
-              value={totalStats.uniqueUsers}
+              value={totalStatus.uniqueUsers}
               icon={<Users className="text-[hsl(30,90%,60%)]" size={28} />}
             />
           </div>
         </div>
-        <Last7DaysChart data={last7Days} />
-
-        {/* Chart */}
-
+    
         {/* OS & Device Stats */}
         <div className="grid md:grid-cols-2 gap-6">
           <OSStats data={osType} />

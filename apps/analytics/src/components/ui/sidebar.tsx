@@ -1,7 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
-import { TrendingUp, Zap, RefreshCw, BarChart3, Link } from "lucide-react";
-import { useState } from "react";
+import { TrendingUp, Zap, RefreshCw, BarChart3,Link as ReactLink} from "lucide-react";
+import { useState} from "react";
+import Link  from "next/link"
+import { useDispatch } from "react-redux";
+import { topicAnalytics } from "../../lib/redux/featuresSlice/topicAnalyticsSlice";
 
 interface SidebarProps {
   onFilterSelect?: (topic: string) => void;
@@ -10,35 +13,42 @@ interface SidebarProps {
 const Sidebar = ({ onFilterSelect }: SidebarProps) => {
   const [active, setActive] = useState("overall");
   const [subActive, setSubActive] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  
   const menuItems = [
     {
       label: "Overall Analytics",
       value: "overall",
       icon: <BarChart3 size={22} />,
+      link:"/overAllAnalytics"
     },
 
     {
       label: "Urls",
       value: "urls",
-      icon: <Link size={22} />,
+      icon: <ReactLink size={22} />,
+      link:"/"
     },
   ];
 
   const subMenueItems = [
     {
-      label: "Acquisition",
+      label: "acquisition",
       value: "acquisition",
       icon: <TrendingUp size={22} />,
+      link:"/topic_url_analytics"
     },
     {
-      label: "Activation",
+      label: "activation",
       value: "activation",
       icon: <Zap size={22} />,
+      link:"/topic_url_analytics"
     },
     {
-      label: "Retention",
+      label: "retention",
       value: "retention",
       icon: <RefreshCw size={22} />,
+      link:"/topic_url_analytics"
     },
   ];
 
@@ -72,9 +82,9 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
           {menuItems.map((item) => {
             const isActive = item.value === active;
             return (
-              <motion.button
+              <Link
+                href={item.link}
                 key={item.value}
-                whileHover={{ x: 1 }}
                 onClick={() => handleClick(item.value)}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-medium transition-all
                 ${
@@ -93,7 +103,7 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                   {item.icon}
                 </span>
                 <span>{item.label}</span>
-              </motion.button>
+              </Link>
             );
           })}
           <div className="w-full h-auto flex flex-col ">
@@ -129,7 +139,7 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                       >
                         {item.icon}
                       </span>
-                      <span>{item.label}</span>
+                      <span  onClick={() => dispatch(topicAnalytics(item.label) as any)}>{item.label}</span>
                     </motion.button>
                   );
                 })}

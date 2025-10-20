@@ -19,9 +19,9 @@ const initialState: topicAnalyticsData = {
 
 export const topicAnalytics = createAsyncThunk(
   "getTopicAnalytics",
-  async (_, thunkAPI) => {
+  async ( topic:string, thunkAPI) => {
     try {
-      const res = await getTopicAnalytics("");
+      const res = await getTopicAnalytics(topic);
       return res;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);

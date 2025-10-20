@@ -18,7 +18,7 @@ export const getUrlsData = createAsyncThunk(
   "getUrlData",
   async (_, thunkAPI) => {
     try {
-      const res = await getUrls("");
+      const res = await getUrls();
       return res;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);

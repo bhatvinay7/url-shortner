@@ -30,9 +30,9 @@ const initialState: individualUrlAnalyticsData = {
 
 export const UrlAnalytics = createAsyncThunk(
   "getAnalytics",
-  async (_, thunkAPI) => {
+  async (urlId: string, thunkAPI) => {
     try {
-      const res = await getUrlAnalytics("");
+      const res = await getUrlAnalytics(urlId);
       return res;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);

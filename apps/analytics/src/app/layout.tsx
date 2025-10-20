@@ -16,7 +16,6 @@ export const metadata: Metadata = {
   title: "urlshortner-analytics",
   description: "Monitor and analyze your shortened URLs with ease.",
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
