@@ -30,7 +30,6 @@ try {
     setupHeartbeat(ws);
     ws.on("message", async (message: string) => {
       const parsedMessage: message = JSON.parse(message);
-      console.log(parsedMessage);
       if (!parsedMessage?.token) {
         return;
       }
@@ -79,7 +78,6 @@ try {
       let notifications = JSON.parse(sc.decode(m.data));
       let user = users?.get(notifications?.userId);
       if (user) user?.send(sc.decode(m.data));
-      console.log("notifications:-" + JSON.stringify(notifications));
     }
   })();
 
@@ -88,7 +86,6 @@ try {
       let data = JSON.parse(sc.decode(m.data));
       let user = users?.get(data?.userId);
       if (user) user?.send(sc.decode(m.data));
-      console.log("data:-" + JSON.stringify(data));
     }
   })();
 } catch (error: any) {

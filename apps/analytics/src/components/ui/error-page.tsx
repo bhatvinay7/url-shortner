@@ -1,6 +1,6 @@
-'use client'
+"use client";
 import { motion } from "framer-motion";
-import React from 'react'
+import React from "react";
 
 export default function ErrorPage() {
   return (
@@ -19,7 +19,6 @@ export default function ErrorPage() {
         transition={{ duration: 0.6 }}
         className="z-10 text-center"
       >
-       
         <p className="mt-4 text-lg text-[hsl(0,83%,57%)]">
           Oops — error ocured.
         </p>
@@ -31,8 +30,5 @@ export default function ErrorPage() {
         </a>
       </motion.div>
     </main>
-  )
+  );
 }
-
-
-

@@ -1,9 +1,15 @@
-'use client";'
+'use client";';
 import { motion } from "framer-motion";
-import { Smartphone, Monitor, Tablet, MousePointerIcon,Users } from "lucide-react";
+import {
+  Smartphone,
+  Monitor,
+  Tablet,
+  MousePointerIcon,
+  Users,
+} from "lucide-react";
 import { DeviceStat } from "./AnalyticsDashboard";
 
-const DeviceStats = ({ data }:{data: DeviceStat[]}) => (
+const DeviceStats = ({ data }: { data: DeviceStat[] }) => (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
@@ -33,22 +39,20 @@ const DeviceStats = ({ data }:{data: DeviceStat[]}) => (
               {device?.deviceName}
             </span>
           </div>
-           <div className="flex gap-x-2 ">
+          <div className="flex gap-x-2 ">
             <div className="flex gap-x-1.5 items-center">
-
-            <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
-              {device.uniqueClicks}
-            </span>
-             <MousePointerIcon className="w-4 h-4 text-black bg-gray-300 rounded-full "/>
+              <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
+                {device.uniqueClicks}
+              </span>
+              <MousePointerIcon className="w-4 h-4 text-black bg-gray-300 rounded-full " />
             </div>
-             <div className="flex gap-x-1.5 items-center">
-             <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
-              {device.uniqueUsers}
-            </span>
-            <Users className="w-4 text-black h-4 bg-gray-300 rounded-full items-center"/>
+            <div className="flex gap-x-1.5 items-center">
+              <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
+                {device.uniqueUsers}
+              </span>
+              <Users className="w-4 text-black h-4 bg-gray-300 rounded-full items-center" />
             </div>
-          </div>  
-         
+          </div>
         </motion.div>
       ))}
     </div>

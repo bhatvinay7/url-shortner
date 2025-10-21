@@ -1,11 +1,19 @@
 "use client";
 import { motion } from "framer-motion";
-import { TrendingUp, Zap, RefreshCw, BarChart3,Link as ReactLink,ChevronDown,ChevronUp} from "lucide-react";
-import { useState} from "react";
-import Link  from "next/link"
+import {
+  TrendingUp,
+  Zap,
+  RefreshCw,
+  BarChart3,
+  Link as ReactLink,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { useState } from "react";
+import Link from "next/link";
 import Togglecomponent from "./togglecomponent";
 import { topicAnalytics } from "../../lib/redux/featuresSlice/topicAnalyticsSlice";
-import {sideBarState} from '../../lib/redux/featuresSlice/slideBarSlice'
+import { sideBarState } from "../../lib/redux/featuresSlice/slideBarSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 interface SidebarProps {
@@ -14,23 +22,23 @@ interface SidebarProps {
 
 const Sidebar = ({ onFilterSelect }: SidebarProps) => {
   const [active, setActive] = useState("urls");
-  const sideBarValue=useSelector(sideBarState)
+  const sideBarValue = useSelector(sideBarState);
   const [subActive, setSubActive] = useState<boolean>(true);
   const dispatch = useDispatch();
-  
+
   const menuItems = [
     {
       label: "Overall Analytics",
       value: "overall",
       icon: <BarChart3 size={22} />,
-      link:"/overAllAnalytics"
+      link: "/overAllAnalytics",
     },
 
     {
       label: "Urls",
       value: "urls",
       icon: <ReactLink size={22} />,
-      link:"/"
+      link: "/",
     },
   ];
 
@@ -39,19 +47,19 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
       label: "acquisition",
       value: "acquisition",
       icon: <TrendingUp size={22} />,
-      link:"/topic_url_analytics"
+      link: "/topic_url_analytics",
     },
     {
       label: "activation",
       value: "activation",
       icon: <Zap size={22} />,
-      link:"/topic_url_analytics"
+      link: "/topic_url_analytics",
     },
     {
       label: "retention",
       value: "retention",
       icon: <RefreshCw size={22} />,
-      link:"/topic_url_analytics"
+      link: "/topic_url_analytics",
     },
   ];
 
@@ -61,10 +69,11 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
   };
 
   return (
-    <div className={` ${sideBarValue ?"block":" hidden sm:block "} h-screen top-[40px] sm:top-0 absolute sm:sticky sm:border sm:border-black/12 sm:w-auto  w-full  bg-gray-100 p-1 `}>
-     
+    <div
+      className={` ${sideBarValue ? "block" : " hidden sm:block "} h-screen top-[40px] sm:top-0 absolute sm:sticky sm:border sm:border-black/12 sm:w-auto  w-full  bg-gray-100 p-1 `}
+    >
       <div className="absolute -right-4">
-      <Togglecomponent/>
+        <Togglecomponent />
       </div>
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
@@ -116,10 +125,13 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
               }}
             >
               <div className=" self-start relative flex space-x-2 left-2 p-1.5 sm:p-2 md:p-3  text-black/75 ">
-              <span>Topics</span>
-              {subActive ?  <ChevronUp className="w-5 h-5"/> :<ChevronDown className="w-5 h-5"/>}
-              
-              </div> 
+                <span>Topics</span>
+                {subActive ? (
+                  <ChevronUp className="w-5 h-5" />
+                ) : (
+                  <ChevronDown className="w-5 h-5" />
+                )}
+              </div>
             </button>
             <div className=" flex-1 overflow-x-hidden top-2 space-y-2 ">
               {subActive &&
@@ -129,7 +141,10 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                     <Link
                       href={`${item.link}/${item.label}`}
                       key={item.value}
-                      onClick={() =>{dispatch(topicAnalytics(item.label) as any), handleClick(item.value)}}
+                      onClick={() => {
+                        (dispatch(topicAnalytics(item.label) as any),
+                          handleClick(item.value));
+                      }}
                       className={`w-full flex items-center gap-3 p-1.5 sm:p-2 md:p-3 rounded-xl text-sm font-medium transition-all
                 ${
                   isActive

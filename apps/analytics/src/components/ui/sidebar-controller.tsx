@@ -6,7 +6,7 @@ import {
   toggleSidebar,
 } from "../../lib/redux/featuresSlice/slideBarSlice";
 import Togglecomponent from "./togglecomponent";
-import { Menu,X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Sidebar from "./sidebar";
 import { useDispatch } from "react-redux";
 export default function SidebarController({
@@ -29,17 +29,20 @@ export default function SidebarController({
             className=" absolute top-5 left-2  w-6 h-6 text-black/75 "
           />
         ) : (
-           <div className=" w-full absolute left-2 top-5 block sm:hidden">
-        <X onClick={()=>{dispatch(toggleSidebar(false))}} className=" w-6 h-6 m-0 text-black/75 hover:text-red-500"/>
-          
-                </div>
+          <div className=" w-full absolute left-2 top-5 block sm:hidden">
+            <X
+              onClick={() => {
+                dispatch(toggleSidebar(false));
+              }}
+              className=" w-6 h-6 m-0 text-black/75 hover:text-red-500"
+            />
+          </div>
         )}
       </div>
       {value ? (
         <Sidebar />
       ) : (
         <div className="  bg-gray-100 hidden sm:block sm:relative sm:border sm:border-black/12 sm:h-screen ">
-    
           <div className=" absolute -right-4 top-1">
             <Togglecomponent />
           </div>

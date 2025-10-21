@@ -1,6 +1,5 @@
 import connection from "rabbitmq";
 import { ConsumerStatus } from "rabbitmq-client";
-import mongoose from "mongoose";
 import { ClientInfo } from "types";
 import {
   Devicedata,

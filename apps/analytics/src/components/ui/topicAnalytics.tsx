@@ -17,7 +17,10 @@ interface UrlAnalyticsProps {
   urlsArray: UrlItem[];
 }
 
-const UrlAnalytics: React.FC<UrlAnalyticsProps> = ({ totalStats, urlsArray }) => {
+const UrlAnalytics: React.FC<UrlAnalyticsProps> = ({
+  totalStats,
+  urlsArray,
+}) => {
   return (
     <div className="p-6 space-y-6 bg-[hsl(220,20%,97%)] h-full ">
       {/* Header */}
@@ -55,8 +58,12 @@ const UrlAnalytics: React.FC<UrlAnalyticsProps> = ({ totalStats, urlsArray }) =>
             <thead>
               <tr className="bg-[hsl(68,26%,88%)] border border-black/15 text-[hsl(220,15%,30%)]">
                 <th className="py-3 px-4 font-medium">Short URL</th>
-                <th className="py-3 px-4 font-medium text-center">Total Clicks</th>
-                <th className="py-3 px-4 font-medium text-center">Unique Users</th>
+                <th className="py-3 px-4 font-medium text-center">
+                  Total Clicks
+                </th>
+                <th className="py-3 px-4 font-medium text-center">
+                  Unique Users
+                </th>
               </tr>
             </thead>
             <tbody>

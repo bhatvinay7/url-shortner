@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { motion } from "framer-motion";
 import { OSData } from "./AnalyticsDashboard";
 import {
@@ -8,12 +8,10 @@ import {
   Laptop,
   Terminal,
   MousePointer,
-  Users
+  Users,
 } from "lucide-react";
 
-
-
-const OSStats = ({ data }:{data:OSData[]}) => {
+const OSStats = ({ data }: { data: OSData[] }) => {
   // Icon mapping for OS names
   const getOSIcon = (osType: string) => {
     switch (osType?.toLowerCase()) {
@@ -53,21 +51,20 @@ const OSStats = ({ data }:{data:OSData[]}) => {
               {getOSIcon(os?.osType!)}
               <span className="text-gray-700 font-medium">{os?.osType}</span>
             </div>
-           <div className="flex gap-x-2 ">
-            <div className="flex gap-x-1.5 items-center">
-
-            <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
-              {os.uniqueClicks}
-            </span>
-             <MousePointer className="w-4 h-4 text-black bg-gray-300 rounded-full "/>
+            <div className="flex gap-x-2 ">
+              <div className="flex gap-x-1.5 items-center">
+                <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
+                  {os.uniqueClicks}
+                </span>
+                <MousePointer className="w-4 h-4 text-black bg-gray-300 rounded-full " />
+              </div>
+              <div className="flex gap-x-1.5 items-center">
+                <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
+                  {os.uniqueUsers}
+                </span>
+                <Users className="w-4 text-black h-4 bg-gray-300 rounded-full items-center" />
+              </div>
             </div>
-            <div className="flex gap-x-1.5 items-center">
-             <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
-              {os.uniqueUsers}
-            </span>
-            <Users className="w-4 text-black h-4 bg-gray-300 rounded-full items-center"/>
-            </div>
-          </div>  
           </motion.div>
         ))}
       </div>
