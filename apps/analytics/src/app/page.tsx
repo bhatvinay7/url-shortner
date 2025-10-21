@@ -1,15 +1,23 @@
-import {getUrls} from '../utils/api/getUrls'
+'use client'
 import UrlsComponent from '../components/ui/get-urls'
-export default async function Page() {
-  const response=await getUrls()
-  
+import { getUrlsData,urlsState } from '../lib/redux/featuresSlice/urlsSlice'
+import { useEffect } from 'react'
+import { useDispatch,useSelector } from 'react-redux'
+export default  function Page() {
+  const dispatch=useDispatch()
+  const data=useSelector(urlsState)
+   useEffect(()=>{
+    dispatch(getUrlsData() as any)
+
+   },[dispatch])
+
   return (
-    <div className="w-full h-screen overflow-y-auto">
+    <div className=" flex-1 min-h-screen  bg-inherit  overflow-y-auto">
       <UrlsComponent
-      data={response}
+      data={data}
       />    
     </div>
   )
-
 }  
+
 

@@ -20,10 +20,10 @@ const initialState: individualUrlAnalyticsData = {
     uniqueUsers: 0
   }],
 
-  totalStats: {
+  totalStats: [{
     totalClicks: 0,
     uniqueUsers: 0
-  },
+  }],
   state:"loading"
 };
 

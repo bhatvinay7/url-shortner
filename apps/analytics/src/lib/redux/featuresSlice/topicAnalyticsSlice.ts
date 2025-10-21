@@ -4,10 +4,10 @@ import { topicAnalyticsData } from "types";
 import { getTopicAnalytics } from "../../../utils/api/topicAnalytics";
 
 const initialState: topicAnalyticsData = {
-    totalStats:{
+    totalStats:[{
         totalClicks: 0,
         uniqClicks: 0
-    },
+    }],
     urlsArray:[{
         shortUrl: "",
         totalClicks: 0,

@@ -3,6 +3,8 @@ import individualUrlAnalyticsReducer from './featuresSlice/individualUrlAnalytic
 import overallAnalyticsReducer  from './featuresSlice/overallAnalytics';
 import topicAnalytics from './featuresSlice/topicAnalyticsSlice';
 import adminReducer from './featuresSlice/adminDetailSlice'
+import analyticsReducer from './featuresSlice/urlsSlice'
+import toggleBarReducer from './featuresSlice/slideBarSlice'
 export const makeStore= ():EnhancedStore => {
   return configureStore({
     reducer: {
@@ -10,6 +12,8 @@ export const makeStore= ():EnhancedStore => {
         individualUrlAnalyticsData:individualUrlAnalyticsReducer,
         overallAnalyticsData:overallAnalyticsReducer,
         topicAnalyticsData:topicAnalytics,
+        urlsData:analyticsReducer,
+        sideBar:toggleBarReducer
     }
   })
 }

@@ -2,11 +2,14 @@ import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import { urlsData } from "types";
 import { getUrls } from "../../../utils/api/getUrls";
-
-const initialState: urlsData = {
+export interface custormdata{
+    totalStats:urlsData[]
+    state?:string
+}
+const initialState: custormdata = {
   totalStats: [
     {
-      _id: null,
+      _id: "",
       totalClicks: 0,
       longUrl: "",
     },
@@ -19,7 +22,7 @@ export const getUrlsData = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await getUrls();
-      return res;
+      return res
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -36,7 +39,7 @@ const analyticsSlice = createSlice({
         state.state = "loading";
       })
       .addCase(getUrlsData.fulfilled, (state, action) => {
-        state.totalStats = action.payload.totalStats;
+        state.totalStats =action.payload;
         state.state = "succeded";
       })
       .addCase(getUrlsData.rejected, (state) => {

@@ -1,15 +1,15 @@
 'use client";'
 import { motion } from "framer-motion";
-import { Smartphone, Monitor, Tablet } from "lucide-react";
+import { Smartphone, Monitor, Tablet, MousePointerIcon,Users } from "lucide-react";
 import { DeviceStat } from "./AnalyticsDashboard";
 
 const DeviceStats = ({ data }:{data: DeviceStat[]}) => (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    className=" bg-[hsl(241,34%,33%)] shadow-md rounded-2xl p-6 border border-gray-100"
+    className=" bg-[hsl(0,0%,84%)] shadow-md rounded-2xl p-6 border border-gray-100"
   >
-    <h2 className="text-lg font-medium text-gray-300 mb-4">
+    <h2 className="text-lg font-medium text-gray-700 mb-4">
       Device Distribution
     </h2>
     <div className="space-y-3 overflow-y-auto max-h-64 pr-2  custom-scroll ">
@@ -30,12 +30,25 @@ const DeviceStats = ({ data }:{data: DeviceStat[]}) => (
               <Tablet className="text-[hsl(30,90%,60%)]" size={22} />
             )}
             <span className="text-gray-700 font-medium">
-              {device.deviceName}
+              {device?.deviceName}
             </span>
           </div>
-          <span className="text-[hsl(30,90%,50%)] font-semibold">
-            {device.uniqueClicks} clicks
-          </span>
+           <div className="flex gap-x-2 ">
+            <div className="flex gap-x-1.5 items-center">
+
+            <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
+              {device.uniqueClicks}
+            </span>
+             <MousePointerIcon className="w-4 h-4 text-black bg-gray-300 rounded-full "/>
+            </div>
+             <div className="flex gap-x-1.5 items-center">
+             <span className="text-[hsl(220,3%,38%)] font-mono font-semibold">
+              {device.uniqueUsers}
+            </span>
+            <Users className="w-4 text-black h-4 bg-gray-300 rounded-full items-center"/>
+            </div>
+          </div>  
+         
         </motion.div>
       ))}
     </div>

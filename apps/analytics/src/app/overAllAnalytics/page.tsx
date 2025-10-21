@@ -8,16 +8,18 @@ export default function Page() {
     const disPatch=useDispatch()
     const data=useSelector(overallAnalyticsState)  
     useEffect(()=>{
-       disPatch(OverallAnalytics() as any)
+      disPatch(OverallAnalytics() as any)
+      console.log(data.totalStats)
   
     },[disPatch])
   return (
-    <div className='w-full min-h-screen'>
+    <div className='w-full min-h-screen  bg-inherit '>
       <AnalyticsDashboard
         deviceType={data.deviceType}
         osType={data.osType}
-        totalStatus={data.totalStatus}
-     />   
+        totalStats={data.totalStats}
+        
+        />   
     </div>
   )
 }

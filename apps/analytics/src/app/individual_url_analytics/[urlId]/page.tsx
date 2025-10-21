@@ -13,7 +13,7 @@ export default function Page() {
     dispatch(UrlAnalytics(params?.urlId) as any)
   },[params])
   return (
-    <div className='w-full min-h-screen '>
+    <div className='w-full min-h-screen  bg-inherit '>
        <IndividualUrlAnalytics
        osType={urlsData?.osType}
        deviceType={urlsData?.deviceType}

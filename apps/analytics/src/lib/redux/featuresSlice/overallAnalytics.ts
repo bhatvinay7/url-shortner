@@ -19,13 +19,14 @@ const initialState: overallAnalyticsData = {
       uniqueUsers: 0
     },
   ],
-  totalStatus: {
+  totalStats: [{
     totalClicks: 0,
     totalUrls: 0,
     uniqueUsers: 0,
-  },
+  }],
   state:"loading"
 };
+
 
 
 export const OverallAnalytics = createAsyncThunk(
@@ -52,7 +53,7 @@ const analyticsSlice = createSlice({
       .addCase(OverallAnalytics.fulfilled, (state, action) => {
        state.deviceType=action.payload.deviceType
        state.osType=action.payload.osType
-       state.totalStatus=action.payload.totalStatus
+       state.totalStats=action.payload.totalStats
        state.state="succeeded"
       }) 
       .addCase(OverallAnalytics.rejected, (state) => {

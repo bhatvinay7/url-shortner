@@ -24,18 +24,6 @@ body {
 
 @layer base {
 
- 
-  body {
-    font-family: 'Inter', sans-serif;
-    color: #333;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-  }
-@layer base {
-
   *,
   *::before,
   *::after {
@@ -53,7 +41,6 @@ body {
   }
 }
 
-}
 .imgDark {
   display: none;
 }
