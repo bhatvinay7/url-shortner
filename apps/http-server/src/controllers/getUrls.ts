@@ -15,20 +15,28 @@ const getUrls = async (req: customRequest, res: Response) => {
     await connectDB();
     const urlData = await Devicedata.aggregate([
       {
+        $lookup: {
+          from: "urls", // collection name
+          localField: "urlId",
+          foreignField: "_id",
+          as: "urlInfo",
+        },
+      },
+      { $unwind: "$urlInfo" },
+      {
+        $group: {
+          _id: "$urlInfo._id",
+          longUrl: { $first: "$urlInfo.longUrl" },
+          totalClicks: { $sum: 1 },
+        },
+      },
+      { $sort: { totalClicks: -1 } },
+      {
+        $limit: 10,
+      },
+      {
         $facet: {
-          // to run multiple aggregation pipelines within a single stage
-          // here we are getting the total clicks and unique users for the given urlId
           totalStats: [
-            {
-              $group: {
-                _id: "$urlId",
-                totalClicks: { $sum: 1 },
-              },
-            },
-            {
-              $limit: 10,
-            },
-            { $sort: { "urlId.totalClicks": -1 } },
             {
               $project: {
                 _id: 1,
@@ -40,7 +48,8 @@ const getUrls = async (req: customRequest, res: Response) => {
         },
       },
     ]);
-    return res.status(200).json(urlData[0]);
+
+    return res.status(200).json(urlData[0]?.totalStats);
   } catch (error: any) {
     return res
       .status(500)

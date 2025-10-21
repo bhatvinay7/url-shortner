@@ -30,19 +30,19 @@ export interface overallAnalyticsData {
       uniqueUsers: number;
     },
   ];
-  totalStatus: {
+  totalStats: [{
     totalClicks: number;
     totalUrls: number;
     uniqueUsers: number;
-  },
+  }],
   state?:string
 }
 
 export interface topicAnalyticsData {
-    totalStats:{
+    totalStats:[{
         totalClicks: number,
         uniqClicks:number
-    },
+    }],
     urlsArray:[{
         shortUrl: string,
         totalClicks: number,
@@ -64,19 +64,16 @@ export interface individualUrlAnalyticsData {
     uniqueUsers: number;
   }],
 
-  totalStats: {
+  totalStats: [{
     totalClicks: number;
     uniqueUsers: number;
-  },
+  }],
    state?:string
 
 }
 
 export interface urlsData{
-    totalStats:[{
-      _id: string|null,
+      _id: string,
       totalClicks: number,
       longUrl:string
-    }],
-    state?:string
 }

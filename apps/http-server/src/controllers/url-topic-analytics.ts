@@ -25,7 +25,7 @@ const urlToppicAnalytics = async (req: customRequest, res: Response) => {
 
       {
         $lookup: {
-          from: "Url", // collection name
+          from: "urls", // collection name
           localField: "urlId",
           foreignField: "_id",
           as: "urlInfo",
