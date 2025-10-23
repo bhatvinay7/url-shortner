@@ -208,7 +208,7 @@ jobs:
           --dry-run=client -o yaml \
           | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
           > secrets/docker-sealed-secret.yaml
-       
+
 
           cat <<'EOFON' > frontend.env
           NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
