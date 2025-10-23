@@ -351,7 +351,6 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
           NEXT_PUBLIC_FRONTEND_API_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_API_URL }}
           NEXT_PUBLIC_WS_SERVER: ${{ secrets.NEXT_PUBLIC_WS_SERVER }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
