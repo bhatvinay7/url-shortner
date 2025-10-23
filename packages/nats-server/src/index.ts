@@ -1,6 +1,6 @@
 import { connect, StringCodec } from "nats";
 import dotenv from "dotenv"
-dotenv.conf()
+dotenv.config()
 const natsConnection = await connect({ servers: process.env.servers,user: process.env.user,
 pass: process.env.pass });
 const sc = StringCodec();
