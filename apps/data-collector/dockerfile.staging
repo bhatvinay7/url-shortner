@@ -27,7 +27,7 @@ ARG APP=data-collector
 WORKDIR /app
 COPY --from=installer /app ./
 WORKDIR /app/apps/${APP}
-RUN pnpm run build
+RUN pnpm --filter=${APP}... run build
 RUN pnpm --filter=${APP} deploy /app/outdir --prod
 
 FROM node:22-slim AS runner

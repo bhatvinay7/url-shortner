@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev ",
-    "build": " pnpm --filter types run build && next build ",
+    "build": "next build ",
     "start": "next start"
   },
   "dependencies": {

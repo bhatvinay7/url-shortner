@@ -32,7 +32,7 @@ ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 COPY --from=installer /app ./
 COPY --from=installer /app/node_modules ./node_modules
 WORKDIR /app/apps/${APP}
-RUN pnpm run build
+RUN pnpm --filter=${APP}... run build
 RUN pnpm --filter=${APP} deploy /app/outdir --prod
 
 

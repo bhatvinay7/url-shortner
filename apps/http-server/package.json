@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": " node --loader ts-node/esm src/index.ts",
-    "build": " pnpm --filter mongodb run build && pnpm --filter rabbitmq run build && pnpm --filter redisclient run build && pnpm --filter types run build && tsc -b",
+    "build": "tsc -b",
     "start": "node  dist/index.js --port 3001"
   },
  
