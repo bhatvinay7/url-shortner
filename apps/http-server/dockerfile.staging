@@ -29,12 +29,12 @@ ENV NEXT_PUBLIC_FRONTEND_URL=${NEXT_PUBLIC_FRONTEND_URL}
 COPY --from=installer /app ./
 WORKDIR /app/apps/${APP}
 RUN pnpm run build
-RUN pnpm --filter=${APP} deploy /outdir --prod
+RUN pnpm --filter=${APP} deploy /app/outdir --prod
 
 FROM node:22-slim AS runner
 ARG APP=http-server
 WORKDIR /app
-COPY --from=builder /app/apps/${APP}/outdir/. ./apps/${APP}/
+COPY --from=builder /app/outdir/. ./apps/${APP}/
 WORKDIR /app/apps/${APP}
 EXPOSE 3001
 CMD ["pnpm", "run", "start"] 
