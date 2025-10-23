@@ -5,14 +5,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev  --port 3006",
-    "build": "next build",
+    "build": "pnpm --filter types run build && next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
-    "@repo/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.1.14",
     "axios": "^1.12.2",
     "framer-motion": "^12.23.22",

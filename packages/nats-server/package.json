@@ -24,6 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "nats": "^2.29.3"
+    "nats": "^2.29.3",
+    "dotenv": "^17.2.3"
   }
 }

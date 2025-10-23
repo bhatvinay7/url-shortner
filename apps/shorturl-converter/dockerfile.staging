@@ -17,13 +17,11 @@ COPY pnpm-workspace.yaml ./
 COPY packages ./packages
 COPY apps/${APP}/package.json ./apps/${APP}/package.json
 RUN pnpm install --filter ${APP}
-RUN pnpm --filter types run build
-RUN pnpm --filter mongodb run build
-RUN pnpm --filter nats-server run build
-RUN pnpm --filter rabbitmq run build
+#   "build" "pnpm --recursive run build && <name> build" in package.json or manualy build the dependency
+
 
 FROM base AS builder
-ARG APP=shorturl-converter 
+ARG APP=shorturl-converter
 WORKDIR /app
 COPY --from=installer /app ./
 WORKDIR /app/apps/${APP}

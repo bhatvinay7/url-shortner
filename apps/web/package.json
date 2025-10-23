@@ -6,13 +6,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev ",
-    "build": "next build ",
+    "build": " pnpm --filter types run build && next build ",
     "start": "next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@reduxjs/toolkit": "^2.9.0",
-    "@repo/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.1.14",
     "@types/express": "^5.0.3",
     "axios": "^1.12.2",

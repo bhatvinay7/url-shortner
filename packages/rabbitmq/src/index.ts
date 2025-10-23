@@ -1,6 +1,7 @@
 import {Connection,ConsumerStatus} from 'rabbitmq-client'
-import {message} from 'types'
-const connection = new Connection({url:'amqp://admin:admin123@rabbitmq:5672',
+import dotenv from 'dotenv'
+dotenv.conf()
+const connection = new Connection({url:process.env.RABBITMQ_CLUSTER_URL,
   heartbeat: 90,
   connectionTimeout: 10000,
   })

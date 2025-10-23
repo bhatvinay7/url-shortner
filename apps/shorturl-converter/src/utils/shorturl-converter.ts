@@ -7,6 +7,8 @@ import redis from "redisclient";
 import { natsConnection, sc } from "nats-server";
 import generatetHash from "./uniqueStringConverter.js";
 import { Url, connectDB } from "mongodb";
+import dotenv from 'dotenv'
+dotenv.config()
 let sub: any = null;
 export async function consumeFromQueue(
   topic: string,
@@ -35,7 +37,7 @@ export async function consumeFromQueue(
           console.log(userMessage);
           try {
             natsConnection.publish(
-              "url-status",
+              process.env.URL_STATUS,
               sc.encode(
                 JSON.stringify({
                   message: "processing your request...",
@@ -45,10 +47,11 @@ export async function consumeFromQueue(
                 })
               )
             );
+
             if (userMessage?.url) {
               const data = await assignTopic(userMessage.url);
               natsConnection.publish(
-                "url-status",
+                process.env.URL_CHANNAL,
                 sc.encode(
                   JSON.stringify({
                     message: "generating short url",

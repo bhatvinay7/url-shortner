@@ -17,15 +17,15 @@ COPY pnpm-workspace.yaml ./
 COPY packages ./packages
 COPY apps/${APP}/package.json ./apps/${APP}/package.json
 RUN pnpm install --filter ${APP}
-RUN pnpm --filter types run build
-RUN pnpm --filter mongodb run build
-RUN pnpm --filter nats-server run build
-RUN pnpm --filter rabbitmq run build
-RUN pnpm --filter radisclient run build    
+
+#   "build" "pnpm --recursive run build && next build" in package.json or manualy build the dependency
 
 FROM BASE AS builder
 ARG APP=http-server
+ARG NEXT_PUBLIC_FRONTEND_URL
 WORKDIR /app
+ENV APP=http-server
+ENV NEXT_PUBLIC_FRONTEND_URL=${NEXT_PUBLIC_FRONTEND_URL}
 COPY --from=installer /app ./
 WORKDIR /app/apps/${APP}
 RUN pnpm run build

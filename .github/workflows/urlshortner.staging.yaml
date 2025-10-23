@@ -3,15 +3,24 @@ on:
     branches: [ "dev" ]
   push:
     branches: [ "dev" ]
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build:
     name: Build and Push
     runs-on: ubuntu-latest
+    environment: staging
+    env:
+      NEXT_PUBLIC_ANALYTICS_FRONTEND_URL: ${{secrets.NEXT_PUBLIC_ANALYTICS_FRONTEND_URL}}
+      NEXT_PUBLIC_BACKEND_URL: ${{secrets.NEXT_PUBLIC_BACKEND_URL}}
+      NEXT_PUBLIC_FRONTEND_URL: ${{secrets.NEXT_PUBLIC_FRONTEND_URL}}
+      NEXT_PUBLIC_WS_SERVER_URL: ${{secrets.NEXT_PUBLIC_WS_SERVER_URL}}
+      COMMIT_SHA: ${{ github.sha }}
 
     steps:
     - uses: actions/checkout@v3
-    
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
@@ -25,8 +34,13 @@ jobs:
         file: ./apps/web/dockerfile.staging
         push: true
         tags: |
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-web:latest 
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-web:staging
+          ${{ secrets.DOCKER_USERNAME }}/url-web:latest
+          ${{ secrets.DOCKER_USERNAME }}/url-web:$COMMIT_SHA
+
+        build-args: |
+              NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL
+              NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+              NEXT_PUBLIC_WS_SERVER_URL=$NEXT_PUBLIC_WS_SERVER_URL
 
     - name: build and push url-analytics image
       uses: docker/build-push-action@v4
@@ -35,8 +49,12 @@ jobs:
         file: ./apps/analytics/dockerfile.staging
         push: true
         tags: |
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-analytics:latest 
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-analytics:staging   
+          ${{ secrets.DOCKER_USERNAME }}/url-analytics:latest
+          ${{ secrets.DOCKER_USERNAME }}/url-analytics:$COMMIT_SHA
+
+        build-args: |
+            NEXT_PUBLIC_ANALYTICS_FRONTEND_URL=$NEXT_PUBLIC_ANALYTICS_FRONTEND_URL
+            NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 
     - name: build and push data-collector image
       uses: docker/build-push-action@v4
@@ -45,8 +63,8 @@ jobs:
         file: ./apps/data-collector/dockerfile.staging
         push: true
         tags: |
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-data-collector:latest 
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-data-collector:staging
+          ${{ secrets.DOCKER_USERNAME }}/url-data-collector:latest
+          ${{ secrets.DOCKER_USERNAME }}/url-data-collector:$COMMIT_SHA
 
     - name: build and push http-server image
       uses: docker/build-push-action@v4
@@ -55,8 +73,11 @@ jobs:
         file: ./apps/http-server/dockerfile.staging
         push: true
         tags: |
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-http-server:latest 
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-http-server:staging
+          ${{ secrets.DOCKER_USERNAME }}/url-http-server:latest
+          ${{ secrets.DOCKER_USERNAME }}/url-http-server:$COMMIT_SHA
+
+        build-args: |
+            NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL
 
     - name: build and push shorturl-converter image
       uses: docker/build-push-action@v4
@@ -65,8 +86,11 @@ jobs:
         file: ./apps/shorturl-converter/dockerfile.staging
         push: true
         tags: |
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-shorturl-converter:latest 
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-shorturl-converter:staging  
+          ${{ secrets.DOCKER_USERNAME }}/url-shorturl-converter:latest
+          ${{ secrets.DOCKER_USERNAME }}/url-shorturl-converter:$COMMIT_SHA
+
+        build-args: |
+            NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL
 
     - name: build and push ws-server image
       uses: docker/build-push-action@v4
@@ -75,15 +99,17 @@ jobs:
         file: ./apps/ws-server/dockerfile.staging
         push: true
         tags: |
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-ws-server:latest 
-          - ${{ secrets.DOCKER_HUB_USERNAME }}/url-ws-server:staging
+          ${{ secrets.DOCKER_USERNAME }}/url-ws-server:latest
+          ${{ secrets.DOCKER_USERNAME }}/url-ws-server:$COMMIT_SHA
 
   Deploy:
     needs: build
-    runs-on: ubuntu-latest        
+    runs-on: ubuntu-latest
     environment: staging
+    env:
+      COMMIT_SHA: ${{ github.sha }}
     steps:
-      - uses: actions/checkout@v3   
+      - uses: actions/checkout@v3
 
       - name: Install kubectl
         run: |
@@ -128,7 +154,7 @@ jobs:
           for dir in "${!services[@]}"; do
           cd "$dir"
           key=${services[$dir]}
-          yq -i -y "(.services[].image) = \"${DOCKER_USERNAME}/${key}:${GITHUB_SHA}\"" values.staging.yml
+          yq -i -y "(.services[].image) = \"${DOCKER_USERNAME}/${key}:${COMMIT_SHA}\"" values.staging.yml
           cd ..
           done
 
@@ -178,11 +204,11 @@ jobs:
           --docker-username="$DOCKER_USERNAME" \
           --docker-password="$DOCKER_PASSWORD" \
           --docker-email="$email" \
-          --namespace=feedback-services \
+          --namespace=shortner \
           --dry-run=client -o yaml \
           | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
           > secrets/docker-sealed-secret.yaml
-
+       
 
           cat <<'EOFON' > frontend.env
           NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
@@ -192,7 +218,7 @@ jobs:
 
           kubectl create secret generic frontend-sealed-secret \
           --from-literal=combined_env="$(cat frontend.env)" \
-          --namespace=feedback-services \
+          --namespace=shortner\
           --dry-run=client -o yaml \
           | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
           > secrets/frontend-sealed-secret.yaml
@@ -204,7 +230,7 @@ jobs:
 
           kubectl create secret generic analytics-frontend-sealed-secret \
           --from-literal=combined_env="$(cat analytics-frontend.env)" \
-          --namespace=feedback-services \
+          --namespace=shortner \
           --dry-run=client -o yaml \
           | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
           > secrets/analytics-frontend-sealed-secret.yaml
@@ -216,14 +242,18 @@ jobs:
           NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_API_URL
           secret_key=$SECRET_KEY
           access_key=$ACCESS_KEY
-
+          REDIS_PASSWORD=$REDIS_PASSWORD
+          REDIS_PORT=$REDIS_PORT
+          REDIS_HOST=$REDIS_HOST
           TOPIC1=$TOPIC1
+          RABBITMQ_CLUSTER_URL=$RABBITMQ_CLUSTER_URL
+          DB_URL=$DB_URL
           EXCHANGE_NAME1=$EXCHANGE_NAME1
           ROUTING_KEY1=$ROUTING_KEY1
 
           TOPIC2=$TOPIC2
           EXCHANGE_NAME2=$EXCHANGE_NAME2
-          ROUTING_KEY2=$QUEUE_NAME2
+          ROUTING_KEY2=$ROUTING_KEY2
           EOFBACK
 
           kubectl create secret generic http-server-sealed-secret \
@@ -236,9 +266,11 @@ jobs:
 
           cat <<'EOFKAF' > data-collector.env
           TOPIC1=TOPIC1
-          EXCHANGE_NAME1=EXCHANGE_NAME1
-          BINDING_KEY1=BINDING_KEY1
+          EXCHANGE_NAME1=$EXCHANGE_NAME1
+          BINDING_KEY1=$BINDING_KEY1
           QUEUE_NAME1=$QUEUE_NAME1
+          RABBITMQ_CLUSTER_URL=$RABBITMQ_CLUSTER_URL
+          DB_URL=$DB_URL
           EOFKAF
 
           kubectl create secret generic data-collector-sealed-secret \
@@ -249,13 +281,21 @@ jobs:
           >  secrets/data-collector-sealed-secret.yaml
 
 
-          cat <<EOFCON> shorturl-converter.env
+          cat <<'EOFCON'> shorturl-converter.env
           api_key=$API_KEY
           groq_api_key=$GROQ_API_KEY
           TOPIC2=$TOPIC2
           EXCHANGE_NAME2=$EXCHANGE_NAME2
           BINDING_KEY2=$BINDING_KEY2
           QUEUE_NAME2=$QUEUE_NAME2
+          RABBITMQ_CLUSTER_URL=$RABBITMQ_CLUSTER_URL
+          DB_URL=$DB_URL
+
+          REDIS_PASSWORD=$REDIS_PASSWORD
+          REDIS_PORT=$REDIS_PORT
+          REDIS_HOST=$REDIS_HOST
+          URL_CHANNAL=$URL_CHANNAL
+          URL_STATUS=$URL_STATUS
           EOFCON
 
           kubectl create secret generic shorturl-converter-sealed-secret \
@@ -269,7 +309,7 @@ jobs:
           cat <<'EOFWS' > ws.env
           NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL
           secret_key=$SECRET_KEY
-          
+
           EOFWS
 
           kubectl create secret generic ws-sealed-secret \
@@ -278,7 +318,32 @@ jobs:
           --dry-run=client -o yaml \
           | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
           >  secrets/ws-sealed-secret.yaml
+
+          cat <<'NATSEOF' > nats-auth.conf
+          authorization {
+          users = [
+          {user: "${NATS_USER}", password: "${NATS_PASSWORD}"}
+            ]
+          }
+          NATSEOF
+
+          kubectl create secret generic sealed-nats-auth \
+          --namespace nats \
+          --from-file=nats-auth.conf=./nats-auth.conf \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem \
+           --format yaml \
+          > secrets/nats-auth-sealed.yaml
+
+          kubectl create secret generic sealed-rabbitmq-auth \
+          --namespace rabbitmq \
+          --from-literal=username=$NATS_USER \
+          --from-literal=password=$NATS_PASSWORD \
+          --dry-run=client -o yaml \
+          | kubeseal --cert=pub-sealed-secrets.pem --format yaml \
+          > secrets/rabbitmq-auth-sealed.yaml
           EOF
+
           chmod +x scripts/create-secrets.sh
 
       - name: Create and Seal Secrets
@@ -297,7 +362,8 @@ jobs:
           access_key: ${{ secrets.ACCESS_KEY }}
           secret_key: ${{ secrets.SECRET_KEY }}
           email: ${{ secrets.USER_EMAIL}}
-
+          RABBITMQ_CLUSTER_URL: ${{secrets.RABBITMQ_CLUSTER_URL}}
+          DB_URL: ${{secrets.DB_URL}}
           TOPIC1: ${{secrets.TOPIC1}}
           EXCHANGE_NAME1: ${{secrets.EXCHANGE_NAME1}}
           BINDING_KEY1: ${{secrets.BINDING_KEY1}}
@@ -309,12 +375,17 @@ jobs:
           BINDING_KEY2: ${{secrets.BINDING_KEY2}}
           ROUTING_KEY2: ${{secrets.ROUTING_KEY2}}
           QUEUE_NAME2: ${{secrets.QUEUE_NAME2}}
+          URL_CHANNAL: ${{secrets.URL_CHANNAL}}
+          URL_STATUS: ${{secrets.URL_STATUS}}
+          NATS_USER: ${{secrets.USER}}
+          NATS_PASSWORD: ${{secrets.PASS}}
 
         run: |
           source scripts/create-secrets.sh
           cd ~/gitops
           rm -f pub-sealed-secrets.pem
-          rm -f http.env frontend.env ws.env shorturl-converter.env  data-collector.env
+          rm -f http.env frontend.env ws.env shorturl-converter.env  data-collector.env analytics-frontend.env
+          rm -f nats-auth.conf
 
 
       - name: Commit and Push Changes
@@ -333,7 +404,7 @@ jobs:
           if git diff-index --quiet HEAD --; then
           echo "No changes to commit"
           else
-          git commit -m "Update images to SHA ${GITHUB_SHA}"
+          git commit -m "Update images to SHA ${COMMIT_SHA}"
 
           git push https://x-access-token:$TOKEN@github.com/$DOCKER_USERNAME/$GITOPS_REPO.git $GITOPS_BRANCH
 

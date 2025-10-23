@@ -3,7 +3,7 @@ import express, { Request } from "express";
 import http from "http";
 import { message } from "types";
 import userVerify from "./userAuth.js";
-import { channel, notifyChannel, sc } from "nats-server";
+import { channal, notifyChannal, sc } from "nats-server";
 import cookieParser from "cookie-parser";
 const heartbeatInterval = 30 * 1000;
 const heartbeatTimeout = 40 * 1000;
@@ -72,9 +72,10 @@ try {
 }
 
 // nats suncribers to receive the data
+
 try {
   (async () => {
-    for await (const m of notifyChannel) {
+    for await (const m of notifyChannal) {
       let notifications = JSON.parse(sc.decode(m.data));
       let user = users?.get(notifications?.userId);
       if (user) user?.send(sc.decode(m.data));
@@ -82,7 +83,7 @@ try {
   })();
 
   (async () => {
-    for await (const m of channel) {
+    for await (const m of channal) {
       let data = JSON.parse(sc.decode(m.data));
       let user = users?.get(data?.userId);
       if (user) user?.send(sc.decode(m.data));

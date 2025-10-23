@@ -8,7 +8,7 @@ export async function connectDB() {
 
   try {
     
-    await mongoose.connect(process.env.DB_URL! || 'mongodb+srv://bhatvinay74:yJcZTZl755aOvJqJ@cluster0.yxdhwpi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+    await mongoose.connect(process.env.DB_URL!);
     const connection = mongoose.connection;
     if(connection.readyState==1){
       console.log("connected")
