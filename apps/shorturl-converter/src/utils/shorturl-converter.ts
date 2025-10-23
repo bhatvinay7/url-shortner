@@ -37,7 +37,7 @@ export async function consumeFromQueue(
           console.log(userMessage);
           try {
             natsConnection.publish(
-              process.env.URL_STATUS,
+              process.env.URL_STATUS!,
               sc.encode(
                 JSON.stringify({
                   message: "processing your request...",
@@ -51,7 +51,7 @@ export async function consumeFromQueue(
             if (userMessage?.url) {
               const data = await assignTopic(userMessage.url);
               natsConnection.publish(
-                process.env.URL_CHANNAL,
+                process.env.URL_CHANNAL!,
                 sc.encode(
                   JSON.stringify({
                     message: "generating short url",
