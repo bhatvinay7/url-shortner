@@ -3,6 +3,7 @@ on:
     branches: [ "dev" ]
   push:
     branches: [ "dev" ]
+
 permissions:
   id-token: write
   contents: read
@@ -159,7 +160,7 @@ jobs:
           done
 
       - name: Azure login (OIDC)
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
