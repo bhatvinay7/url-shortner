@@ -221,7 +221,7 @@ jobs:
 
           kubectl create secret generic frontend-sealed-secret \
           --from-literal=combined_env="$(cat frontend.env)" \
-          --namespace=shortner\
+          --namespace=shortner \
           --dry-run=client -o yaml \
           | kubeseal --cert=pub-sealed-secrets.pem --format=yaml \
           > secrets/frontend-sealed-secret.yaml
