@@ -5,7 +5,7 @@ on:
     branches: [ "dev" ]
 
 permissions:
-  # id-token: write
+  id-token: write
   contents: read
 
 jobs:
@@ -166,13 +166,8 @@ jobs:
           client-secret: ${{secrets.AZURE_CLIENT_SECRET}}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          enable-AzPSSession: false
-          environment: azurecloud
-          auth-type: SERVICE_PRINCIPAL
           
 
-  
-      
       - name: Get AKS credentials
         run: az aks get-credentials --resource-group ${{secrets.RESOURCE_GROUP}} --name ${{secrets.CLUSTER_NAME}}
 
