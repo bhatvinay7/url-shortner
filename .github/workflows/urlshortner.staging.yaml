@@ -331,7 +331,7 @@ jobs:
           NATSEOF
 
           kubectl create secret generic sealed-nats-auth \
-          --namespace nats \
+          --namespace shortner \
           --from-file=nats-auth.conf=./nats-auth.conf \
           --dry-run=client -o yaml \
           | kubeseal --cert=pub-sealed-secrets.pem \
@@ -339,7 +339,7 @@ jobs:
           > secrets/nats-auth-sealed.yaml
 
           kubectl create secret generic sealed-rabbitmq-auth \
-          --namespace rabbitmq \
+          --namespace shortner \
           --from-literal=username=$NATS_USER \
           --from-literal=password=$NATS_PASSWORD \
           --dry-run=client -o yaml \
