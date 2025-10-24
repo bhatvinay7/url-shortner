@@ -5,7 +5,7 @@ on:
     branches: [ "dev" ]
 
 permissions:
-  id-token: write
+  # id-token: write
   contents: read
 
 jobs:
@@ -165,6 +165,9 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: false
+          environment: azurecloud
+          auth-type: SERVICE_PRINCIPAL
 
   
       
