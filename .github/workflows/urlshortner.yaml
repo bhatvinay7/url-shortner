@@ -155,7 +155,11 @@ jobs:
             export ANALYTICS_DOMAIN="${{secrets.ANALYTICS_DOMAIN}}"
             export USER="${{secrets.USER}}"
             export PASS="${{secrets.PASS}}"
+            export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME}}"
+            export RABBITMQ_USER="${{secrets.USER}}"
+            export RABBITMQ_PASS="${{secrets.PASS}}"
             export NATS_SERVER="${{secrets.NATS_SERVER}}"
+            
             if ! command -v curl &> /dev/null; then
                 sudo apt-get update
                 sudo apt-get install -y curl
@@ -254,6 +258,8 @@ jobs:
 
             cat >>'EOL'> env.compose
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            RABBITMQ_USER=${{secrets.USER}}
+            RABBITMQ_PASS=${{secrets.PASS}}
             NEXT_PUBLIC_BACKEND_API_URL=${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
             NEXT_PUBLIC_FRONTEND_API_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_API_URL }}
             NEXT_PUBLIC_WS_SERVER=${{ secrets.NEXT_PUBLIC_WS_SERVER }}
@@ -288,8 +294,6 @@ jobs:
             REDIS_HOST=${{secrets.REDIS_HOST}}
             EOL
 
-            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME}} RABBITMQ_USER=${{secrets.USER}} RABBITMQ_PASS=${{secrets.PASS}} \
+            
             sudo docker compose -f docker-compose.staging.yaml --env-file ./env.compose pull
-
-            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} RABBITMQ_USER=${{secrets.USER}} RABBITMQ_PASS=${{secrets.PASS}} \
             sudo docker compose -f docker-compose.staging.yaml --env-file ./env.compose up -d
