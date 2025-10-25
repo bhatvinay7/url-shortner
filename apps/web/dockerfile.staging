@@ -49,4 +49,4 @@ COPY --from=builder /app/apps/${APP}/.next/static ./apps/${APP}/.next/static
 COPY --from=builder /app/apps/${APP}/public ./apps/${APP}/public
 WORKDIR /app/apps/${APP}
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["node", ".next/server.js"]

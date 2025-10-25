@@ -159,6 +159,7 @@ jobs:
             export RABBITMQ_USER="${{secrets.USER}}"
             export RABBITMQ_PASS="${{secrets.PASS}}"
             export NATS_SERVER="${{secrets.NATS_SERVER}}"
+            export NATS_SERVER_NAME="${{secrets.NATS_SERVER_NAME}}"
 
             if ! command -v curl &> /dev/null; then
                 sudo apt-get update
@@ -224,7 +225,7 @@ jobs:
             echo "Pulling the  images from  docker hub"
             cat << EOF > nats-server.conf
 
-            server_name: ${NATS_SERVER}
+            server_name: ${NATS_SERVER_NAME}
               authorization {
               user: ${USER}
               password: ${PASS}
