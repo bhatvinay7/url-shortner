@@ -256,7 +256,7 @@ jobs:
 
             rm -f env.compose || true
 
-            cat >> EOL > env.compose
+            cat << EOL > env.compose
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             RABBITMQ_USER=${{secrets.USER}}
             RABBITMQ_PASS=${{secrets.PASS}}
@@ -294,6 +294,6 @@ jobs:
             REDIS_HOST=${{secrets.REDIS_HOST}}
             EOL
 
-            
+
             sudo docker compose -f docker-compose.staging.yaml --env-file ./env.compose pull
             sudo docker compose -f docker-compose.staging.yaml --env-file ./env.compose up -d
