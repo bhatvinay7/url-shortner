@@ -159,7 +159,7 @@ jobs:
             export RABBITMQ_USER="${{secrets.USER}}"
             export RABBITMQ_PASS="${{secrets.PASS}}"
             export NATS_SERVER="${{secrets.NATS_SERVER}}"
-            
+
             if ! command -v curl &> /dev/null; then
                 sudo apt-get update
                 sudo apt-get install -y curl
@@ -217,12 +217,12 @@ jobs:
             sudo docker rm -f $(sudo docker ps -aq) || true
             fi
 
-            docker compose -f docker-compose.staging.yml down --remove-orphans || true
+            docker compose -f docker-compose.staging.yaml down --remove-orphans || true
             sudo docker image prune -f || true
             sudo docker prune -af || true
 
             echo "Pulling the  images from  docker hub"
-            cat <<'EOF' > nats-server.conf
+            cat << EOF > nats-server.conf
 
             server_name: ${NATS_SERVER}
               authorization {
@@ -256,7 +256,7 @@ jobs:
 
             rm -f env.compose || true
 
-            cat >>'EOL'> env.compose
+            cat >> EOL > env.compose
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             RABBITMQ_USER=${{secrets.USER}}
             RABBITMQ_PASS=${{secrets.PASS}}
