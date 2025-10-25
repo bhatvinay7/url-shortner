@@ -41,5 +41,8 @@ ARG APP=analytics
 WORKDIR /app
 COPY --from=builder /app/outdir/. ./apps/${APP}/
 WORKDIR /app/apps/${APP}
+COPY --from=builder /app/apps/${APP}/.next/standalone ./
+COPY --from=builder /app/apps/${APP}/.next/static ./apps/${APP}/.next/static
+COPY --from=builder /app/apps/${APP}/public ./apps/${APP}/public
 EXPOSE 3006
-CMD ["node", ".next/standalone/server.js"]
+CMD ["node", "server.js"]
