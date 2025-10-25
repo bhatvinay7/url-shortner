@@ -1,24 +1,37 @@
 services:
   urlshortner-web:
+    image: ${DOCKER_USERNAME}/url-web:latest
     container_name: urlshortner-web
-    build:
-      context: .
-      dockerfile: apps/web/dockerfile.dev
     env_file:
-      - .env.web      
+      - env.compose      
     ports:
       - "3000:3000"
     deploy:
       resources:
         limits:
-          cpus: "1.5"  
+          cpus: "0.5"  
     restart: unless-stopped
 
+  analytics-web:
+    image: ${DOCKER_USERNAME}/url-analytics:latest
+    container_name: analytics
+    env_file:
+      - env.compose      
+    ports:
+      - "3006:3006"
+    networks:
+      - rabbitmq_net  
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"  
+    restart: unless-stopped    
+
   data-collector:
+    image: ${DOCKER_USERNAME}/url-data-collector:latest
     container_name: data-collector
-    build:
-      context: .
-      dockerfile: apps/data-collector/dockerfile.dev  
+    env_file:
+      - env.compose  
     ports:
       - "3012:3012"
     restart: unless-stopped
@@ -27,25 +40,24 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"  
+          cpus: "0.25"  
     depends_on:
       - rabbitmq
       - nats
   
   ws-server:
+    image: ${DOCKER_USERNAME}/url-ws-server:latest
     container_name: ws-server
-    build:
-      context: .
-      dockerfile: apps/ws-server/dockerfile.dev
+    
     env_file:
-      - .env.ws-server   
+      - env.compose  
     ports:
       - "8080:8080"
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          cpus: "1"
+          cpus: "0.25"
     networks:
       - rabbitmq_net
     depends_on:
@@ -53,16 +65,14 @@ services:
       - nats
 
   http-server:
+    image: ${DOCKER_USERNAME}/url-http-server:latest
     container_name: http-server
-    build:
-      context: .
-      dockerfile: apps/http-server/dockerfile.dev
+    env_file:
+      - env.compose  
     deploy:
       resources:
         limits:
-          cpus: "1"  
-    env_file:
-      - .env/http     
+          cpus: "0.25"     
     ports:
       - "3001:3001"
     
@@ -74,12 +84,10 @@ services:
       - nats
 
   short-urlconverter:
+    image: ${DOCKER_USERNAME}/url-shorturl-converter:latest
     container_name: shorturl-converter
-    build:
-      context: .
-      dockerfile: apps/shorturl-converter/dockerfile.dev
     env_file:
-      - .env.shorturl-converter  
+      - env.compose  
     ports:
       - "3011:3011"
     networks:
@@ -88,7 +96,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
+          cpus: "0.25"
     depends_on:
       - rabbitmq
       - nats
@@ -98,10 +106,9 @@ services:
     container_name: rabbitmq
     hostname: rabbitmq
     restart: unless-stopped
-
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-admin123}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
 
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit loopback_users []"
@@ -120,25 +127,26 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "2"  
+          cpus: "1"  
 
     networks:
       - rabbitmq_net
   nats:
     image: nats:2.10
     container_name: nats-server
-    command: ["-c", "/etc/nats/nats.conf"]
     ports:
       - "4222:4222"
       - "8222:8222"
       - "6222:6222"
     volumes:
-      - ./packages/nats-server/src/nats/nats.conf:/etc/nats/nats.conf
-      - nats_data:/data/nats
+      - ./nats_data:/data
+      - ./nats-server.conf:/etc/nats/nats-server.conf
+    command: ["-c", "/etc/nats/nats-server.conf"]
+
     deploy:
       resources:
         limits:
-          cpus: "1.5"
+          cpus: "0.75"
     restart: unless-stopped
     networks:
       - rabbitmq_net
