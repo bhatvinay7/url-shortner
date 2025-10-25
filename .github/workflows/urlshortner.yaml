@@ -1,12 +1,8 @@
 on:
   pull_request:
-    branches: [ "dev" ]
+    branches: ["dev"]
   push:
-    branches: [ "dev" ]
-
-permissions:
-  id-token: write
-  contents: read
+    branches: ["dev"]
 
 jobs:
   build:
@@ -21,87 +17,87 @@ jobs:
       COMMIT_SHA: ${{ github.sha }}
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: actions/checkout@v3
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: build and push url-web image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./apps/web/dockerfile.staging
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/url-web:latest
-          ${{ secrets.DOCKER_USERNAME }}/url-web:${{env.COMMIT_SHA}}
+      - name: build and push url-web image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./apps/web/dockerfile.staging
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/url-web:latest
+            ${{ secrets.DOCKER_USERNAME }}/url-web:${{env.COMMIT_SHA}}
 
-        build-args: |
-              NEXT_PUBLIC_FRONTEND_URL=${{env.NEXT_PUBLIC_FRONTEND_URL}}
-              NEXT_PUBLIC_BACKEND_URL=${{env.NEXT_PUBLIC_BACKEND_URL}}
-              NEXT_PUBLIC_WS_SERVER_URL=${{env.NEXT_PUBLIC_WS_SERVER_URL}}
+          build-args: |
+            NEXT_PUBLIC_FRONTEND_URL=${{env.NEXT_PUBLIC_FRONTEND_URL}}
+            NEXT_PUBLIC_BACKEND_URL=${{env.NEXT_PUBLIC_BACKEND_URL}}
+            NEXT_PUBLIC_WS_SERVER_URL=${{env.NEXT_PUBLIC_WS_SERVER_URL}}
 
-    - name: build and push url-analytics image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./apps/analytics/dockerfile.staging
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/url-analytics:latest
-          ${{ secrets.DOCKER_USERNAME }}/url-analytics:${{env.COMMIT_SHA}}
+      - name: build and push url-analytics image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./apps/analytics/dockerfile.staging
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/url-analytics:latest
+            ${{ secrets.DOCKER_USERNAME }}/url-analytics:${{env.COMMIT_SHA}}
 
-        build-args: |
+          build-args: |
             NEXT_PUBLIC_ANALYTICS_FRONTEND_URL=${{env.NEXT_PUBLIC_ANALYTICS_FRONTEND_URL}}
             NEXT_PUBLIC_BACKEND_URL=${{env.NEXT_PUBLIC_BACKEND_URL}}
 
-    - name: build and push data-collector image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./apps/data-collector/dockerfile.staging
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/url-data-collector:latest
-          ${{ secrets.DOCKER_USERNAME }}/url-data-collector:${{env.COMMIT_SHA}}
+      - name: build and push data-collector image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./apps/data-collector/dockerfile.staging
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/url-data-collector:latest
+            ${{ secrets.DOCKER_USERNAME }}/url-data-collector:${{env.COMMIT_SHA}}
 
-    - name: build and push http-server image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./apps/http-server/dockerfile.staging
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/url-http-server:latest
-          ${{ secrets.DOCKER_USERNAME }}/url-http-server:${{env.COMMIT_SHA}}
+      - name: build and push http-server image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./apps/http-server/dockerfile.staging
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/url-http-server:latest
+            ${{ secrets.DOCKER_USERNAME }}/url-http-server:${{env.COMMIT_SHA}}
 
-        build-args: |
+          build-args: |
             NEXT_PUBLIC_FRONTEND_URL=$NEXT_PUBLIC_FRONTEND_URL
 
-    - name: build and push shorturl-converter image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./apps/shorturl-converter/dockerfile.staging
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/url-shorturl-converter:latest
-          ${{ secrets.DOCKER_USERNAME }}/url-shorturl-converter:${{env.COMMIT_SHA}}
+      - name: build and push shorturl-converter image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./apps/shorturl-converter/dockerfile.staging
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/url-shorturl-converter:latest
+            ${{ secrets.DOCKER_USERNAME }}/url-shorturl-converter:${{env.COMMIT_SHA}}
 
-        build-args: |
+          build-args: |
             NEXT_PUBLIC_FRONTEND_URL=${{env.NEXT_PUBLIC_FRONTEND_URL}}
 
-    - name: build and push ws-server image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./apps/ws-server/dockerfile.staging
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/url-ws-server:latest
-          ${{ secrets.DOCKER_USERNAME }}/url-ws-server:${{env.COMMIT_SHA}}
+      - name: build and push ws-server image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./apps/ws-server/dockerfile.staging
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/url-ws-server:latest
+            ${{ secrets.DOCKER_USERNAME }}/url-ws-server:${{env.COMMIT_SHA}}
 
   Deploy:
     needs: build
@@ -123,8 +119,9 @@ jobs:
           export FRONTEND_DOMAIN_PORT=${{ secrets.FRONTEND_DOMAIN_PORT }}
           export WS_SERVER_DOMAIN_PORT=${{ secrets.WS_SERVER_DOMAIN_PORT }}
           export ANALYTICS_DOMAIN=${{secrets.ANALYTICS_DOMAIN}}
-          export ANALYTICS_DOMAIN_PORT=${{.secrets.ANALYTICS_DOMAIN_PORT}}
-          envsubst '${API_DOMAIN} ${FRONTEND_DOMAIN} ${WS_SERVER_DOMAIN} ${ANALYTICS_DOMAIN} ${API_DOMAIN_PORT} ${FRONTEND_DOMAIN_PORT} ${WS_SERVER_DOMAIN_PORT} ${ANALYTICS_DOMAIN_PORT}' \
+          export ANALYTICS_DOMAIN_PORT=${{secrets.ANALYTICS_DOMAIN_PORT}}
+          envsubst '${API_DOMAIN} ${FRONTEND_DOMAIN} ${WS_SERVER_DOMAIN} ${ANALYTICS_DOMAIN} ${API_DOMAIN_PORT} ${FRONTEND_DOMAIN_PORT} \
+          ${WS_SERVER_DOMAIN_PORT} ${ANALYTICS_DOMAIN_PORT}' \
           < nginx/nginx.conf.template > ./build/nginx.conf
 
       - name: Copy config to server
@@ -184,13 +181,13 @@ jobs:
             sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
             sudo groupadd docker
 
-            sudo usermod -aG docker $USER          
+            sudo usermod -aG docker $USER
 
             sudo apt-get update -y
             sudo apt-get install -y nginx
             sudo systemctl start nginx
             sudo mkdir -p /etc/nginx/conf.d
-            sudo cp -f /home/ubuntu/nginx-temp/build/nginx.conf /etc/nginx/conf.d/app.conf  
+            sudo cp -f /home/ubuntu/nginx-temp/build/nginx.conf /etc/nginx/conf.d/app.conf
             sudo rm -f /etc/nginx/sites-enabled/default
             sudo rm -f /etc/nginx/sites-available/default
             sudo apt install certbot python3-certbot-nginx -y
@@ -215,7 +212,7 @@ jobs:
             if [ -n "$(sudo docker ps -aq)" ]; then
             sudo docker rm -f $(sudo docker ps -aq) || true
             fi
-            
+
             docker compose -f docker-compose.staging.yml down --remove-orphans || true
             sudo docker image prune -f || true
             sudo docker prune -af || true
@@ -248,12 +245,14 @@ jobs:
             EOF
 
             sudo mkdir -p rabbitmq_data
-          
+            sudo mkdir -p nats_data
+
             sudo chown -R 1001:1001 rabbitmq_data
+            sudo chown -R 1001:1001 nats_data
 
             rm -f env.compose || true
 
-            cat >>'EOL'> env.compose 
+            cat >>'EOL'> env.compose
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             NEXT_PUBLIC_BACKEND_API_URL=${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
             NEXT_PUBLIC_FRONTEND_API_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_API_URL }}
@@ -272,7 +271,7 @@ jobs:
             BINDING_KEY1=${{secrets.BINDING_KEY1}}
             ROUTING_KEY1=${{secrets.ROUTING_KEY1}}
             QUEUE_NAME1=${{secrets.QUEUE_NAME1}}
-            
+
             TOPIC2=${{secrets.TOPIC2}}
             EXCHANGE_NAME2=${{secrets.EXCHANGE_NAME2}}
             BINDING_KEY2=${{secrets.BINDING_KEY2}}
@@ -283,17 +282,14 @@ jobs:
             user=${{secrets.USER}}
             pass=${{secrets.PASS}}
             servers=${{secrets.NATS_SERVER}}
-             
+
             REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}
             REDIS_PORT=${{secrets.REDIS_PORT}}
             REDIS_HOST=${{secrets.REDIS_HOST}}
             EOL
 
-            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} \
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME}} RABBITMQ_USER=${{secrets.USER}} RABBITMQ_PASS=${{secrets.PASS}} \
             sudo docker compose -f docker-compose.staging.yaml --env-file ./env.compose pull
 
-            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} \
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} RABBITMQ_USER=${{secrets.USER}} RABBITMQ_PASS=${{secrets.PASS}} \
             sudo docker compose -f docker-compose.staging.yaml --env-file ./env.compose up -d
-            
-
-     
