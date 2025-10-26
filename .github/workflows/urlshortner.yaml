@@ -261,11 +261,11 @@ jobs:
             sudo chown -R 1001:1001 rabbitmq_data
             sudo chown -R 1001:1001 nats_data
             
-            cat << RAB > enabled_plugins
+            cat <<'RAB'> enabled_plugins
             [rabbitmq_auth_backend_jwt].
             RAB
 
-            cat << RABJWT > jwt_public_key.pem
+            cat <<'RABJWT'> jwt_public_key.pem
             ${jwt_public_key}
             RABJWT
 
@@ -280,12 +280,12 @@ jobs:
             auth_jwt.verify=true
             RABCONF
             
-            mv enabled_plugins rabbitmq_data/enabled_plugins
-            mv jwt_public_key.pem  rabbitmq_data/jwt_public_key.pem
-            mv rabbitmq.conf       rabbitmq_data/rabbitmq.conf
+            sudo chmod 600 rabbitmq_data/jwt_public_key.pem
+            
+            sudo mv enabled_plugins rabbitmq_data/enabled_plugins
+            sudo mv jwt_public_key.pem  rabbitmq_data/jwt_public_key.pem
+            sudo mv rabbitmq.conf       rabbitmq_data/rabbitmq.conf
 
-            chown -R rabbitmq:rabbitmq rabbitmq_data
-            chmod 600 rabbitmq_data/jwt_public_key.pem
 
             rm -f env.compose || true
             cat << EOL > env.compose
@@ -326,6 +326,7 @@ jobs:
             REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}
             REDIS_PORT=${{secrets.REDIS_PORT}}
             REDIS_HOST=${{secrets.REDIS_HOST}}
+
             EOL
 
 
