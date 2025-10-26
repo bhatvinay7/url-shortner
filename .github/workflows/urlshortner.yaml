@@ -257,18 +257,19 @@ jobs:
 
             sudo mkdir -p rabbitmq_data
             sudo mkdir -p nats_data
-
+            sudo mkdir -p rabbitmq
             sudo chown -R 1001:1001 rabbitmq_data
             sudo chown -R 1001:1001 nats_data
+            sudo chown -R 1001:1001 rabbitmq
 
             cat <<'RAB'> enabled_plugins
             [rabbitmq_auth_backend_jwt].
             RAB
 
             echo "$jwt_public_key" | sudo tee rabbitmq_data/jwt_public_key.pem > /dev/null
-            sudo chmod 600 rabbitmq_data/jwt_public_key.pem
+            sudo chmod 600 rabbitmq/jwt_public_key.pem
 
-            sudo mv enabled_plugins rabbitmq_data/enabled_plugins
+            sudo mv enabled_plugins rabbitmq/enabled_plugins
 
             cat << RABCONF > rabbitmq.conf
             auth_backends.1 = rabbit_auth_backend_jwt
@@ -281,7 +282,7 @@ jobs:
             auth_jwt.verify=true
             RABCONF
 
-            sudo mv rabbitmq.conf       rabbitmq_data/rabbitmq.conf
+            sudo mv rabbitmq.conf       rabbitmq/rabbitmq.conf
 
             rm -f env.compose || true
 
