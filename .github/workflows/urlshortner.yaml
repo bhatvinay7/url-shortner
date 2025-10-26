@@ -160,6 +160,12 @@ jobs:
             export RABBITMQ_PASS="${{secrets.PASS}}"
             export NATS_SERVER="${{secrets.NATS_SERVER}}"
             export NATS_SERVER_NAME="${{secrets.NATS_SERVER_NAME}}"
+            export jwt_public_key="${{secrets.JWT_PUBLIC_KEY}}"
+            export jwt_private_key="${{secrets.JWT_PRIVATE_KEY}}"
+            export INDENTITY_KEY="${{secrets.INDENTITY_KEY}}"
+            export EXPECTED_AUD="${{secrets.EXPECTED_AUD}}"
+            export JWT_ALGO="${{secrets.JWT_ALGO}}"
+            export AUTH_ISSUER="${{secrets.AUTH_ISSUER}}"
 
             if ! command -v curl &> /dev/null; then
                 sudo apt-get update
@@ -254,16 +260,41 @@ jobs:
 
             sudo chown -R 1001:1001 rabbitmq_data
             sudo chown -R 1001:1001 nats_data
+            
+            cat << RAB > enabled_plugins
+            [rabbitmq_auth_backend_jwt].
+            RAB
+
+            cat << RABJWT > jwt_public_key.pem
+            ${jwt_public_key}
+            RABJWT
+
+            cat << RABCONF > rabbitmq.conf
+            auth_backends.1 = rabbit_auth_backend_jwt
+            auth_backends.2 = internal
+            auth_jwt.signing_key= /etc/rabbitmq/jwt_public_key.pem
+            auth_jwt.algorithm = ${JWT_ALGO}
+            auth_jwt.claims_identity_key = ${INDENTITY_KEY}
+            auth_jwt.expected_iss =${AUTH_ISSUER}
+            auth_jwt.expected_aud =${EXPECTED_AUD}
+            auth_jwt.verify=true
+            RABCONF
+            
+            mv enabled_plugins rabbitmq_data/enabled_plugins
+            mv jwt_public_key.pem  rabbitmq_data/jwt_public_key.pem
+            mv rabbitmq.conf       rabbitmq_data/rabbitmq.conf
+
+            chown -R rabbitmq:rabbitmq rabbitmq_data
+            chmod 600 rabbitmq_data/jwt_public_key.pem
 
             rm -f env.compose || true
-
             cat << EOL > env.compose
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             RABBITMQ_USER=${{secrets.USER}}
             RABBITMQ_PASS=${{secrets.PASS}}
-            NEXT_PUBLIC_BACKEND_API_URL=${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
-            NEXT_PUBLIC_FRONTEND_API_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_API_URL }}
-            NEXT_PUBLIC_WS_SERVER=${{ secrets.NEXT_PUBLIC_WS_SERVER }}
+            NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+            NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEN_URL }}
+            NEXT_PUBLIC_WS_SERVER_URL=${{ secrets.NEXT_PUBLIC_WS_SERVER_URL }}
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
             GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
             GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}
@@ -289,7 +320,9 @@ jobs:
             user=${{secrets.USER}}
             pass=${{secrets.PASS}}
             servers=${{secrets.NATS_SERVER}}
-
+            jwt_private_key=${{secrets.JWT_PRIVATE_KEY}}
+            INDENTITY_KEY=${{secrets.INDENTITY_KEY}}
+            AUTH_ISSUER=${{secrets.AUTH_ISSUER}}
             REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}
             REDIS_PORT=${{secrets.REDIS_PORT}}
             REDIS_HOST=${{secrets.REDIS_HOST}}

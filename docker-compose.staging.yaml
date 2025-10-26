@@ -9,7 +9,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"  
+          cpus: "1"  
     restart: unless-stopped
 
   analytics-web:
@@ -24,7 +24,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"  
+          cpus: "1"  
     restart: unless-stopped    
 
   data-collector:
@@ -122,8 +122,8 @@ services:
       - "15672:15672"  # Management UI
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      # - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-      # - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     deploy:
       resources:
         limits:

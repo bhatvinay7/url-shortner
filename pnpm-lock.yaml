@@ -23,9 +23,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.9.0
         version: 2.9.0(react-redux@9.2.0(@types/react@19.1.0)(react@19.1.0)(redux@5.0.1))(react@19.1.0)
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@tailwindcss/postcss':
         specifier: ^4.1.14
         version: 4.1.14
@@ -127,9 +124,6 @@ importers:
 
   apps/http-server:
     dependencies:
-      '@types/jsonwebtoken':
-        specifier: ^9.0.10
-        version: 9.0.10
       axios:
         specifier: ^1.12.2
         version: 1.12.2
@@ -182,6 +176,9 @@ importers:
       '@types/express':
         specifier: ^5.0.3
         version: 5.0.3
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.7.0)(typescript@5.9.3)
@@ -230,9 +227,6 @@ importers:
       tsc-node:
         specifier: ^0.0.3
         version: 0.0.3
-      types:
-        specifier: workspace:*
-        version: link:../../packages/types
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
@@ -243,6 +237,9 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.7.0)(typescript@5.9.3)
+      types:
+        specifier: workspace:*
+        version: link:../../packages/types
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -255,9 +252,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.9.0
         version: 2.9.0(react-redux@9.2.0(@types/react@19.1.0)(react@19.1.0)(redux@5.0.1))(react@19.1.0)
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@tailwindcss/postcss':
         specifier: ^4.1.14
         version: 4.1.14
@@ -337,9 +331,6 @@ importers:
 
   apps/ws-server:
     dependencies:
-      '@types/cookie-parser':
-        specifier: ^1.4.9
-        version: 1.4.9(@types/express@5.0.3)
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
@@ -355,9 +346,6 @@ importers:
       nats-server:
         specifier: workspace:*
         version: link:../../packages/nats-server
-      rabbitmq:
-        specifier: workspace:*
-        version: link:../../packages/rabbitmq
       ws:
         specifier: ^8.18.3
         version: 8.18.3
@@ -365,6 +353,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@types/cookie-parser':
+        specifier: ^1.4.9
+        version: 1.4.9(@types/express@5.0.3)
       '@types/express':
         specifier: ^5.0.3
         version: 5.0.3
@@ -465,6 +456,9 @@ importers:
 
   packages/nats-server:
     dependencies:
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       nats:
         specifier: ^2.29.3
         version: 2.29.3
@@ -481,9 +475,12 @@ importers:
 
   packages/rabbitmq:
     dependencies:
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       rabbitmq-client:
         specifier: ^5.0.5
         version: 5.0.5
@@ -491,6 +488,12 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.15.3)(typescript@5.9.3)
