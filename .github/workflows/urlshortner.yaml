@@ -206,7 +206,7 @@ jobs:
             sudo certbot --nginx -d ${{secrets.FRONTEND_DOMAIN}} -m ${{ secrets.SSL_EMAIL }} --agree-tos --non-interactive
             sudo certbot --nginx -d ${{secrets.API_DOMAIN}} -m ${{ secrets.SSL_EMAIL }} --agree-tos --non-interactive
             sudo certbot --nginx -d ${{secrets.WS_SERVER_DOMAIN}} -m ${{ secrets.SSL_EMAIL }} --agree-tos --non-interactive
-            sudo certbot --nginx -d ${{secrets._ANALYTICS_DOMAIN}} -m ${{ secrets.SSL_EMAIL }} --agree-tos --non-interactive
+            sudo certbot --nginx -d ${{secrets.ANALYTICS_DOMAIN}} -m ${{ secrets.SSL_EMAIL }} --agree-tos --non-interactive
 
             sudo certbot renew --deploy-hook "systemctl reload nginx"
             sudo nginx -t
@@ -272,7 +272,7 @@ jobs:
             sudo mv enabled_plugins rabbitmq/enabled_plugins
             sudo chmod 644 rabbitmq/enabled_plugins
             sudo chmod 644 rabbitmq/rabbitmq.conf
-            
+
             cat << RABCONF > rabbitmq.conf
             auth_backends.1 = rabbit_auth_backend_jwt
             auth_backends.2 = internal
