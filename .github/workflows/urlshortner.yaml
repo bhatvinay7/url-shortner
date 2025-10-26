@@ -290,7 +290,8 @@ jobs:
             echo "RABBITMQ_USER=${{ secrets.USER }}" >> env.compose
             echo "RABBITMQ_PASS=${{ secrets.PASS }}" >> env.compose
             echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> env.compose
-            echo "NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEN_URL }}" >> env.compose
+            echo "NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_URL }}" >> env.compose
+            echo "NEXT_PUBLIC_ANALYTICS_FRONTEND_URL=${{secrets.NEXT_PUBLIC_ANALYTICS_FRONTEND_URL}}" >> env.compose
             echo "NEXT_PUBLIC_WS_SERVER_URL=${{ secrets.NEXT_PUBLIC_WS_SERVER_URL }}" >> env.compose
             echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> env.compose
             echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> env.compose

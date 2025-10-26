@@ -43,5 +43,5 @@ COPY --from=builder  /app/apps/${APP}/.next/static ./.next/static
 COPY --from=builder  /app/apps/${APP}/public ./public
 WORKDIR /app/apps/${APP}
 EXPOSE 3006
-CMD ["node", "server.js"]
+CMD ["node", "server.js","-p", "3006"]
 
