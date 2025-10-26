@@ -111,19 +111,15 @@ services:
       - nats
     
   rabbitmq:
-    image: rabbitmq:3.13-management
+    image: rabbitmq:4.1.4-management
     container_name: rabbitmq
     hostname: rabbitmq
     restart: unless-stopped
 
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-admin123}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
-
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit loopback_users []"
       RABBITMQ_HIPE_COMPILE: 0
-
       # RABBITMQ_NODENAME: rabbit@rabbitmq
       # RABBITMQ_USE_LONGNAME: "false"
     ports:
@@ -132,8 +128,7 @@ services:
       - "15672:15672"  # Management UI
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      # - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-      # - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+       ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     deploy:
       resources:
         limits:
@@ -160,10 +155,68 @@ services:
     networks:
       - rabbitmq_net
 
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:21.1.1
+  #   environment:
+  #     KC_DB: postgres
+  #     KC_DB_URL_HOST: keycloak-db
+  #     KC_DB_URL_DATABASE: keycloak
+  #     KC_DB_USERNAME: keycloak
+  #     KC_DB_PASSWORD: StrongPassword
+  #     KC_HOSTNAME: "http://localhost:8443"
+  #     KC_HTTP_ENABLED: "true"
+  #     KC_PROXY: edge
+  #     KEYCLOAK_ADMIN: admin
+  #     KEYCLOAK_ADMIN_PASSWORD: StrongPassword
+  #   ports:
+  #     - "8443:8443"
+  #   volumes:
+  #     - keycloak_data:/opt/keycloak/data
+  #   depends_on:
+  #     - keycloak-db
+
+  #   networks:
+  #     - rabbitmq_net  
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "0.25"  
+
+  # keycloak-db:
+  #   image: postgres:15
+  #   environment:
+  #     POSTGRES_DB: keycloak
+  #     POSTGRES_USER: keycloak
+  #     POSTGRES_PASSWORD: StrongPassword
+  #   networks:
+  #     - rabbitmq_net  
+  #   volumes:
+  #     - keycloak_db_data:/var/lib/postgresql/data
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "0.25"  
+
+  # openldap:
+  #   image: osixia/openldap:1.7.0
+  #   container_name: openldap
+  #   environment:
+  #     LDAP_ORGANISATION: "Example Corp"
+  #     LDAP_DOMAIN: "example.com"
+  #     LDAP_ADMIN_PASSWORD: "adminpassword"
+  #   ports:
+  #     - "389:389"
+  #     - "636:636"
+  #   volumes:
+  #     - .ldpa/ldap-data:/var/lib/ldap
+  #     - .ldpa/ldap-config:/etc/ldap/slapd.d
+  #     - ./bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif:ro
+
 volumes:
   rabbitmq_data:
   nats_data:
-  
+  # keycloak_db_data:
+  # keycloak_data:  
 networks:
   rabbitmq_net:
     driver: bridge

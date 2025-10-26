@@ -14,7 +14,7 @@ nats
 .vscode
 # Testing
 coverage
-
+ldpa
 # Turbo
 .turbo
 

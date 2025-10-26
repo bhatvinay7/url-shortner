@@ -117,14 +117,12 @@ services:
     ports:
       # Expose for local dev
       - "5672:5672"    # AMQP port
+      - "5671:5671" 
       - "15672:15672"  # Management UI
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-    command: >
-      bash -c "
-      rabbitmq-plugins enable --offline rabbitmq_auth_backend_jwt && rabbitmq-server"  
+      - ./rabbitmq/certs:/etc/rabbitmq/certs 
     deploy:
       resources:
         limits:
@@ -152,7 +150,7 @@ services:
           cpus: "0.75"
     restart: unless-stopped
     networks:
-      - rabbitmq_net
+      - rabbitmq_net    
 
 volumes:
   rabbitmq_data:

@@ -160,12 +160,9 @@ jobs:
             export RABBITMQ_PASS="${{secrets.PASS}}"
             export NATS_SERVER="${{secrets.NATS_SERVER}}"
             export NATS_SERVER_NAME="${{secrets.NATS_SERVER_NAME}}"
-            export jwt_public_key="${{secrets.JWT_PUBLIC_KEY}}"
-            export jwt_private_key="${{secrets.JWT_PRIVATE_KEY}}"
-            export INDENTITY_KEY="${{secrets.INDENTITY_KEY}}"
-            export EXPECTED_AUD="${{secrets.EXPECTED_AUD}}"
-            export JWT_ALGO="${{secrets.JWT_ALGO}}"
-            export AUTH_ISSUER="${{secrets.AUTH_ISSUER}}"
+            export CA_CERTIFICATE='"${{secrets.CA_CERTIFICATE}}"'
+            export SERVER_KEY='"${{secrets.SERVER_KEY}}"'
+            export SERVER_CERTIFICATE='"${{secrets.SERVER_CERTIFICATE}}"'
 
             if ! command -v curl &> /dev/null; then
                 sudo apt-get update
@@ -198,7 +195,7 @@ jobs:
             sudo apt-get install -y nginx
             sudo systemctl start nginx
             sudo mkdir -p /etc/nginx/conf.d
-            sudo cp -f /home/ubuntu/nginx-temp/build/nginx.conf /etc/nginx/conf.d/app.conf
+            sudo cp -f /home/azureuser/nginx-temp/build/nginx.conf /etc/nginx/conf.d/app.conf
             sudo rm -f /etc/nginx/sites-enabled/default
             sudo rm -f /etc/nginx/sites-available/default
             sudo apt install certbot python3-certbot-nginx -y
@@ -258,33 +255,30 @@ jobs:
             sudo mkdir -p rabbitmq_data
             sudo mkdir -p nats_data
             sudo mkdir -p rabbitmq
+            sudo mkdir -p certs
             sudo chown -R 1001:1001 rabbitmq_data
             sudo chown -R 1001:1001 nats_data
             sudo chown -R 1001:1001 rabbitmq
 
-            cat <<'RAB'> enabled_plugins
-            [rabbitmq_auth_backend_jwt].
-            RAB
-
-            echo "$jwt_public_key" | sudo tee rabbitmq/jwt_public_key.pem > /dev/null
-            sudo chmod 600 rabbitmq/jwt_public_key.pem
-
-            sudo mv enabled_plugins rabbitmq/enabled_plugins
-            sudo chmod 644 rabbitmq/enabled_plugins
+            cat <<'CONF'> rabbitmq.conf
+            listeners.ssl.default = 5671
+            ssl_options.cacertfile = /etc/rabbitmq/certs/ca_certificate.pem
+            ssl_options.certfile = /etc/rabbitmq/certs/server_certificate.pem
+            ssl_options.keyfile = /etc/rabbitmq/certs/server_key.pem
+            ssl_options.verify = verify_peer
+            ssl_options.fail_if_no_peer_cert = false
+            auth_backends.1 = internal
+            CONF
+            
+            echo "$CA_CERTIFICATE" | sudo tee certs/ca_certificate.pem > /dev/null
+            echo "$SERVER_CERTIFICATE"  | sudo tee  certs/server_certificate.pem > /dev/null
+            echo "$SERVER_KEY" | sudo tee certs/server_key.pem > /dev/null
+            
+            sudo mv rabbitmq.conf rabbitmq/rabbitmq.conf
             sudo chmod 644 rabbitmq/rabbitmq.conf
-
-            cat << RABCONF > rabbitmq.conf
-            auth_backends.1 = rabbit_auth_backend_jwt
-            auth_backends.2 = internal
-            auth_jwt.signing_key= /etc/rabbitmq/jwt_public_key.pem
-            auth_jwt.algorithm = ${JWT_ALGO}
-            auth_jwt.claims_identity_key = ${INDENTITY_KEY}
-            auth_jwt.expected_iss =${AUTH_ISSUER}
-            auth_jwt.expected_aud =${EXPECTED_AUD}
-            auth_jwt.verify=true
-            RABCONF
-
-            sudo mv rabbitmq.conf  rabbitmq/rabbitmq.conf
+            sudo chmod 644 certs/ca_certificate.pem
+            sudo chmod 644 certs/server_certificate.pem
+            sudo chmod 644 certs/server_key.pem
 
             rm -f env.compose || true
 
@@ -319,9 +313,6 @@ jobs:
             echo "user=${{ secrets.USER }}" >> env.compose
             echo "pass=${{ secrets.PASS }}" >> env.compose
             echo "servers=${{ secrets.NATS_SERVER }}" >> env.compose
-            echo "jwt_private_key='${{ secrets.JWT_PRIVATE_KEY }}'" >> env.compose
-            echo "INDENTITY_KEY=${{ secrets.INDENTITY_KEY }}" >> env.compose
-            echo "AUTH_ISSUER=${{ secrets.AUTH_ISSUER }}" >> env.compose
             echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> env.compose
             echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env.compose
             echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env.compose

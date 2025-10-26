@@ -16,7 +16,7 @@ node_modules
 *.log
 npm-debug.log
 npm-debug.log.*
-
+ldpa
 # macOS specific files
 .DS_Store
 
