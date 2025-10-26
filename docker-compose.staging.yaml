@@ -100,7 +100,7 @@ services:
       - nats
     
   rabbitmq:
-    image: rabbitmq:3.15-management
+    image: rabbitmq:3.14-management
     container_name: rabbitmq
     hostname: rabbitmq
     restart: unless-stopped
