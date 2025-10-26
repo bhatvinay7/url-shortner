@@ -269,7 +269,7 @@ jobs:
             sudo chmod 600 rabbitmq_data/jwt_public_key.pem
 
             sudo mv enabled_plugins rabbitmq_data/enabled_plugins
-      
+
             cat << RABCONF > rabbitmq.conf
             auth_backends.1 = rabbit_auth_backend_jwt
             auth_backends.2 = internal
@@ -283,48 +283,44 @@ jobs:
 
             sudo mv rabbitmq.conf       rabbitmq_data/rabbitmq.conf
 
-
             rm -f env.compose || true
-            cat << EOL > env.compose
-            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-            RABBITMQ_USER=${{secrets.USER}}
-            RABBITMQ_PASS=${{secrets.PASS}}
-            NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
-            NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEN_URL }}
-            NEXT_PUBLIC_WS_SERVER_URL=${{ secrets.NEXT_PUBLIC_WS_SERVER_URL }}
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-            GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}
-            api_key=${{ secrets.API_KEY }}
-            groq_api_key=${{ secrets.GROQ_API_KEY }}
-            access_key=${{ secrets.ACCESS_KEY }}
-            secret_key=${{ secrets.SECRET_KEY }}
-            RABBITMQ_CLUSTER_URL=${{secrets.RABBITMQ_CLUSTER_URL1}}
-            DB_URL=${{secrets.DB_URL}}
-            TOPIC1=${{secrets.TOPIC1}}
-            EXCHANGE_NAME1=${{secrets.EXCHANGE_NAME1}}
-            BINDING_KEY1=${{secrets.BINDING_KEY1}}
-            ROUTING_KEY1=${{secrets.ROUTING_KEY1}}
-            QUEUE_NAME1=${{secrets.QUEUE_NAME1}}
 
-            TOPIC2=${{secrets.TOPIC2}}
-            EXCHANGE_NAME2=${{secrets.EXCHANGE_NAME2}}
-            BINDING_KEY2=${{secrets.BINDING_KEY2}}
-            ROUTING_KEY2=${{secrets.ROUTING_KEY2}}
-            QUEUE_NAME2=${{secrets.QUEUE_NAME2}}
-            URL_CHANNAL=${{secrets.URL_CHANNAL}}
-            URL_STATUS=${{secrets.URL_STATUS}}
-            user=${{secrets.USER}}
-            pass=${{secrets.PASS}}
-            servers=${{secrets.NATS_SERVER}}
-            jwt_private_key=${{secrets.JWT_PRIVATE_KEY}}
-            INDENTITY_KEY=${{secrets.INDENTITY_KEY}}
-            AUTH_ISSUER=${{secrets.AUTH_ISSUER}}
-            REDIS_PASSWORD=${{secrets.REDIS_PASSWORD}}
-            REDIS_PORT=${{secrets.REDIS_PORT}}
-            REDIS_HOST=${{secrets.REDIS_HOST}}
-            EOL
-
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> env.compose
+            echo "RABBITMQ_USER=${{ secrets.USER }}" >> env.compose
+            echo "RABBITMQ_PASS=${{ secrets.PASS }}" >> env.compose
+            echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> env.compose
+            echo "NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEN_URL }}" >> env.compose
+            echo "NEXT_PUBLIC_WS_SERVER_URL=${{ secrets.NEXT_PUBLIC_WS_SERVER_URL }}" >> env.compose
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> env.compose
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> env.compose
+            echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> env.compose
+            echo "api_key=${{ secrets.API_KEY }}" >> env.compose
+            echo "groq_api_key=${{ secrets.GROQ_API_KEY }}" >> env.compose
+            echo "access_key=${{ secrets.ACCESS_KEY }}" >> env.compose
+            echo "secret_key=${{ secrets.SECRET_KEY }}" >> env.compose
+            echo "RABBITMQ_CLUSTER_URL=${{ secrets.RABBITMQ_CLUSTER_URL1 }}" >> env.compose
+            echo "DB_URL=${{ secrets.DB_URL }}" >> env.compose
+            echo "TOPIC1=${{ secrets.TOPIC1 }}" >> env.compose
+            echo "EXCHANGE_NAME1=${{ secrets.EXCHANGE_NAME1 }}" >> env.compose
+            echo "BINDING_KEY1=${{ secrets.BINDING_KEY1 }}" >> env.compose
+            echo "ROUTING_KEY1=${{ secrets.ROUTING_KEY1 }}" >> env.compose
+            echo "QUEUE_NAME1=${{ secrets.QUEUE_NAME1 }}" >> env.compose
+            echo "TOPIC2=${{ secrets.TOPIC2 }}" >> env.compose
+            echo "EXCHANGE_NAME2=${{ secrets.EXCHANGE_NAME2 }}" >> env.compose
+            echo "BINDING_KEY2=${{ secrets.BINDING_KEY2 }}" >> env.compose
+            echo "ROUTING_KEY2=${{ secrets.ROUTING_KEY2 }}" >> env.compose
+            echo "QUEUE_NAME2=${{ secrets.QUEUE_NAME2 }}" >> env.compose
+            echo "URL_CHANNAL=${{ secrets.URL_CHANNAL }}" >> env.compose
+            echo "URL_STATUS=${{ secrets.URL_STATUS }}" >> env.compose
+            echo "user=${{ secrets.USER }}" >> env.compose
+            echo "pass=${{ secrets.PASS }}" >> env.compose
+            echo "servers=${{ secrets.NATS_SERVER }}" >> env.compose
+            echo "jwt_private_key=${{ secrets.JWT_PRIVATE_KEY }}" >> env.compose
+            echo "INDENTITY_KEY=${{ secrets.INDENTITY_KEY }}" >> env.compose
+            echo "AUTH_ISSUER=${{ secrets.AUTH_ISSUER }}" >> env.compose
+            echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> env.compose
+            echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env.compose
+            echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env.compose
 
             sudo docker compose -f docker-compose.staging.yaml --env-file env.compose pull
             sudo docker compose -f docker-compose.staging.yaml --env-file env.compose up -d
