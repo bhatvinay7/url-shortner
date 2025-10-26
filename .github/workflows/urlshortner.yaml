@@ -315,7 +315,7 @@ jobs:
             echo "user=${{ secrets.USER }}" >> env.compose
             echo "pass=${{ secrets.PASS }}" >> env.compose
             echo "servers=${{ secrets.NATS_SERVER }}" >> env.compose
-            echo "jwt_private_key=${{ secrets.JWT_PRIVATE_KEY }}" >> env.compose
+            echo "jwt_private_key='${{ secrets.JWT_PRIVATE_KEY }}'" >> env.compose
             echo "INDENTITY_KEY=${{ secrets.INDENTITY_KEY }}" >> env.compose
             echo "AUTH_ISSUER=${{ secrets.AUTH_ISSUER }}" >> env.compose
             echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> env.compose
