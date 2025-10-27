@@ -4,9 +4,9 @@ export async function RateLimitter(userId:string){
       if(count && parseInt(count)>5){ 
         const time=await redis.get("startTime")
         if(!time){
-          redis.set("startTime",Date.now()); // Set expiration time to 5 minutes
-          redis.expire("startTime",300); // Set expiration time to 5 minutes
-          redis.expire(userId!,300); // Set expiration time to 5 minutes
+          await redis.set("startTime",Date.now()); // Set expiration time to 5 minutes
+          await redis.expire("startTime",300); // Set expiration time to 5 minutes
+          await redis.expire(userId!,300); // Set expiration time to 5 minutes
           const leftTime=Date.now()
           const waitTime= leftTime/1000
           return waitTime

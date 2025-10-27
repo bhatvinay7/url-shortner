@@ -18,7 +18,7 @@ export default function Redirect() {
       await new Promise<void>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
           () => resolve(),
-          () => reject()
+          (err) => reject(err)
         );
       });
 
