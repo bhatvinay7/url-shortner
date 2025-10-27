@@ -74,7 +74,7 @@ const UrlAnalytics: React.FC<UrlAnalyticsProps> = ({
                 >
                   <td className="py-3 px-4 flex items-center gap-2 text-[hsl(220,20%,25%)]">
                     <Link2 className="w-4 h-4 text-[hsl(210,80%,55%)]" />
-                    <span className="font-medium">{url?.shortUrl}</span>
+                    <span className="font-medium">{url?.shortUrl?`${process.env.NEXT_PUBLIC_FRONTEND_URL}/r/${url?.shortUrl}`:""}</span>
                   </td>
                   <td className="py-3 px-4 text-center text-[hsl(220,20%,25%)] font-semibold">
                     {url?.totalClicks}

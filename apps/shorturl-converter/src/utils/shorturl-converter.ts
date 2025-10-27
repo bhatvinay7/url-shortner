@@ -62,13 +62,7 @@ export async function consumeFromQueue(
                 )
               );
               const hash = generatetHash(userMessage.url);
-              const shortenUrl= Url.create({
-                longUrl:userMessage.url,
-                user: new mongoose.Types.ObjectId(userMessage.userId),
-                shortUrl:hash,
-                topic:data.topic,
-                applicationContext:data.applicationContext,
-              })
+             
               redis.set(hash,userMessage.url)
               natsConnection.publish(
                 "url-status",
@@ -91,7 +85,13 @@ export async function consumeFromQueue(
                   })
                 )
               );
-
+               const shortenUrl= Url.create({
+                longUrl:userMessage.url,
+                user: new mongoose.Types.ObjectId(userMessage.userId),
+                shortUrl:hash,
+                topic:data.topic,
+                applicationContext:data.applicationContext,
+              })
               return ConsumerStatus.ACK;
             }
           } catch (error: any) {

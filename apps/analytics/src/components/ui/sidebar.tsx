@@ -97,7 +97,7 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                 href={item.link}
                 key={item.value}
                 onClick={() => handleClick(item.value)}
-                className={`w-full flex items-center gap-3 p-1.5 sm:p-2 md:p-3 rounded-xl text-sm font-medium transition-all
+                className={`w-full flex items-center gap-3 text-[14px] p-1.5 sm:p-2 md:p-3 rounded-xl text-sm font-medium transition-all
                 ${
                   isActive
                     ? "bg-[hsl(30,90%,90%)] text-[hsl(30,90%,45%)]"
@@ -113,7 +113,7 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                 >
                   {item.icon}
                 </span>
-                <span>{item.label}</span>
+                <span className="text-[14px] ">{item.label}</span>
               </Link>
             );
           })}
@@ -161,7 +161,7 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                       >
                         {item.icon}
                       </span>
-                      <span>{item.label}</span>
+                      <span className="text-[14px] ">{item.label}</span>
                     </Link>
                   );
                 })}

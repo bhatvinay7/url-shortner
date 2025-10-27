@@ -42,7 +42,7 @@ export default function SidebarController({
       {value ? (
         <Sidebar />
       ) : (
-        <div className="  bg-gray-100 hidden sm:block sm:relative sm:border sm:border-black/12 sm:h-screen ">
+        <div className="  bg-gray-100 hidden sm:block sm:relative sm:border sm:border-black/12 sm:h-full ">
           <div className=" absolute -right-4 top-1">
             <Togglecomponent />
           </div>
