@@ -272,9 +272,9 @@ jobs:
             auth_backends.1 = internal
             CONF
             
-            echo "$CA_CERTIFICATE" | sudo tee certs/ca_certificate.pem > /dev/null
-            echo "$SERVER_CERTIFICATE"  | sudo tee  certs/server_certificate.pem > /dev/null
-            echo "$SERVER_KEY" | sudo tee certs/server_key.pem > /dev/null
+            echo "$CA_CERTIFICATE" | base64 -d | sudo tee certs/ca_certificate.pem > /dev/null
+            echo "$SERVER_CERTIFICATE" | base64 -d  | sudo tee  certs/server_certificate.pem > /dev/null
+            echo "$SERVER_KEY"  | base64 -d | sudo tee certs/server_key.pem > /dev/null
             
             sudo mv rabbitmq.conf rabbitmq/rabbitmq.conf
             sudo mv certs rabbitmq/certs
@@ -314,9 +314,9 @@ jobs:
             echo "user=${{ secrets.USER }}" >> env.compose
             echo "pass=${{ secrets.PASS }}" >> env.compose
             echo "servers=${{ secrets.NATS_SERVER }}" >> env.compose
-            echo "CA_CERTIFICATE='${{secrets.CA_CERTIFICATE}}'" >> env.compose
-            echo "SERVER_KEY='${{secrets.SERVER_KEY}}'" >> env.compose
-            echo "SERVER_CERTIFICATE='${{secrets.SERVER_CERTIFICATE}}'" >> env.compose
+            echo "CA_CERTIFICATE=${{secrets.CA_CERTIFICATE}}" >> env.compose
+            echo "SERVER_KEY=${{secrets.SERVER_KEY}}" >> env.compose
+            echo "SERVER_CERTIFICATE=${{secrets.SERVER_CERTIFICATE}}" >> env.compose
             echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> env.compose
             echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env.compose
             echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env.compose
