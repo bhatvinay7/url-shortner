@@ -10,48 +10,66 @@ export default function Redirect() {
     const params = useParams<{ hash: string }>();
     const hash = params.hash;
     useEffect(() => {
-  async function fetch() {
-    let geolocationPermission: string | undefined;
+      async function fetch(timeoutMs = 10000) {
+        let geolocationPermission: string | undefined;
 
-    try {
-      // Request permission by trying to get position
-      await new Promise<void>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-          () => resolve(),
-          (err) => reject(err)
-        );
-      });
+        try {
+          // Request permission by trying to get position
 
-      // Check permission state afterward (optional)
-      try{
-        const perm = await (navigator as any).permissions?.query?.({
-          name: "geolocation",
-        });
-        geolocationPermission = perm?.state || "granted";
+            await new Promise<GeolocationPosition>((resolve, reject) => {
+              let didFinish = false;
 
+              const timer = setTimeout(() => {
+                if (!didFinish) {
+                  didFinish = true;
+                  reject(new Error("Geolocation request timed out or blocked"));
+                }
+              }, timeoutMs);
+
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  if (!didFinish) {
+                    clearTimeout(timer);
+                    didFinish = true;
+                    resolve(pos);
+                  }
+                },
+                (err) => {
+                  if (!didFinish) {
+                    clearTimeout(timer);
+                    didFinish = true;
+                    reject(err);
+                  }
+                }
+              );
+            })
+         } catch (err) {
+          geolocationPermission = "denied";
+          console.log("User denied location access.");
+        }
+            fetch();
+          // Check permission state afterward (optional)
+          try {
+            const perm = await (navigator as any).permissions?.query?.({
+              name: "geolocation",
+            });
+            geolocationPermission = perm?.state || "granted";
+            const data = await processData()();
+            const updatedData = {
+              ...data,
+              permission: { geolocation: geolocationPermission },
+            };
+       
+            const response = await collect_user_data(data, hash);
+            console.log(response);
+            window.location.href = response?.url!;
+          } catch (error: any) {
+            console.log(error);
+          }
+       
       }
-      catch(error:any){
-        console.log(error)
-      }
-      const data = await processData()();
-      const updatedData = {
-        ...data,
-        permission: { geolocation: geolocationPermission },
-      };
-      
-      const response=await collect_user_data(data,hash)
-      console.log(response)
-      window.location.href = response?.url!
-      // await redirectUser(hash);
-    } catch (err) {
-      geolocationPermission = "denied";
-      console.log("User denied location access.");
-    }
-  }
 
-  fetch();
-}, []);
-
+    }, []);
   } catch (error: any) {
     return <ErrorPage />;
   }
