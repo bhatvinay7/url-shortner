@@ -1,5 +1,7 @@
 import { Connection } from 'rabbitmq-client';
+import {ConnectionOptions} from 'rabbitmq-client'
 import dotenv from 'dotenv';
+import fs from 'fs';
 dotenv.config();
 
 let retryAttempt = 0;
@@ -17,6 +19,12 @@ function createConnection() {
     url:process.env.RABBITMQ_CLUSTER_URL!,
     heartbeat: 90,
     connectionTimeout: 10000,
+    tls: {
+    ca: [Buffer.from(process.env.CA_CERTIFICATE!, 'base64').toString('utf-8')],
+    cert: Buffer.from(process.env.SERVER_CERTIFICATE!, 'base64').toString('utf-8'),
+    key: Buffer.from(process.env.SERVER_KEY!, 'base64').toString('utf-8'),
+    rejectUnauthorized: true,
+  },
   });
 
   connection.on('error', (err: any) => {

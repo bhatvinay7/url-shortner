@@ -314,6 +314,9 @@ jobs:
             echo "user=${{ secrets.USER }}" >> env.compose
             echo "pass=${{ secrets.PASS }}" >> env.compose
             echo "servers=${{ secrets.NATS_SERVER }}" >> env.compose
+            echo "CA_CERTIFICATE="${{secrets.CA_CERTIFICATE}}" >> env.compose
+            echo "SERVER_KEY="${{secrets.SERVER_KEY}}" >> env.compose
+            echo "SERVER_CERTIFICATE=${{secrets.SERVER_CERTIFICATE}}" >> env.compose
             echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> env.compose
             echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env.compose
             echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env.compose
