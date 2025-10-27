@@ -160,9 +160,9 @@ jobs:
             export RABBITMQ_PASS="${{secrets.PASS}}"
             export NATS_SERVER="${{secrets.NATS_SERVER}}"
             export NATS_SERVER_NAME="${{secrets.NATS_SERVER_NAME}}"
-            export CA_CERTIFICATE='"${{secrets.CA_CERTIFICATE}}"'
-            export SERVER_KEY='"${{secrets.SERVER_KEY}}"'
-            export SERVER_CERTIFICATE='"${{secrets.SERVER_CERTIFICATE}}"'
+            export CA_CERTIFICATE="${{secrets.CA_CERTIFICATE}}"
+            export SERVER_KEY="${{secrets.SERVER_KEY}}"
+            export SERVER_CERTIFICATE="${{secrets.SERVER_CERTIFICATE}}"
 
             if ! command -v curl &> /dev/null; then
                 sudo apt-get update
@@ -259,6 +259,8 @@ jobs:
             sudo chown -R 1001:1001 rabbitmq_data
             sudo chown -R 1001:1001 nats_data
             sudo chown -R 1001:1001 rabbitmq
+            sudo chown -R 1001:1001 certs
+
 
             cat <<'CONF'> rabbitmq.conf
             listeners.ssl.default = 5671
