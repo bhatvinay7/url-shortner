@@ -43,6 +43,7 @@ COPY --from=builder  /app/apps/${APP}/.next/static ./apps/${APP}/.next/static
 COPY --from=builder  /app/apps/${APP}/public ./apps/${APP}/public
 
 WORKDIR /app/apps/${APP}
+ENV PORT=3006
 EXPOSE 3006
 CMD ["node", "server.js","-p", "3006"]
 
