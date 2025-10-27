@@ -41,7 +41,7 @@ const generateShortUrl = async (req: authRequest, res: Response) => {
       );
       return res
         .status(200)
-        .json({ message: "Your request is accepted", url: null });
+        .json({ message: "Processing your request...", url: null });
     } catch (error: any) {
       console.log(error.message);
     }

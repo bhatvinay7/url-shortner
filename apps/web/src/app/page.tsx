@@ -166,7 +166,7 @@ function onMessage(data:any){
                 {updates}
                 </div>  
 
-               { (updates?.includes("processing") || updates?.includes("generating")) && !shortUrl ? <Loader  className="animate-spin  w-5 h-5 text-[hsl(237,62%,63%)]"/>:<CircleCheck className=" w-6 h-6 text-[hsl(156,90%,45%)]"/>} 
+               { (updates?.includes("Processing") || updates?.includes("Generating")) && !shortUrl ? <Loader  className="animate-spin  w-5 h-5 text-[hsl(237,62%,63%)]"/>:<CircleCheck className=" w-6 h-6 text-[hsl(156,90%,45%)]"/>} 
                </div>
             )
           })}

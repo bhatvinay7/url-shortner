@@ -20,7 +20,6 @@ export async function RateLimitter(userId:string){
         }
       }
      }
-      else{
         await redis.incr(userId!);
         const time=await redis.get(`startTime-${userId!}`)
         if(!time){
@@ -29,5 +28,4 @@ export async function RateLimitter(userId:string){
         await redis.expire(userId!,300);
         }
         return null
-      }
 }

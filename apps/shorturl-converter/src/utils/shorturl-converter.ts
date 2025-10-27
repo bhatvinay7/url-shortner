@@ -40,7 +40,7 @@ export async function consumeFromQueue(
               process.env.URL_STATUS!,
               sc.encode(
                 JSON.stringify({
-                  message: "processing your request...",
+                  message: "Converting into short url...",
                   userId: userMessage.userId,
                   type: "notification",
                   status: 200,
@@ -54,7 +54,7 @@ export async function consumeFromQueue(
                 process.env.URL_CHANNAL!,
                 sc.encode(
                   JSON.stringify({
-                    message: "generating short url",
+                    message: "Generating short url...",
                     userId: userMessage.userId,
                     type: "notification",
                     status: 200,
