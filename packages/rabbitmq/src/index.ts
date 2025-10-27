@@ -19,13 +19,13 @@ function createConnection() {
     url:process.env.RABBITMQ_CLUSTER_URL!,
     heartbeat: 90,
     connectionTimeout: 10000,
-    tls: {
-    ca: [Buffer.from(process.env.CA_CERTIFICATE!, 'base64').toString('utf-8')],
-    cert: Buffer.from(process.env.SERVER_CERTIFICATE!, 'base64').toString('utf-8'),
-    key: Buffer.from(process.env.SERVER_KEY!, 'base64').toString('utf-8'),
-    rejectUnauthorized: true,
-  },
-  });
+    tls:{
+  ca: [Buffer.from(process.env.CA_CERTIFICATE!, "base64")],
+  cert: Buffer.from(process.env.SERVER_CERTIFICATE!, "base64"),
+  key: Buffer.from(process.env.SERVER_KEY!, "base64"),
+  rejectUnauthorized: false,
+}
+});
 
   connection.on('error', (err: any) => {
     console.log('RabbitMQ connection error', err);
