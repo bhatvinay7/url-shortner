@@ -2,6 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 import {custormdata} from "../../lib/redux/featuresSlice/urlsSlice"
+import Copy from '../ui/copy'
 export default function GetUrls({data}:{data:custormdata}) {
   type data={
     totalStats:{
@@ -21,8 +22,13 @@ export default function GetUrls({data}:{data:custormdata}) {
     <div className=" w-full flex flex-col justify-center overflow-y-hidden items-center h-auto  space-y-2 p-3 " >
       {data?.totalStats?.map((each:each)=>{
        return (
-       <div className=' w-full md:w-3/5 bg-[#3434360d] flex flex-col  items-center rounded-md p-3'>
-         <div className='  self-start text-black text-base min-w-[320px] line-clamp-1 '>{each?.longUrl}</div>
+       <div className=' w-full md:w-3/5 bg-[#3434360d] flex flex-col relative items-center rounded-md p-3'>
+         {<div className=' absolute top-1 right-2 '>
+          <Copy
+          text={each.longUrl}
+          />
+          </div>  
+         }
          <div className='w-full flex  gap-x-2 items-center'>
             <div className='flex  space-x-1.5'>
             <span className='text-indigo-800 text-base'>Total clicks :</span> 
