@@ -52,7 +52,7 @@ const SignIn = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/googleAuth`;
+      window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL!}/api/auth/googleAuth`;
     } catch (error: any) {
       console.log({ error: error.message });
     }
@@ -81,7 +81,7 @@ const SignIn = () => {
         {/* Google Sign In Button */}
         <div className=" w-full flex justify-center items-center">
         <button
-          onClick={handleGoogleSignIn}
+          onClick={()=>handleGoogleSignIn()}
           className="w-3/4 h-12 border bg-[hsl(240,2%,67%)] border-gray-300 rounded-full flex items-center justify-center gap-3 hover:bg-gray-300 transition-all"
         >
           <FcGoogle size={22} />

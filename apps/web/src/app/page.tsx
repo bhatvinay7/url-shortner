@@ -58,7 +58,7 @@ useEffect(()=>{
   return () => {
     currentInput.removeEventListener("keydown", handleKeyDown);
   };
-}, [userDetails]);
+}, [userDetails,inputRef]);
 
 useEffect(()=>{
   

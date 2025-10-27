@@ -85,7 +85,7 @@ export async function consumeFromQueue(
                 "push-url",
                 sc.encode(
                   JSON.stringify({
-                    message: `${hash}`,
+                    message: `${process.env.NEXT_PUBLIC_FRONTEND_URL!}/r/${hash}`,
                     type: "data",
                     userId: userMessage.userId,
                   })
