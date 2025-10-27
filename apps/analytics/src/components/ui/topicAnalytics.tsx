@@ -73,7 +73,7 @@ const UrlAnalytics: React.FC<UrlAnalyticsProps> = ({
                   className="border-t bborder border-black/15 hover:bg-[hsl(220,20%,97%)] transition"
                 >
                   <td className="py-3 px-4 flex items-center gap-2 text-[hsl(220,20%,25%)]">
-                    <Link2 href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/r/${url?.shortUrl}`} className="w-5 h-5 text-[hsl(210,80%,55%)]" />
+                    <Link2 href={`${process.env.NEXT_PUBLIC_FRONTEND_URL!}/r/${url?.shortUrl}`} className="w-5 h-5 text-[hsl(210,80%,55%)]" />
                     <span className="font-medium">{url?.shortUrl?`${process.env.NEXT_PUBLIC_FRONTEND_URL}/r/${url?.shortUrl}`:""}</span>
                   </td>
                   <td className="py-3 px-4 text-center text-[hsl(220,20%,25%)] font-semibold">
