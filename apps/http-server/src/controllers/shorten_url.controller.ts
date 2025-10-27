@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { publishToQueue } from "../utils/rabbitmq-ptoducer.js";
 import { userCredentials } from "types";
 import connection from "rabbitmq";
-import redis from "redisclient";
-
+import dotenv from 'dotenv'
+dotenv.config()
 const topic=process.env.TOPIC2!
 const exchange=process.env.EXCHANGE_NAME2!
 const routing_key=process.env.ROUTING_KEY2!
@@ -19,17 +19,12 @@ const generateShortUrl = async (req: authRequest, res: Response) => {
     if (!url) {
       return res.status(400).json({ message: "url is not provided" });
     }
-    const userLink = await redis.get(url);
-    if (userLink) {
-    return  res
-        .status(200)
-        .json({ message: "Your new url is generated", url: userLink });
-    }
+   
     const link = await Url.findOne({ longUrl: url.trim() });
     if (link) {
     return  res
         .status(200)
-        .json({ message: "Your new url is generated", url: link?.shortUrl });
+        .json({ message: "Your new url is generated", url:`${process.env.NEXT_PUBLIC_FRONTEND_URL!}/r/${link?.shortUrl}`});
     }
     try {
       await connection.onConnect(120, true);
