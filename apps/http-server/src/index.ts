@@ -28,7 +28,7 @@ import os from "os"; // To get the number of CPU cores
 
   dotenv.config();
   const options = cors({
-    origin: ["http://localhost:3006"],
+    origin: [process.env.NEXT_PUBLIC_FRONTEND_URL!,process.env.NEXT_PUBLIC_ANALYTICS_FRONTEND_URL!],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   });

@@ -51,9 +51,9 @@ const callbackHandler = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      // domain:process.env.NEXT_PUBLIC_BACKEND_URL,
+      domain:".shortner.services",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      // path:".*"
+      path:"/"
     });
 
 

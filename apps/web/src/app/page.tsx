@@ -47,7 +47,7 @@ useEffect(()=>{
   if (!inputRef.current) return;
 
   const handleKeyDown = () => {
-    if (!userDetails) {
+    if (!userDetails?.userId) {
       setPopUp(true);
     }
   };
