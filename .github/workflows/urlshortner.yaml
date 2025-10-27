@@ -277,10 +277,9 @@ jobs:
             echo "$SERVER_KEY" | sudo tee certs/server_key.pem > /dev/null
             
             sudo mv rabbitmq.conf rabbitmq/rabbitmq.conf
+            sudo mv certs rabbitmq/certs
+            sudo chmod 644 /etc/rabbitmq/certs/*.pem
             sudo chmod 644 rabbitmq/rabbitmq.conf
-            sudo chmod 644 certs/ca_certificate.pem
-            sudo chmod 644 certs/server_certificate.pem
-            sudo chmod 644 certs/server_key.pem
 
             rm -f env.compose || true
 
