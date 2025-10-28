@@ -198,7 +198,7 @@ This architecture ensures:
 
 ## 📁 Monorepo Structure
 <img width="707" height="703" alt="image" src="https://github.com/user-attachments/assets/05c63c7d-8605-4264-aabe-bffaceba524a" />
----
+
 ## ⚙️ Services and Ports
 
 | Service | Description | Port |
