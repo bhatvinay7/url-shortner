@@ -1,135 +1,142 @@
-# Turborepo starter
+# 🌐 URL Shortener Platform — Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+A **distributed, AI-driven URL Shortener** built with a **microservice architecture**, designed for **real-time analytics, scalability, and fault tolerance**.  
+This monorepo follows a modular structure with shared configuration, type definitions, and service-level isolation.
 
-## Using this example
+---
 
-Run the following command:
+## 🧭 Overview
 
-```sh
-npx create-turbo@latest
-```
+The platform allows users to:
+- Generate short URLs using an AI-based topic classifier.
+- Monitor analytics in real time (via WebSocket).
+- Collect device and location-based data upon redirection.
+- Support multiple brokers and fault-tolerant messaging (RabbitMQ & NATS).
 
-## What's inside?
+---
+# 🏗️ System Architecture — URL Shortener Platform
 
-This Turborepo includes the following packages/apps:
+This document provides a detailed overview of the system architecture for the URL Shortener monorepo.
+<img width="1335" height="662" alt="image" src="https://github.com/user-attachments/assets/2d1a6846-8675-4767-882f-34acd7f953fc" />
 
-### Apps and Packages
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Core Components
+- HTTP Server — Auth, Rate Limiting, Analytics  
+- ShortURL Converter — AI + Hashing Engine  
+- Data Collector — User analytics  
+- WebSocket Server — Real-time updates  
+- RabbitMQ + NATS — Messaging backbone  
+- MongoDB — Persistent storage
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## 📁 Monorepo Structure
+<img width="707" height="703" alt="image" src="https://github.com/user-attachments/assets/05c63c7d-8605-4264-aabe-bffaceba524a" />
+---
+## ⚙️ Services and Ports
 
-### Utilities
+| Service | Description | Port |
+|----------|-------------|------|
+| 🟨 **Client (web)** | Frontend app for URL management | `3000` |
+| 🟩 **HTTP Server (api)** | Core backend server for auth, rate-limit, and URL ops | `3001` |
+| 🟪 **WebSocket Server** | Real-time status and event updates | `8080` |
+| 🟩 **ShortURL Converter** | AI-enhanced shortener using scraping & categorization | `3011` |
+| 🟩 **Data Collector** | Tracks redirect analytics and user info | `3012` |
+| 🟦 **NATS Server** | Lightweight message bus for status broadcasting | `4222` |
+| 🟦 **RabbitMQ Cluster** | 2 brokers (SSL-enabled):<br>• Broker 1 → ShortURL info<br>• Broker 2 → User data | `5671` |
 
-This Turborepo has some additional tools already setup for you:
+---
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## 🧱 HTTP Server Endpoints
 
-### Build
+| Endpoint | Method | Description |
+|-----------|---------|-------------|
+| `/user/create` | `POST` | Register a new user |
+| `/auth/google` | `GET` | OAuth2 Google authentication |
+| `/shorten` | `POST` | Create a short URL |
+| `/analytics/overall` | `GET` | Fetch overall analytics |
+| `/analytics/topic` | `GET` | Get topic-wise analytics |
+| `/analytics/top10` | `GET` | List top 10 URLs by clicks |
+| — | Middleware | JWT auth, Redis rate limiter |
 
-To build all apps and packages, run the following command:
+---
 
-```
-cd my-turborepo
+## 🧠 ShortURL Converter
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+- Hashes long URLs into compact short IDs  
+- Uses AI to **scrape and analyze web content**  
+- Assigns a **topic/category** for analytics  
+- Publishes data to RabbitMQ (`url-metric exchange`)  
+- Stores short URL + metadata in **MongoDB**
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+---
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 📊 Data Collector Service
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+- Listens to redirect events  
+- Extracts user metadata:
+  - Location 🌍  
+  - OS / Device type 💻  
+  - Browser / Platform 📱  
+- Sends analytics data to **RabbitMQ Broker 2**  
+- Persists to **MongoDB**
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+---
 
-### Develop
+## 🐇 RabbitMQ Cluster
 
-To develop all apps and packages, run the following command:
+| Broker | Responsibility | SSL | Port |
+|---------|----------------|------|------|
+| Broker 1 | Collect short URL & topic info | ✅ | `5671` |
+| Broker 2 | Collect user analytics data | ✅ | `5671` |
 
-```
-cd my-turborepo
+Cluster is configured with:
+- TLS certificates (`CA_CERTIFICATE`, `SERVER_CERTIFICATE`, `SERVER_KEY`)
+- Persistent exchanges for `topic1`, `topic2`
+- Fanout and direct routing keys for `url-metric` and `user-metric` queues
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+---
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+## 🔄 CI/CD Pipeline
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+### 🧩 **CI (Continuous Integration)** — *GitHub Actions*
+Triggered on every push or PR:
+1. Install dependencies using **pnpm**
+2. Run **linting** and **type-checks**
+3. Build all apps via **Turborepo**
+4. Generate `env.compose` dynamically from GitHub Secrets:
+   ```bash
+   USER
+   PASS
+   NEXT_PUBLIC_BACKEND_URL
+   NEXT_PUBLIC_FRONTEND_URL
+   NEXT_PUBLIC_ANALYTICS_FRONTEND_URL
+   NEXT_PUBLIC_WS_SERVER_URL
+   GOOGLE_CLIENT_ID
+   GOOGLE_CLIENT_SECRET
+   GOOGLE_REDIRECT_URI
+   API_KEY
+   groq_api_key
+   access_ke
+   secret_key
+   RABBITMQ_CLUSTER_URL
+   DB_URL
+   TOPIC1
+   EXCHANGE_NAME1
+   BINDING_KEY1
+   ROUTING_KEY1
+   QUEUE_NAME1
+   TOPIC2
+   EXCHANGE_NAME2
+   BINDING_KEY2
+   ROUTING_KEY2
+   QUEUE_NAME2
+   URL_CHANNAL
+   URL_STATUS
+   user
+   pass
+   servers
+   CA_CERTIFICATE
+   SERVER_KEY
+   SERVER_CERTIFICATE
+   REDIS_PASSWORD
+   REDIS_PORT
+   REDIS_HOST
