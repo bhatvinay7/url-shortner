@@ -29,12 +29,13 @@ export default function GetUrls({data}:{data:custormdata}) {
           />
           </div>  
          }
-         <div className='w-full flex  gap-x-2 items-center'>
+         <div className='w-full flex  p-1 items-center'>
+            <div className='text-black/75 text-sm sm:text-base p-0.5 text-wrap max-w-9/10 overflow-x-auto custom-scroll '>{each.longUrl}</div> 
             <div className='flex  space-x-1.5'>
             <span className='text-indigo-800 text-base'>Total clicks :</span> 
             <span className='text-black/75 text-base'>{each?.totalClicks}</span>
             </div>
-            <Link className=' text-[13px] border  w-fit p-1  border-black/15  bg-[#f2eeba] rounded-md text-black/60' href={`/individual_url_analytics/${each?._id}`}>view more</Link>
+            <Link className=' text-[12px] border  w-fit p-1  border-black/15  bg-[#f2eeba] rounded-md text-black/60' href={`/individual_url_analytics/${each?._id}`}>view more</Link>
          </div>
        </div>
        )
