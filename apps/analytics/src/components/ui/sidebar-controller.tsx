@@ -39,18 +39,19 @@ export default function SidebarController({
           </div>
         )}
       </div>
-      {value ? (
+      {value ?
         <div>
 
           <Sidebar />
         </div>
-      ) : (
-        <div className="  bg-gray-100 hidden sm:block sm:relative sm:border sm:border-black/12 sm:h-full ">
+       : 
+        <div className={` ${value ? " sm:hidden ":"block"} bg-gray-100 hidden sm:relative sm:border sm:border-black/12 sm:h-full `}>
           <div className=" absolute -right-4 top-1">
             <Togglecomponent />
           </div>
         </div>
-      )}
+      
+      }
 
       {children}
     </div>
