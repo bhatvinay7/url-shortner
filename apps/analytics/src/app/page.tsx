@@ -12,7 +12,7 @@ export default  function Page() {
    },[dispatch])
 
   return (
-    <div className=" flex-1 min-h-screen  bg-inherit  overflow-y-auto">
+    <div className=" flex-1 h-screen  bg-inherit  overflow-y-auto">
       <UrlsComponent
       data={data}
       />    
