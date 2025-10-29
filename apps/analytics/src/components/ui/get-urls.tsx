@@ -20,7 +20,7 @@ export default function GetUrls({data}:{data:custormdata}) {
   if((data?.totalStats?.length==0)) return <></>
   return (
     <div className=" w-full flex-1 flex-col items-center h-auto overflow-y-hidden  space-y-2 p-3 " >
-      <div className=' w-full sm:w-3/5 mx-auto flex h-auto items-center'>
+      <div className=' w-full sm:w-3/5 mx-auto flex flex-col h-auto items-center'>
 
       {data?.totalStats?.map((each:each)=>{
         return (
