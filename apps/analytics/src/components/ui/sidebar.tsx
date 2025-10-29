@@ -69,9 +69,11 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
   };
 
   return (
+    <div className={`${sideBarValue ? "block" : " hidden sm:block"} relative h-full `}>
+
     <div
-      className={` ${sideBarValue ? "block" : " hidden sm:block "} h-full top-[40px] sm:top-0 absolute sm:sticky sm:border sm:border-black/12 sm:w-auto  w-full  bg-gray-100 p-1 `}
-    >
+      className={`  h-full top-[40px] sm:top-0 absolute sm:sticky sm:border sm:border-black/12 sm:w-auto  w-full  bg-gray-100 p-1 `}
+      >
       <div className="absolute -right-4">
         <Togglecomponent />
       </div>
@@ -87,17 +89,17 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
         initial={{ x: -30, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         className=" w-full h-screen bg-gray-100 shadow-md   flex flex-col"
-      >
+        >
         {/* Menu */}
         <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300">
           {menuItems.map((item) => {
             const isActive = item.value === active;
             return (
               <Link
-                href={item.link}
-                key={item.value}
-                onClick={() => handleClick(item.value)}
-                className={`w-full flex items-center gap-3 text-[14px] p-1.5 sm:p-2 md:p-3 rounded-xl text-sm font-medium transition-all
+              href={item.link}
+              key={item.value}
+              onClick={() => handleClick(item.value)}
+              className={`w-full flex items-center gap-3 text-[14px] p-1.5 sm:p-2 md:p-3 rounded-xl text-sm font-medium transition-all
                 ${
                   isActive
                     ? "bg-[hsl(30,90%,90%)] text-[hsl(30,90%,45%)]"
@@ -107,8 +109,8 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                 <span
                   className={`${
                     isActive
-                      ? "text-[hsl(30,90%,50%)]"
-                      : "text-[hsl(30,90%,60%)]"
+                    ? "text-[hsl(30,90%,50%)]"
+                    : "text-[hsl(30,90%,60%)]"
                   }`}
                 >
                   {item.icon}
@@ -123,7 +125,7 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
               onClick={() => {
                 setSubActive(!subActive);
               }}
-            >
+              >
               <div className=" self-start relative flex space-x-2 left-2 p-1.5 sm:p-2 md:p-3  text-black/75 ">
                 <span>Topics</span>
                 {subActive ? (
@@ -139,16 +141,16 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                   const isActive = item.value === active;
                   return (
                     <Link
-                      href={`${item.link}/${item.label}`}
-                      key={item.value}
-                      onClick={() => {
+                    href={`${item.link}/${item.label}`}
+                    key={item.value}
+                    onClick={() => {
                         (dispatch(topicAnalytics(item.label) as any),
                           handleClick(item.value));
-                      }}
-                      className={`w-full flex items-center gap-3 p-1.5 sm:p-2 md:p-3 rounded-xl text-sm font-medium transition-all
+                        }}
+                        className={`w-full flex items-center gap-3 p-1.5 sm:p-2 md:p-3 rounded-xl text-sm font-medium transition-all
                 ${
                   isActive
-                    ? "bg-[hsl(30,90%,90%)] text-[hsl(30,78%,73%)]"
+                  ? "bg-[hsl(30,90%,90%)] text-[hsl(30,78%,73%)]"
                     : "text-gray-700 hover:bg-[hsl(30,90%,95%)]"
                 }`}
                     >
@@ -157,8 +159,8 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
                           isActive
                             ? "text-[hsl(30,90%,50%)]"
                             : "text-[hsl(30,90%,60%)]"
-                        }`}
-                      >
+                            }`}
+                            >
                         {item.icon}
                       </span>
                       <span className="text-[14px] ">{item.label}</span>
@@ -170,6 +172,7 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
         </div>
       </motion.aside>
     </div>
+  </div>
   );
 };
 
