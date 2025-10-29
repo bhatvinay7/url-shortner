@@ -12,7 +12,7 @@ function getBackoffDelay(attempt: number) {
   const delay = retryLow * 2 ** attempt;
   return Math.min(delay, retryHigh);
 }
-
+// For development remove the tls and use the cluster url  amqps:user:password@rabbitmq:5672/
 // Function to create a connection
 function createConnection() {
   const connection = new Connection({
