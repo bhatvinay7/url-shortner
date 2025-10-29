@@ -18,7 +18,7 @@ export default function SidebarController({
   const dispatch = useDispatch();
   return (
     <div
-      className={`w-full  h-[vh]  bg-white  relative overflow-x-hidden grid grid-cols-[1fr] ${value ? " sm:grid-cols-[200px_1fr] md:grid-cols-[300px_1fr]" : "sm:grid-cols-[120px_1fr]"}`}
+      className={`w-full  max-h-screen bg-white overflow-y-scroll  relative overflow-x-hidden grid grid-cols-[1fr] ${value ? " sm:grid-cols-[200px_1fr] md:grid-cols-[300px_1fr]" : "sm:grid-cols-[120px_1fr]"}`}
     >
       <div className=" w-full h-10 inset-0 relative z-[42] bg-gray-100 p-2   block sm:hidden">
         {!value ? (
@@ -40,12 +40,14 @@ export default function SidebarController({
         )}
       </div>
       {value ?
-        <div>
-
+        <div className="  top-0 sticky  h-full w-full flex justify-center p-1 z-[42] bg-white sm:border sm:border-black/12 ">
+           <div className="absolute -right-2 z-[43] sm:-right-4">
+        <Togglecomponent />
+      </div>
           <Sidebar />
         </div>
        : 
-        <div className={` ${value ? " sm:hidden ":"block"} bg-gray-100 hidden sm:relative sm:border sm:border-black/12 sm:h-full `}>
+        <div className={` ${value ? "hidden":" block w-full "}  bg-gray-100  sm:relative sm:border sm:border-black/12 sm:h-full `}>
           <div className=" absolute -right-4 top-1">
             <Togglecomponent />
           </div>

@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} min-h-screen overflow-y-auto ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} max-h-screen scroll-y-hidden ${geistMono.variable}`}>
         <RedduxProvider>
         <SidebarController>{children}</SidebarController>
         </RedduxProvider>

@@ -11,7 +11,7 @@ export default  function Page() {
    },[dispatch])
 
   return (
-    <div className=" flex-1 min-h-screen  bg-inherit">
+    <div className=" flex-1 h-screen w-full bg-inherit">
       <UrlsComponent
       data={data}
       />    

@@ -9,7 +9,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Link from "next/link";
 import Togglecomponent from "./togglecomponent";
 import { topicAnalytics } from "../../lib/redux/featuresSlice/topicAnalyticsSlice";
@@ -20,7 +20,13 @@ interface SidebarProps {
   onFilterSelect?: (topic: string) => void;
 }
 
+
+
 const Sidebar = ({ onFilterSelect }: SidebarProps) => {
+
+
+ 
+
   const [active, setActive] = useState("urls");
   const sideBarValue = useSelector(sideBarState);
   const [subActive, setSubActive] = useState<boolean>(true);
@@ -69,18 +75,15 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
   };
 
   return (
-    <div className={`${sideBarValue ? "absolute top-[40px] z-[40] block sm:sticky sm:top-0 " : " hidden"}  w-full  h-full `}>
 
     <div
-      className={`  h-full sm:border sm:border-black/12 sm:w-auto  w-full  bg-gray-100 p-1 `}
+      className={`  ${sideBarValue ? "absolute sm:block  " : " hidden "} bg-white top-0 p-2 sm:p-0 w-full  h-full   sm:w-auto `}
       >
-      <div className="absolute -right-4">
-        <Togglecomponent />
-      </div>
+     
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-semibold mb-6 mt-3 text-gray-800 text-center"
+        className="text-2xl font-semibold sm:mb-6 bg-white sm:mt-3 text-gray-800 text-center"
       >
         Analytics Overview
       </motion.h1>
@@ -88,10 +91,10 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
       <motion.aside
         initial={{ x: -30, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        className=" w-full h-screen bg-gray-100 shadow-md   flex flex-col"
+        className=" w-full h-screen bg-white   flex flex-col"
         >
         {/* Menu */}
-        <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300">
+        <div className="flex-1 w-full overflow-y-auto bg-white space-y-2 scrollbar-thin scrollbar-thumb-gray-300">
           {menuItems.map((item) => {
             const isActive = item.value === active;
             return (
@@ -171,7 +174,6 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
           </div>
         </div>
       </motion.aside>
-    </div>
   </div>
   );
 };
