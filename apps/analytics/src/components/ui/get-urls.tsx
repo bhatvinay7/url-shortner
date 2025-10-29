@@ -19,7 +19,7 @@ export default function GetUrls({data}:{data:custormdata}) {
   }
   if((data?.totalStats?.length==0)) return <></>
   return (
-    <div className=" w-full flex flex-col justify-center overflow-y-hidden items-center h-auto  space-y-2 p-3 " >
+    <div className=" w-full flex flex-col justify-center  items-center h-full overflow-y-hidden  space-y-2 p-3 " >
       {data?.totalStats?.map((each:each)=>{
        return (
        <div className=' w-full md:w-3/5 bg-[#3434360d] flex flex-col relative items-center rounded-md p-3'>
