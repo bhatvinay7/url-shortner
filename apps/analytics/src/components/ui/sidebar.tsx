@@ -70,7 +70,7 @@ const Sidebar = ({ onFilterSelect }: SidebarProps) => {
 
   return (
     <div
-      className={` ${sideBarValue ? "block" : " hidden sm:block "} h-screen top-[40px] sm:top-0 absolute sm:sticky sm:border sm:border-black/12 sm:w-auto  w-full  bg-gray-100 p-1 `}
+      className={` ${sideBarValue ? "block" : " hidden sm:block "} h-full top-[40px] sm:top-0 absolute sm:sticky sm:border sm:border-black/12 sm:w-auto  w-full  bg-gray-100 p-1 `}
     >
       <div className="absolute -right-4">
         <Togglecomponent />

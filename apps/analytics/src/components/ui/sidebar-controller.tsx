@@ -18,7 +18,7 @@ export default function SidebarController({
   const dispatch = useDispatch();
   return (
     <div
-      className={`w-full  h-[vh]  bg-white overflow-y-auto  relative overflow-x-hidden grid grid-cols-[1fr] ${value ? " sm:grid-cols-[200px_1fr] md:grid-cols-[300px_1fr]" : "sm:grid-cols-[120px_1fr]"}`}
+      className={`w-full  h-[vh]  bg-white  relative overflow-x-hidden grid grid-cols-[1fr] ${value ? " sm:grid-cols-[200px_1fr] md:grid-cols-[300px_1fr]" : "sm:grid-cols-[120px_1fr]"}`}
     >
       <div className=" w-full h-10 inset-0 relative z-[42] bg-gray-100 p-2   block sm:hidden">
         {!value ? (
