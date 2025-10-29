@@ -29,7 +29,7 @@ export default function GetUrls({data}:{data:custormdata}) {
           />
           </div>  
          }
-         <div className='w-full flex flex-col p-1 items-center'>
+         <div className='w-full flex flex-col p-1 items-start'>
             <div className='text-black/75 text-sm sm:text-base p-0.5 text-wrap max-w-9/10 overflow-x-auto custom-scroll '>{each.longUrl}</div> 
             <div className='flex  space-x-1.5'>
             <span className='text-indigo-800 text-base'>Total clicks :</span> 
